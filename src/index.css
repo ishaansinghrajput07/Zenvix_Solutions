@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display text-navy tracking-tight;
+  }
+
+  ::selection {
+    @apply bg-violet-400/20 text-navy;
+  }
+
+  :focus-visible {
+    outline: 2px solid #2F5FED;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  .shell {
+    @apply mx-auto w-full max-w-shell px-5 sm:px-8 lg:px-12;
+  }
+
+  .eyebrow {
+    @apply font-mono text-[11px] tracking-[0.18em] uppercase text-slate-500;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-navy px-6 py-3.5
+      font-display text-[15px] font-medium text-white shadow-soft
+      transition-all duration-200 hover:bg-navy-700 hover:shadow-lift
+      active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-border
+      bg-white px-6 py-3.5 font-display text-[15px] font-medium text-navy
+      transition-all duration-200 hover:border-navy-100 hover:bg-surface
+      active:scale-[0.98];
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

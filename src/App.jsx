@@ -1,0 +1,59 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Home from './pages/Home.jsx'
+import ProgramsPage from './pages/Programspage.jsx'
+import ProgramDetail from './pages/ProgramDetail.jsx'
+import Career from "./components/CareerSupport/Career.jsx"
+import Navbar from './components/Navbar.jsx'
+import Footer from './components/Footer.jsx'
+import InterviewPreparation from './components/Interview/InterviewPreparation.jsx'
+import JobPreparation from "./components/JobPreparation/JobPreparation.jsx";
+import JobPlacement from "./components/JobPlacement/JobPlacement.jsx";
+import FreeResources from "./components/FreeResources.jsx";
+import Blog from "./pages/Blog.jsx";
+import BlogDetail from "./pages/BlogDetail.jsx";
+import SuccessStoriesPage from "./pages/SuccessStoriesPage.jsx";
+import Contact from './pages/Contact.jsx'
+
+export default function App() {
+  return (
+    <BrowserRouter>
+    <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/programs" element={<ProgramsPage />} />
+
+        <Route path="/blog" element={<Blog />} />
+        <Route
+  path="/success-stories"
+  element={<SuccessStoriesPage />}
+/>
+
+<Route
+  path="/resources"
+  element={<FreeResources />}
+/>
+
+<Route
+  path="/blog/:slug"
+  element={<BlogDetail />}
+/>
+        <Route path="/career" element={<Career />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/interview-preparation" element={<InterviewPreparation />} />
+        <Route
+  path="/job-placement"
+  element={<JobPlacement />}
+/>
+        <Route
+  path="/job-preparation"
+  element={<JobPreparation />}
+/>
+        <Route
+          path="/programs/:id"
+          element={<ProgramDetail />}
+        />
+      </Routes>
+       <Footer />
+    </BrowserRouter>
+  )
+}

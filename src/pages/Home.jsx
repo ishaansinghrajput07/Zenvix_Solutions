@@ -14,10 +14,16 @@ import WhyZenvix from '../components/WhyZenvix.jsx'
 import FAQ from '../components/FAQ.jsx'
 import TopCompanies from '../components/TopCompanies.jsx'
 import FinalCTA from '../components/FinalCTA.jsx'
-
+import SEO from "../components/SEO/SEO.jsx";
 export default function Home() {
   return (
     <>
+
+    <SEO
+  title="Learn. Build. Get Hired."
+  description="Build practical skills through career-focused programs, real-world projects, interview preparation, job preparation and career support with Zenvix Solutions."
+  path="/"
+/>
       
       <main>
         <Hero />

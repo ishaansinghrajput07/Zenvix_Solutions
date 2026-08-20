@@ -25,8 +25,7 @@ const journey = [
   {
     number: "01",
     title: "Tell us your goal",
-    description:
-      "Share where you are today and what you want to achieve next.",
+    description: "Share where you are today and what you want to achieve next.",
   },
   {
     number: "02",
@@ -109,15 +108,13 @@ export default function Contact() {
 
           <h1 className="text-4xl font-semibold leading-[1.04] tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-[4rem]">
             Let&apos;s build your
-            <span className="block text-slate-400">
-              next career move.
-            </span>
+            <span className="block text-slate-400">next career move.</span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-sm leading-7 text-slate-500 sm:text-base">
-            Tell us about your goals, challenges, or career direction.
-            Zenvix can help you identify the right path and take the next
-            step with confidence.
+            Tell us about your goals, challenges, or career direction. Zenvix
+            can help you identify the right path and take the next step with
+            confidence.
           </p>
         </motion.section>
 
@@ -162,10 +159,7 @@ export default function Contact() {
 
               <div className="mt-8 space-y-6">
                 {journey.map((item, index) => (
-                  <div
-                    key={item.number}
-                    className="relative flex gap-4"
-                  >
+                  <div key={item.number} className="relative flex gap-4">
                     {index !== journey.length - 1 && (
                       <div className="absolute left-[15px] top-9 h-[calc(100%+8px)] w-px bg-white/10" />
                     )}
@@ -246,8 +240,8 @@ export default function Contact() {
                 </h2>
 
                 <p className="mt-2 max-w-md text-xs leading-5 text-slate-500">
-                  Share a few details and our team can understand how to
-                  support your career journey.
+                  Share a few details and our team can understand how to support
+                  your career journey.
                 </p>
               </div>
 
@@ -368,7 +362,6 @@ export default function Contact() {
                 className="group inline-flex w-full items-center justify-center gap-3 rounded-xl bg-slate-950 px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-slate-800 hover:shadow-[0_12px_30px_rgba(15,23,42,0.15)]"
               >
                 Send Enquiry
-
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
                   <Send className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </span>
@@ -405,8 +398,8 @@ export default function Contact() {
                 </h2>
 
                 <p className="mt-2 max-w-xl text-xs leading-5 text-slate-500">
-                  That's okay. Tell us your current situation and we'll help
-                  you identify the most suitable next step.
+                  That's okay. Tell us your current situation and we'll help you
+                  identify the most suitable next step.
                 </p>
               </div>
 
@@ -415,7 +408,6 @@ export default function Contact() {
                 className="group inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-xs font-semibold text-slate-900 transition-all duration-300 hover:border-slate-950 hover:bg-slate-950 hover:text-white"
               >
                 Start with a conversation
-
                 <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </a>
             </div>

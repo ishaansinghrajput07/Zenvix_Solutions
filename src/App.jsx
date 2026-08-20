@@ -15,7 +15,9 @@ import SuccessStoriesPage from "./pages/SuccessStoriesPage.jsx";
 import Contact from './pages/Contact.jsx'
 import Login from "./pages/Login.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
+import ContactPopup from "./components/ContactPopup.jsx";
 import HowItWorksPage from "./pages/HowItWorksPage.jsx";
+import NotFound from "./pages/NotFound.jsx";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop.jsx";
 export default function App() {
   return (
@@ -32,10 +34,7 @@ export default function App() {
   element={<SuccessStoriesPage />}
 />
 
-<Route
-  path="/how-it-works"
-  element={<HowItWorksPage />}
-/>
+<Route path="/how-it-works" element={<HowItWorksPage />}/>
 <Route path="/login" element={<Login />} />
 
 <Route
@@ -63,8 +62,11 @@ export default function App() {
           path="/programs/:id"
           element={<ProgramDetail />}
         />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
        <Footer />
+       <ContactPopup />
     </BrowserRouter>
   )
 }

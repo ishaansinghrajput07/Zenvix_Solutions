@@ -9,7 +9,7 @@ import JobPlacement from '../components/JobPlacement.jsx'
 import CareerDomains from '../components/CareerDomains.jsx'
 import SuccessStories from '../components/SuccessStories.jsx'
 import About from '../components/About.jsx'
-
+import Feedback from "../components/Feedback/Feedback.jsx";
 import WhyZenvix from '../components/WhyZenvix.jsx'
 import FAQ from '../components/FAQ.jsx'
 import TopCompanies from '../components/TopCompanies.jsx'
@@ -30,6 +30,7 @@ export default function Home() {
         <CareerDomains />
         <WhyZenvix />
         <SuccessStories />
+        <Feedback />
         <TopCompanies />
         <FAQ />
         <About />

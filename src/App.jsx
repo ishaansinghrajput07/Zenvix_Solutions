@@ -13,10 +13,14 @@ import Blog from "./pages/Blog.jsx";
 import BlogDetail from "./pages/BlogDetail.jsx";
 import SuccessStoriesPage from "./pages/SuccessStoriesPage.jsx";
 import Contact from './pages/Contact.jsx'
-
+import Login from "./pages/Login.jsx";
+import AboutPage from "./pages/AboutPage.jsx";
+import HowItWorksPage from "./pages/HowItWorksPage.jsx";
+import ScrollToTop from "./components/ScrollToTop/ScrollToTop.jsx";
 export default function App() {
   return (
     <BrowserRouter>
+    <ScrollToTop />
     <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -27,6 +31,12 @@ export default function App() {
   path="/success-stories"
   element={<SuccessStoriesPage />}
 />
+
+<Route
+  path="/how-it-works"
+  element={<HowItWorksPage />}
+/>
+<Route path="/login" element={<Login />} />
 
 <Route
   path="/resources"
@@ -48,6 +58,7 @@ export default function App() {
   path="/job-preparation"
   element={<JobPreparation />}
 />
+<Route path="/about" element={<AboutPage />} />
         <Route
           path="/programs/:id"
           element={<ProgramDetail />}

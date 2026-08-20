@@ -97,7 +97,7 @@ export const navLinks = [
   // =========================================================
   {
     label: "Resources",
-    href: "/#resources",
+    href: "/blog",
     items: [
       {
         label: "Blog",
@@ -124,7 +124,7 @@ export const navLinks = [
   // =========================================================
   {
     label: "How It Works",
-    href: "/#how-it-works",
+    href: "/how-it-works",
   },
 
   // =========================================================
@@ -132,6 +132,6 @@ export const navLinks = [
   // =========================================================
   {
     label: "About",
-    href: "/#about",
+    href: "/about",
   },
 ];

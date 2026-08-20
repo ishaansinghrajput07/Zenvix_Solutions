@@ -7,66 +7,66 @@ import {
 const companiesRow1 = [
   {
     name: 'Microsoft',
-    logo: '/images/companies/microsoft.png',
+    logo: '/companies/microsoft.png',
   },
   {
     name: 'Amazon',
-    logo: '/images/companies/amazon.png',
+    logo: '/companies/amazon.png',
   },
   {
     name: 'Google',
-    logo: '/images/companies/google.png',
+    logo: '/companies/google.png',
   },
   {
     name: 'IBM',
-    logo: '/images/companies/ibm.png',
+    logo: '/companies/ibm.png',
   },
   {
     name: 'Oracle',
-    logo: '/images/companies/oracle.png',
+    logo: '/companies/oracle.png',
   },
   {
     name: 'Deloitte',
-    logo: '/images/companies/deloitte.png',
+    logo: '/companies/deloitte.png',
   },
   {
     name: 'Accenture',
-    logo: '/images/companies/accenture.png',
+    logo: '/companies/accenture.png',
   },
   {
     name: 'Salesforce',
-    logo: '/images/companies/salesforce.png',
+    logo: '/companies/salesforce.png',
   },
 ]
 
 const companiesRow2 = [
   {
     name: 'TCS',
-    logo: '/images/companies/tcs.png',
+    logo: '/companies/tcs.png',
   },
   {
     name: 'Infosys',
-    logo: '/images/companies/infosys.png',
+    logo: '/companies/infosys.png',
   },
   {
     name: 'Capgemini',
-    logo: '/images/companies/capgemini.png',
+    logo: '/companies/capgemini.png',
   },
   {
     name: 'Cognizant',
-    logo: '/images/companies/cognizant.png',
+    logo: '/companies/cognizant.png',
   },
   {
     name: 'Wipro',
-    logo: '/images/companies/wipro.png',
+    logo: '/companies/wipro.png',
   },
   {
     name: 'HCLTech',
-    logo: '/images/companies/hcltech.png',
+    logo: '/companies/hcltech.png',
   },
   {
     name: 'Tech Mahindra',
-    logo: '/images/companies/techmahindra.png',
+    logo: '/companies/techmahindra.png',
   },
 ]
 
@@ -77,7 +77,7 @@ function CompanyCard({ company }) {
         src={company.logo}
         alt={`${company.name} logo`}
         loading="lazy"
-        className="max-h-9 max-w-[125px] object-contain grayscale opacity-60 transition-all duration-500 group-hover:grayscale-0 group-hover:opacity-100 sm:max-h-10 sm:max-w-[140px]"
+       className="max-h-9 max-w-[125px] object-contain opacity-90 transition-all duration-500 group-hover:scale-105 group-hover:opacity-100 sm:max-h-10 sm:max-w-[140px]"
       />
     </div>
   )

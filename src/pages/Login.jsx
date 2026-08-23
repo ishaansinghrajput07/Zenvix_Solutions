@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -11,11 +12,14 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { loginUser } from "../services/authService.js";
 
 export default function Login() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -23,6 +27,7 @@ export default function Login() {
   });
 
   const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState("");
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -36,6 +41,8 @@ export default function Login() {
       ...previous,
       [name]: "",
     }));
+
+    setServerError("");
   };
 
   const validateForm = () => {
@@ -61,27 +68,65 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!validateForm()) return;
 
-    /*
-     * Connect your authentication API here.
-     *
-     * Example:
-     *
-     * await axios.post("/api/auth/login", {
-     *   email: formData.email,
-     *   password: formData.password,
-     * });
-     */
+    setIsLoading(true);
+    setServerError("");
 
-    console.log("Login form ready:", {
-      email: formData.email,
-      password: formData.password,
-      remember: formData.remember,
-    });
+    try {
+      const response = await loginUser({
+        email: formData.email.trim(),
+        password: formData.password,
+      });
+
+      if (!response?.success || !response?.token || !response?.user) {
+        throw new Error(
+          response?.message || "Unable to login. Please try again."
+        );
+      }
+
+      const storage = formData.remember
+        ? localStorage
+        : sessionStorage;
+
+      const otherStorage = formData.remember
+        ? sessionStorage
+        : localStorage;
+
+      otherStorage.removeItem("zenvix_token");
+      otherStorage.removeItem("zenvix_user");
+
+      storage.setItem("zenvix_token", response.token);
+      storage.setItem(
+        "zenvix_user",
+        JSON.stringify(response.user)
+      );
+
+      /*
+       * Login successful.
+       *
+       * For now we send the user to the student dashboard.
+       * Dashboard will be created in the next step.
+       */
+
+      navigate("/dashboard", {
+        replace: true,
+      });
+    } catch (error) {
+      console.error("Login Error:", error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Unable to login. Please check your credentials and try again.";
+
+      setServerError(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -137,10 +182,7 @@ export default function Login() {
             to="/"
             className="group inline-flex items-center gap-2 text-[11px] font-semibold text-slate-600 transition-colors hover:text-slate-950"
           >
-            <ArrowLeft
-              className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1"
-            />
-
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1" />
             Back to Zenvix
           </Link>
 
@@ -160,6 +202,7 @@ export default function Login() {
 
       <div className="relative z-10 flex min-h-[calc(100vh-90px)] items-center justify-center px-5 pb-12 pt-8">
         <div className="grid w-full max-w-5xl overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.08)] lg:grid-cols-[0.9fr_1.1fr]">
+
           {/* =================================================
               LEFT PANEL
           ================================================== */}
@@ -228,6 +271,7 @@ export default function Login() {
 
           <div className="p-6 sm:p-10 lg:p-12">
             <div className="mx-auto max-w-md">
+
               {/* Mobile Brand */}
 
               <div className="mb-8 flex items-center gap-2 lg:hidden">
@@ -260,12 +304,33 @@ export default function Login() {
                 </p>
               </div>
 
+              {/* Server Error */}
+
+              {serverError && (
+                <motion.div
+                  initial={{
+                    opacity: 0,
+                    y: -8,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3"
+                >
+                  <p className="text-xs font-medium leading-relaxed text-red-600">
+                    {serverError}
+                  </p>
+                </motion.div>
+              )}
+
               {/* Form */}
 
               <form
                 onSubmit={handleSubmit}
                 className="mt-8 space-y-5"
               >
+
                 {/* Email */}
 
                 <div>
@@ -293,7 +358,8 @@ export default function Login() {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="you@example.com"
-                      className="h-full w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-300"
+                      disabled={isLoading}
+                      className="h-full w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-300 disabled:cursor-not-allowed disabled:opacity-60"
                     />
                   </div>
 
@@ -344,7 +410,8 @@ export default function Login() {
                       value={formData.password}
                       onChange={handleChange}
                       placeholder="Enter your password"
-                      className="h-full w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-300"
+                      disabled={isLoading}
+                      className="h-full w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-300 disabled:cursor-not-allowed disabled:opacity-60"
                     />
 
                     <button
@@ -354,12 +421,13 @@ export default function Login() {
                           (previous) => !previous
                         )
                       }
+                      disabled={isLoading}
                       aria-label={
                         showPassword
                           ? "Hide password"
                           : "Show password"
                       }
-                      className="ml-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-700"
+                      className="ml-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-700 disabled:cursor-not-allowed"
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -384,6 +452,7 @@ export default function Login() {
                     name="remember"
                     checked={formData.remember}
                     onChange={handleChange}
+                    disabled={isLoading}
                     className="h-3.5 w-3.5 rounded border-slate-300 accent-slate-950"
                   />
 
@@ -396,11 +465,21 @@ export default function Login() {
 
                 <button
                   type="submit"
-                  className="group flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-slate-950 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(15,23,42,0.15)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-[0_15px_35px_rgba(15,23,42,0.18)]"
+                  disabled={isLoading}
+                  className="group flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-slate-950 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(15,23,42,0.15)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-[0_15px_35px_rgba(15,23,42,0.18)] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
                 >
-                  Sign In
+                  {isLoading ? (
+                    <>
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                      Signing in...
+                    </>
+                  ) : (
+                    <>
+                      Sign In
 
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    </>
+                  )}
                 </button>
               </form>
 

@@ -19,6 +19,8 @@ import ContactPopup from "./components/ContactPopup.jsx";
 import HowItWorksPage from "./pages/HowItWorksPage.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop.jsx";
+import Register from "./pages/Register.jsx";
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -36,7 +38,7 @@ export default function App() {
 
 <Route path="/how-it-works" element={<HowItWorksPage />}/>
 <Route path="/login" element={<Login />} />
-
+<Route path="/register" element={<Register />} />
 <Route
   path="/resources"
   element={<FreeResources />}

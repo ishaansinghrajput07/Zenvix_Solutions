@@ -1,5 +1,6 @@
+
 import { Link, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -13,12 +14,14 @@ import {
   Sparkles,
   MessageSquareText,
   BookOpen,
+  AlertCircle,
+  Loader2,
 } from "lucide-react";
 
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
 import ApplyProgramModal from "../components/programs/ApplyProgramModal.jsx";
-import { programs } from "../data/programs.js";
+import { getCourseById } from "../services/courseService.js";
 
 const accentStyles = {
   electric: {
@@ -103,42 +106,147 @@ const curriculum = [
   "Career guidance and job preparation",
 ];
 
-function getProgramById(id) {
-  return programs.find((program) => program.id === id);
+function getAccentFromCategory(category = "") {
+  const value = category.toLowerCase();
+
+  if (value.includes("data") || value.includes("ai")) {
+    return "violet";
+  }
+
+  if (value.includes("cloud") || value.includes("devops")) {
+    return "cyan";
+  }
+
+  if (value.includes("security")) {
+    return "emerald";
+  }
+
+  return "electric";
 }
 
 export default function ProgramDetail() {
   const { id } = useParams();
 
+  const [course, setCourse] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
-  const program = getProgramById(id);
+  // =====================================================
+  // FETCH COURSE
+  // =====================================================
 
-  /* =====================================================
-      PROGRAM NOT FOUND
-  ====================================================== */
+  useEffect(() => {
+    let isMounted = true;
 
-  if (!program) {
+    const fetchCourse = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        if (!id) {
+          throw new Error("Course ID is missing.");
+        }
+
+        const response = await getCourseById(id);
+
+        if (!response?.success || !response?.course) {
+          throw new Error(
+            response?.message || "Course could not be found."
+          );
+        }
+
+        if (isMounted) {
+          setCourse(response.course);
+        }
+      } catch (err) {
+        console.error("Fetch Course Error:", err);
+
+        if (isMounted) {
+          setError(
+            err?.response?.data?.message ||
+              err?.message ||
+              "Unable to load course."
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchCourse();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  // =====================================================
+  // LOADING
+  // =====================================================
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+
+        <main className="min-h-screen bg-surface px-4 pt-[140px]">
+          <div className="shell flex min-h-[55vh] items-center justify-center">
+            <div className="text-center">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-electric-500/10">
+                <Loader2
+                  size={24}
+                  className="animate-spin text-electric-500"
+                />
+              </div>
+
+              <h1 className="mt-5 font-display text-2xl font-semibold text-navy">
+                Loading course...
+              </h1>
+
+              <p className="mt-2 font-body text-sm text-slate-500">
+                Please wait while we load the course details.
+              </p>
+            </div>
+          </div>
+        </main>
+
+        <Footer />
+      </>
+    );
+  }
+
+  // =====================================================
+  // ERROR / COURSE NOT FOUND
+  // =====================================================
+
+  if (error || !course) {
     return (
       <>
         <Navbar />
 
         <main className="min-h-screen bg-surface px-4 pt-[140px]">
           <div className="shell py-20 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-navy/5">
-              <GraduationCap size={24} className="text-navy" />
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/10">
+              <AlertCircle size={24} className="text-red-500" />
             </div>
 
             <h1 className="mt-5 font-display text-3xl font-semibold text-navy">
-              Program not found
+              Course not found
             </h1>
 
             <p className="mx-auto mt-3 max-w-md font-body text-sm leading-relaxed text-slate-500">
-              The program you're looking for may have been moved or is no
-              longer available.
+              {error ||
+                "The course you're looking for may have been moved or is no longer available."}
             </p>
 
-            <Link to="/programs" className="btn-primary mt-7 inline-flex">
+            <Link
+              to="/programs"
+              className="btn-primary mt-7 inline-flex"
+            >
               View All Programs
               <ArrowRight size={16} />
             </Link>
@@ -150,8 +258,21 @@ export default function ProgramDetail() {
     );
   }
 
-  const styles =
-    accentStyles[program.accent] ?? accentStyles.electric;
+  // =====================================================
+  // COURSE DATA
+  // =====================================================
+
+  const accent = getAccentFromCategory(course.category);
+  const styles = accentStyles[accent];
+
+  const skills = Array.isArray(course.skills)
+    ? course.skills
+    : [];
+
+  const projects =
+    course.projects ||
+    course.projectCount ||
+    0;
 
   return (
     <>
@@ -169,7 +290,6 @@ export default function ProgramDetail() {
             aria-hidden
             className="pointer-events-none absolute inset-0"
           >
-
             <div
               className={`absolute -top-40 left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-gradient-to-br ${styles.gradient} blur-3xl`}
             />
@@ -184,10 +304,11 @@ export default function ProgramDetail() {
                   "radial-gradient(ellipse 65% 60% at 50% 0%, black 35%, transparent 100%)",
               }}
             />
-
           </div>
 
           <div className="shell relative">
+
+            {/* BACK */}
 
             <Link
               to="/programs"
@@ -199,9 +320,7 @@ export default function ProgramDetail() {
 
             <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
 
-              {/* =================================================
-                  LEFT
-              ================================================== */}
+              {/* LEFT */}
 
               <motion.div
                 initial={{
@@ -232,21 +351,14 @@ export default function ProgramDetail() {
                 </div>
 
                 <h1 className="max-w-3xl font-display text-4xl font-semibold leading-[1.08] tracking-tight text-navy sm:text-5xl lg:text-[58px]">
-                  Become confident in{" "}
-                  <span className={styles.text}>
-                    {program.name}.
-                  </span>
+                  {course.title}
                 </h1>
 
                 <p className="mt-6 max-w-2xl font-body text-[15px] leading-[1.8] text-slate-600 sm:text-[16px]">
-                  {program.description}
+                  {course.description}
                 </p>
 
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-
-                  {/* =================================================
-                      APPLY BUTTON → MODAL
-                  ================================================== */}
 
                   <button
                     type="button"
@@ -272,9 +384,7 @@ export default function ProgramDetail() {
 
               </motion.div>
 
-              {/* =================================================
-                  RIGHT OVERVIEW
-              ================================================== */}
+              {/* RIGHT OVERVIEW */}
 
               <motion.div
                 initial={{
@@ -305,7 +415,7 @@ export default function ProgramDetail() {
                     <div className="flex items-center justify-between">
 
                       <span className="eyebrow">
-                        Program overview
+                        Course overview
                       </span>
 
                       <span
@@ -317,10 +427,12 @@ export default function ProgramDetail() {
                     </div>
 
                     <h2 className="mt-3 font-display text-xl font-semibold text-navy">
-                      {program.name}
+                      {course.title}
                     </h2>
 
                     <div className="mt-6 grid grid-cols-2 gap-3">
+
+                      {/* Duration */}
 
                       <div className="rounded-xl border border-border bg-surface p-4">
 
@@ -334,10 +446,12 @@ export default function ProgramDetail() {
                         </p>
 
                         <p className="mt-1 font-body text-sm font-semibold text-navy">
-                          {program.duration}
+                          {course.duration || "Flexible"}
                         </p>
 
                       </div>
+
+                      {/* Projects */}
 
                       <div className="rounded-xl border border-border bg-surface p-4">
 
@@ -351,10 +465,14 @@ export default function ProgramDetail() {
                         </p>
 
                         <p className="mt-1 font-body text-sm font-semibold text-navy">
-                          {program.projects} Projects
+                          {projects > 0
+                            ? `${projects} Projects`
+                            : "Practical Projects"}
                         </p>
 
                       </div>
+
+                      {/* Level */}
 
                       <div className="rounded-xl border border-border bg-surface p-4">
 
@@ -368,10 +486,12 @@ export default function ProgramDetail() {
                         </p>
 
                         <p className="mt-1 font-body text-sm font-semibold text-navy">
-                          {program.level}
+                          {course.level || "Beginner"}
                         </p>
 
                       </div>
+
+                      {/* Language */}
 
                       <div className="rounded-xl border border-border bg-surface p-4">
 
@@ -381,40 +501,39 @@ export default function ProgramDetail() {
                         />
 
                         <p className="mt-2 font-mono text-[10px] text-slate-400 uppercase">
-                          Outcome
+                          Language
                         </p>
 
                         <p className="mt-1 font-body text-sm font-semibold text-navy">
-                          Career Ready
+                          {course.language || "English"}
                         </p>
 
                       </div>
 
                     </div>
 
-                    <div className="mt-5 flex flex-wrap gap-1.5">
+                    {/* Skills */}
 
-                      {program.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-md border border-border bg-white px-2.5 py-1.5 font-mono text-[9.5px] text-slate-500"
-                        >
-                          {tag}
-                        </span>
-                      ))}
+                    {skills.length > 0 && (
+                      <div className="mt-5 flex flex-wrap gap-1.5">
 
-                    </div>
+                        {skills.map((skill) => (
+                          <span
+                            key={skill}
+                            className="rounded-md border border-border bg-white px-2.5 py-1.5 font-mono text-[9.5px] text-slate-500"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+
+                      </div>
+                    )}
 
                   </div>
-
                 </div>
-
               </motion.div>
-
             </div>
-
           </div>
-
         </section>
 
         {/* =====================================================
@@ -433,7 +552,6 @@ export default function ProgramDetail() {
 
               <h2 className="font-display text-3xl font-semibold tracking-tight text-navy sm:text-4xl">
                 Learn. Build. Prepare.
-
                 <span className="block">
                   Move toward your career.
                 </span>
@@ -507,9 +625,7 @@ export default function ProgramDetail() {
               })}
 
             </div>
-
           </div>
-
         </section>
 
         {/* =====================================================
@@ -534,8 +650,8 @@ export default function ProgramDetail() {
               </h2>
 
               <p className="mt-4 max-w-lg font-body text-[14px] leading-[1.8] text-slate-500">
-                Every part of the program is designed to help
-                you move from learning concepts to demonstrating
+                Every part of the program is designed to help you
+                move from learning concepts to demonstrating
                 real-world capability.
               </p>
 
@@ -609,9 +725,7 @@ export default function ProgramDetail() {
               </div>
 
             </div>
-
           </div>
-
         </section>
 
         {/* =====================================================
@@ -632,7 +746,6 @@ export default function ProgramDetail() {
 
                 <h2 className="mt-4 font-display text-3xl font-semibold leading-tight text-white sm:text-4xl">
                   Your journey doesn't
-
                   <span className="block text-white/60">
                     end with the final lesson.
                   </span>
@@ -645,15 +758,12 @@ export default function ProgramDetail() {
                   and job-search support.
                 </p>
 
-                {/* APPLY MODAL */}
-
                 <button
                   type="button"
                   onClick={() => setIsApplyModalOpen(true)}
                   className="mt-7 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 font-body text-[13px] font-semibold text-navy transition-transform hover:-translate-y-0.5"
                 >
                   Start Your Journey
-
                   <ArrowRight size={15} />
                 </button>
 
@@ -687,11 +797,8 @@ export default function ProgramDetail() {
                 ))}
 
               </div>
-
             </div>
-
           </div>
-
         </section>
 
         {/* =====================================================
@@ -733,15 +840,11 @@ export default function ProgramDetail() {
 
               <p className="mx-auto mt-4 max-w-xl font-body text-[14px] leading-relaxed text-slate-500">
                 Connect with the Zenvix team to learn more about{" "}
-                {program.name} and find the right path for your
+                {course.title} and find the right path for your
                 career goals.
               </p>
 
               <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-
-                {/* =================================================
-                    TALK TO ADVISOR → MODAL
-                ================================================== */}
 
                 <button
                   type="button"
@@ -749,7 +852,6 @@ export default function ProgramDetail() {
                   className="btn-primary"
                 >
                   Talk to an Advisor
-
                   <ArrowRight size={16} />
                 </button>
 
@@ -763,24 +865,22 @@ export default function ProgramDetail() {
               </div>
 
             </div>
-
           </div>
-
         </section>
-
       </main>
 
       {/* =====================================================
-          APPLY PROGRAM MODAL
-      ====================================================== */}
+          APPLY MODAL
+      ===================================================== */}
 
       <ApplyProgramModal
         isOpen={isApplyModalOpen}
         onClose={() => setIsApplyModalOpen(false)}
-        program={program}
+        program={course}
       />
 
       <Footer />
     </>
   );
 }
+

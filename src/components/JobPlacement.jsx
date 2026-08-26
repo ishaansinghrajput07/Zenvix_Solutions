@@ -18,7 +18,8 @@ const placementSteps = [
       'Build practical, job-ready skills through structured learning and real-world projects.',
     icon: CheckCircle2,
     color: '#8B5CF6',
-    bg: 'bg-violet-500/10',
+    bg: 'bg-violet-50',
+    border: 'border-violet-100',
   },
   {
     number: '02',
@@ -27,7 +28,8 @@ const placementSteps = [
       'Prepare your resume, portfolio and professional profile with focused career guidance.',
     icon: FileText,
     color: '#4C74F0',
-    bg: 'bg-blue-500/10',
+    bg: 'bg-blue-50',
+    border: 'border-blue-100',
   },
   {
     number: '03',
@@ -36,7 +38,8 @@ const placementSteps = [
       'Practice interviews, strengthen communication and build confidence for real opportunities.',
     icon: Target,
     color: '#14B8C9',
-    bg: 'bg-cyan-500/10',
+    bg: 'bg-cyan-50',
+    border: 'border-cyan-100',
   },
   {
     number: '04',
@@ -45,7 +48,8 @@ const placementSteps = [
       'Receive ongoing guidance and support as you move through the job search and hiring process.',
     icon: UserCheck,
     color: '#12A76B',
-    bg: 'bg-emerald-500/10',
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-100',
   },
 ]
 
@@ -53,67 +57,133 @@ export default function JobPlacement() {
   return (
     <section
       id="job-placement"
-      className="relative overflow-hidden bg-slate-950 py-24 sm:py-28 lg:py-32"
+      className="relative overflow-hidden bg-white py-12 sm:py-14 lg:py-16"
     >
       {/* =====================================================
-          AMBIENT BACKGROUND
+          PREMIUM WHITE BLUR BACKGROUND
       ====================================================== */}
 
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
       >
-        <div className="absolute left-1/2 top-[-260px] h-[560px] w-[900px] -translate-x-1/2 rounded-full bg-violet-500/[0.09] blur-3xl" />
+        {/* Soft Violet Glow */}
+        <motion.div
+          animate={{
+            x: [0, 30, 0],
+            y: [0, -20, 0],
+            scale: [1, 1.06, 1],
+          }}
+          transition={{
+            duration: 14,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          className="absolute -left-40 -top-44 h-[520px] w-[520px] rounded-full bg-violet-200/25 blur-[110px]"
+        />
 
-        <div className="absolute bottom-[-220px] left-[-120px] h-[420px] w-[420px] rounded-full bg-emerald-500/[0.07] blur-3xl" />
+        {/* Soft Sky Glow */}
+        <motion.div
+          animate={{
+            x: [0, -25, 0],
+            y: [0, 25, 0],
+            scale: [1, 1.08, 1],
+          }}
+          transition={{
+            duration: 16,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          className="absolute -right-44 top-[-40px] h-[520px] w-[520px] rounded-full bg-sky-200/30 blur-[115px]"
+        />
 
-        <div className="absolute right-[-140px] top-1/3 h-[420px] w-[420px] rounded-full bg-blue-500/[0.07] blur-3xl" />
+        {/* Soft Emerald Glow */}
+        <motion.div
+          animate={{
+            x: [0, 20, 0],
+            y: [0, -18, 0],
+            scale: [1, 1.05, 1],
+          }}
+          transition={{
+            duration: 18,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          className="absolute bottom-[-260px] left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-emerald-200/20 blur-[120px]"
+        />
 
-        {/* subtle grid */}
+        {/* Center White Light */}
+        <div className="absolute left-1/2 top-1/2 h-[500px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/80 blur-[100px]" />
+
+        {/* Very Subtle Grid */}
         <div
-          className="absolute inset-0 opacity-[0.08]"
+          className="absolute inset-0 opacity-[0.025]"
           style={{
             backgroundImage:
-              'linear-gradient(to right, rgba(255,255,255,0.18) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.18) 1px, transparent 1px)',
-            backgroundSize: '64px 64px',
+              'linear-gradient(#0f172a 1px, transparent 1px), linear-gradient(90deg, #0f172a 1px, transparent 1px)',
+            backgroundSize: '72px 72px',
             maskImage:
-              'radial-gradient(ellipse 75% 70% at 50% 45%, black 20%, transparent 100%)',
+              'radial-gradient(ellipse 80% 70% at 50% 50%, black 10%, transparent 85%)',
             WebkitMaskImage:
-              'radial-gradient(ellipse 75% 70% at 50% 45%, black 20%, transparent 100%)',
+              'radial-gradient(ellipse 80% 70% at 50% 50%, black 10%, transparent 85%)',
           }}
         />
       </div>
 
-      <div className="shell relative">
+      {/* =====================================================
+          CONTENT
+      ====================================================== */}
+
+      <div className="shell relative z-10">
+
         {/* =====================================================
             HEADER
         ====================================================== */}
 
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.65, ease: 'easeOut' }}
+          initial={{
+            opacity: 0,
+            y: 18,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          viewport={{
+            once: true,
+            amount: 0.3,
+          }}
+          transition={{
+            duration: 0.6,
+            ease: 'easeOut',
+          }}
           className="mx-auto max-w-3xl text-center"
         >
-          <div className="mb-5 flex items-center justify-center gap-3">
-            <span className="h-px w-8 bg-white/20" />
+          {/* Label */}
 
-            <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-emerald-400">
+          <div className="mb-3 flex items-center justify-center gap-3">
+            <span className="h-px w-7 bg-slate-200" />
+
+            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.24em] text-emerald-600">
               From Learning to Employment
             </span>
 
-            <span className="h-px w-8 bg-white/20" />
+            <span className="h-px w-7 bg-slate-200" />
           </div>
 
-          <h2 className="text-3xl font-semibold leading-[1.08] tracking-[-0.045em] text-white sm:text-4xl lg:text-[3.3rem]">
+          {/* Heading */}
+
+          <h2 className="text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-slate-950 sm:text-4xl lg:text-[3rem]">
             Your course doesn't end
-            <span className="block text-white/40">
+
+            <span className="block bg-gradient-to-r from-violet-500 via-sky-500 to-emerald-500 bg-clip-text text-transparent">
               when the training ends.
             </span>
           </h2>
 
-          <p className="mx-auto mt-6 max-w-2xl text-sm leading-7 text-slate-400 sm:text-[15px]">
+          {/* Description */}
+
+          <p className="mx-auto mt-4 max-w-2xl text-[13px] leading-6 text-slate-500 sm:text-sm">
             Zenvix takes your journey beyond learning — with practical
             training, career preparation and job placement support designed
             to help you move toward employment.
@@ -121,47 +191,106 @@ export default function JobPlacement() {
         </motion.div>
 
         {/* =====================================================
-            SIGNATURE PLACEMENT JOURNEY
+            MAIN JOURNEY CARD
         ====================================================== */}
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.97, y: 20 }}
-          whileInView={{ opacity: 1, scale: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="mx-auto mt-14 max-w-5xl"
+          initial={{
+            opacity: 0,
+            y: 18,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          viewport={{
+            once: true,
+            amount: 0.2,
+          }}
+          transition={{
+            duration: 0.7,
+            delay: 0.1,
+          }}
+          className="mx-auto mt-8 max-w-5xl"
         >
-          <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.045] p-5 shadow-[0_30px_100px_rgba(0,0,0,0.25)] backdrop-blur sm:p-7 lg:p-9">
-            {/* top label */}
+          <div
+            className="
+              relative overflow-hidden
+              rounded-[1.5rem]
+              border border-slate-200/80
+              bg-white/90
+              p-5
+              shadow-[0_20px_70px_rgba(15,23,42,0.07)]
+              backdrop-blur-xl
+              sm:p-6
+              lg:p-7
+            "
+          >
+            {/* =================================================
+                CARD DECORATIVE GLOWS
+            ================================================== */}
 
-            <div className="flex flex-col gap-4 border-b border-white/10 pb-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-sky-200/25 blur-[90px]" />
+
+            <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-violet-200/20 blur-[90px]" />
+
+            {/* =================================================
+                CARD HEADER
+            ================================================== */}
+
+            <div className="relative flex flex-col gap-3 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
+
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
-                  Zenvix Career Path
-                </p>
+                <div className="flex items-center gap-2">
 
-                <p className="mt-1 text-sm font-semibold text-white">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-950 shadow-sm">
+                    <Sparkles className="h-3.5 w-3.5 text-white" />
+                  </span>
+
+                  <p className="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-400">
+                    Zenvix Career Path
+                  </p>
+
+                </div>
+
+                <p className="mt-2 text-sm font-semibold text-slate-900">
                   A guided path from training to placement
                 </p>
               </div>
 
-              <div className="flex w-fit items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/[0.07] px-3 py-1.5">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+              {/* Career Focused Badge */}
 
-                <span className="text-[9px] font-semibold uppercase tracking-[0.16em] text-emerald-400">
+              <div className="flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 shadow-sm">
+
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                </span>
+
+                <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-emerald-600">
                   Career Focused
                 </span>
+
               </div>
             </div>
 
-            {/* journey line */}
+            {/* =================================================
+                JOURNEY STEPS
+            ================================================== */}
 
-            <div className="relative mt-9">
-              {/* desktop connecting line */}
+            <div className="relative mt-6">
 
-              <div className="absolute left-[7%] right-[7%] top-5 hidden h-px bg-gradient-to-r from-violet-400/30 via-blue-400/30 to-emerald-400/40 lg:block" />
+              {/* Connecting Line */}
 
-              <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+              <div className="absolute left-[8%] right-[8%] top-5 hidden h-[2px] overflow-hidden rounded-full bg-gradient-to-r from-violet-200 via-sky-200 to-emerald-200 lg:block" />
+
+              {/* Small Line Glow */}
+
+              <div className="absolute left-[12%] right-[12%] top-[19px] hidden h-[4px] rounded-full bg-gradient-to-r from-violet-100 via-sky-100 to-emerald-100 opacity-60 blur-[5px] lg:block" />
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+
                 {placementSteps.map((step, index) => {
                   const Icon = step.icon
 
@@ -170,7 +299,7 @@ export default function JobPlacement() {
                       key={step.number}
                       initial={{
                         opacity: 0,
-                        y: 18,
+                        y: 12,
                       }}
                       whileInView={{
                         opacity: 1,
@@ -180,72 +309,116 @@ export default function JobPlacement() {
                         once: true,
                       }}
                       transition={{
-                        duration: 0.5,
-                        delay: 0.15 + index * 0.08,
+                        duration: 0.45,
+                        delay: 0.12 + index * 0.08,
                       }}
                       className="group relative"
                     >
+                      {/* =================================================
+                          ICON + NUMBER
+                      ================================================== */}
+
                       <div className="relative z-10 flex items-center gap-3 lg:block">
+
                         <motion.div
                           whileHover={{
-                            scale: 1.06,
+                            scale: 1.08,
+                            y: -3,
                           }}
-                          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 ${step.bg}`}
+                          transition={{
+                            type: 'spring',
+                            stiffness: 300,
+                            damping: 20,
+                          }}
+                          className={`
+                            relative
+                            flex h-10 w-10 shrink-0
+                            items-center justify-center
+                            rounded-xl
+                            border
+                            ${step.border}
+                            ${step.bg}
+                            shadow-[0_6px_18px_rgba(15,23,42,0.06)]
+                            transition-shadow duration-300
+                            group-hover:shadow-[0_10px_25px_rgba(15,23,42,0.10)]
+                          `}
                         >
                           <Icon
                             size={16}
-                            strokeWidth={2.15}
+                            strokeWidth={2.2}
                             style={{
                               color: step.color,
                             }}
                           />
                         </motion.div>
 
-                        <span className="font-mono text-[9px] tracking-[0.16em] text-white/25 lg:absolute lg:left-12 lg:top-3">
+                        <span
+                          className="
+                            font-mono
+                            text-[8px]
+                            font-semibold
+                            tracking-[0.15em]
+                            text-slate-300
+                            lg:absolute
+                            lg:left-12
+                            lg:top-3
+                          "
+                        >
                           {step.number}
                         </span>
                       </div>
 
-                      <div className="ml-[52px] mt-0 lg:ml-0 lg:mt-6">
-                        <h3 className="text-[14px] font-semibold text-white">
+                      {/* =================================================
+                          CONTENT
+                      ================================================== */}
+
+                      <div className="ml-[52px] mt-0 lg:ml-0 lg:mt-5">
+
+                        <h3 className="text-[13px] font-bold leading-5 text-slate-900">
                           {step.title}
                         </h3>
 
-                        <p className="mt-2 text-[11.5px] leading-5.5 text-slate-500">
+                        <p className="mt-1.5 text-[10.5px] leading-5 text-slate-500">
                           {step.description}
                         </p>
+
                       </div>
                     </motion.div>
                   )
                 })}
+
               </div>
             </div>
           </div>
         </motion.div>
 
         {/* =====================================================
-            BOTTOM FEATURE ROW
+            FEATURE ROW
         ====================================================== */}
 
-        <div className="mx-auto mt-8 grid max-w-5xl gap-3 sm:grid-cols-3">
+        <div className="mx-auto mt-5 grid max-w-5xl gap-3 sm:grid-cols-3">
+
           {[
             {
               icon: BriefcaseBusiness,
               title: 'Career Focused',
               text: 'Training aligned with real career goals.',
               color: '#8B5CF6',
+              bg: 'bg-violet-50',
             },
             {
               icon: Search,
               title: 'Job Search Support',
               text: 'Guidance throughout your job search.',
               color: '#14B8C9',
+              bg: 'bg-cyan-50',
             },
             {
               icon: Sparkles,
               title: 'Built for Progress',
               text: 'A clear path from learner to professional.',
               color: '#12A76B',
+              bg: 'bg-emerald-50',
             },
           ].map((item, index) => {
             const Icon = item.icon
@@ -255,7 +428,7 @@ export default function JobPlacement() {
                 key={item.title}
                 initial={{
                   opacity: 0,
-                  y: 15,
+                  y: 10,
                 }}
                 whileInView={{
                   opacity: 1,
@@ -265,17 +438,35 @@ export default function JobPlacement() {
                   once: true,
                 }}
                 transition={{
-                  duration: 0.45,
+                  duration: 0.4,
                   delay: index * 0.08,
                 }}
-                className="rounded-xl border border-white/[0.08] bg-white/[0.025] px-4 py-4 transition-colors duration-300 hover:bg-white/[0.045]"
+                className="
+                  group
+                  rounded-xl
+                  border border-slate-200/80
+                  bg-white/80
+                  px-4 py-3
+                  shadow-[0_8px_25px_rgba(15,23,42,0.035)]
+                  backdrop-blur
+                  transition-all
+                  duration-300
+                  hover:-translate-y-0.5
+                  hover:border-slate-200
+                  hover:bg-white
+                  hover:shadow-[0_12px_30px_rgba(15,23,42,0.08)]
+                "
               >
                 <div className="flex items-center gap-3">
+
                   <span
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                    style={{
-                      backgroundColor: `${item.color}12`,
-                    }}
+                    className={`
+                      flex h-8 w-8 shrink-0
+                      items-center justify-center
+                      rounded-lg
+                      ${item.bg}
+                      shadow-sm
+                    `}
                   >
                     <Icon
                       size={14}
@@ -286,14 +477,15 @@ export default function JobPlacement() {
                   </span>
 
                   <div>
-                    <p className="text-[11.5px] font-semibold text-white">
+                    <p className="text-[11px] font-bold text-slate-900">
                       {item.title}
                     </p>
 
-                    <p className="mt-0.5 text-[10px] leading-4 text-slate-500">
+                    <p className="mt-0.5 text-[9.5px] leading-4 text-slate-500">
                       {item.text}
                     </p>
                   </div>
+
                 </div>
               </motion.div>
             )
@@ -305,30 +497,84 @@ export default function JobPlacement() {
         ====================================================== */}
 
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.55, delay: 0.2 }}
-          className="mt-10 flex flex-col items-center justify-center gap-4 text-center sm:flex-row"
+          initial={{
+            opacity: 0,
+            y: 10,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          viewport={{
+            once: true,
+          }}
+          transition={{
+            duration: 0.5,
+            delay: 0.15,
+          }}
+          className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row"
         >
+
+          {/* Primary CTA */}
+
           <a
             href="#programs"
-            className="group inline-flex items-center gap-2.5 rounded-full bg-white px-5 py-3 text-xs font-semibold text-slate-950 shadow-[0_10px_30px_rgba(255,255,255,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_15px_40px_rgba(255,255,255,0.12)]"
+            className="
+              group
+              inline-flex items-center gap-2
+              rounded-full
+              bg-slate-950
+              px-5 py-2.5
+              text-[11px]
+              font-semibold
+              text-white
+              shadow-[0_10px_25px_rgba(15,23,42,0.12)]
+              transition-all
+              duration-300
+              hover:-translate-y-0.5
+              hover:bg-slate-800
+              hover:shadow-[0_15px_35px_rgba(15,23,42,0.16)]
+            "
           >
             Explore Programs
 
             <ArrowRight
-              size={15}
+              size={14}
               className="transition-transform duration-300 group-hover:translate-x-1"
             />
           </a>
 
+          {/* Secondary CTA */}
+
           <a
             href="#contact"
-            className="text-xs font-medium text-slate-400 transition-colors duration-300 hover:text-white"
+            className="
+              group
+              inline-flex items-center gap-1.5
+              rounded-full
+              border border-slate-200
+              bg-white
+              px-5 py-2.5
+              text-[11px]
+              font-semibold
+              text-slate-700
+              shadow-[0_5px_18px_rgba(15,23,42,0.04)]
+              transition-all
+              duration-300
+              hover:-translate-y-0.5
+              hover:border-slate-300
+              hover:bg-slate-50
+              hover:shadow-[0_8px_22px_rgba(15,23,42,0.07)]
+            "
           >
             Talk to Zenvix
+
+            <ArrowRight
+              size={13}
+              className="transition-transform duration-300 group-hover:translate-x-1"
+            />
           </a>
+
         </motion.div>
       </div>
     </section>

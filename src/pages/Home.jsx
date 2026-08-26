@@ -27,7 +27,9 @@ export default function Home() {
       
       <main>
         <Hero />
+         <TopCompanies />
         <Programs />
+         <About />
         <WhoIsZenvixFor />
         <LearningExperience />
         <CareerSupport />
@@ -37,9 +39,9 @@ export default function Home() {
         <WhyZenvix />
         <SuccessStories />
         <Feedback />
-        <TopCompanies />
+       
         <FAQ />
-        <About />
+       
         <FinalCTA />
       </main>
     

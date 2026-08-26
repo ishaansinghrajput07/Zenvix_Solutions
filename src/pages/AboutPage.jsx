@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import {
+  ArrowLeft,
   ArrowRight,
   ArrowUpRight,
   BrainCircuit,
@@ -54,6 +55,7 @@ const journey = [
     description:
       "Understand your interests, strengths and the career direction you want to explore.",
     icon: Compass,
+    accent: "sky",
   },
   {
     number: "02",
@@ -61,6 +63,7 @@ const journey = [
     description:
       "Build strong foundations through structured, career-focused learning experiences.",
     icon: GraduationCap,
+    accent: "violet",
   },
   {
     number: "03",
@@ -68,6 +71,7 @@ const journey = [
     description:
       "Turn knowledge into ability through projects, practical work and continuous practice.",
     icon: BrainCircuit,
+    accent: "emerald",
   },
   {
     number: "04",
@@ -75,29 +79,34 @@ const journey = [
     description:
       "Develop the confidence and career readiness needed to approach professional opportunities.",
     icon: ShieldCheck,
+    accent: "amber",
   },
 ];
 
 const accentStyles = {
   sky: {
-    icon: "bg-sky-50 text-sky-600",
+    icon: "bg-sky-50 text-sky-600 ring-sky-100",
     glow: "bg-sky-400/20",
     line: "bg-sky-400",
+    badge: "bg-sky-50 text-sky-600",
   },
   violet: {
-    icon: "bg-violet-50 text-violet-600",
+    icon: "bg-violet-50 text-violet-600 ring-violet-100",
     glow: "bg-violet-400/20",
     line: "bg-violet-400",
+    badge: "bg-violet-50 text-violet-600",
   },
   emerald: {
-    icon: "bg-emerald-50 text-emerald-600",
+    icon: "bg-emerald-50 text-emerald-600 ring-emerald-100",
     glow: "bg-emerald-400/20",
     line: "bg-emerald-400",
+    badge: "bg-emerald-50 text-emerald-600",
   },
   amber: {
-    icon: "bg-amber-50 text-amber-600",
+    icon: "bg-amber-50 text-amber-600 ring-amber-100",
     glow: "bg-amber-400/20",
     line: "bg-amber-400",
+    badge: "bg-amber-50 text-amber-600",
   },
 };
 
@@ -108,49 +117,93 @@ export default function AboutPage() {
           HERO
       ====================================================== */}
 
-      <section className="relative overflow-hidden bg-slate-950 py-24 sm:py-28 lg:py-36">
-        {/* Background */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-white via-sky-50/60 to-violet-50/70 py-8 sm:py-12 lg:py-16">
+        {/* Soft background glow */}
 
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-[-220px] h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-sky-500/10 blur-3xl" />
+          <motion.div
+            animate={{
+              x: [0, 40, 0],
+              y: [0, -20, 0],
+              scale: [1, 1.08, 1],
+            }}
+            transition={{
+              duration: 14,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute left-[-180px] top-[-180px] h-[520px] w-[520px] rounded-full bg-sky-200/45 blur-3xl"
+          />
 
-          <div className="absolute -left-40 bottom-[-180px] h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-3xl" />
+          <motion.div
+            animate={{
+              x: [0, -35, 0],
+              y: [0, 25, 0],
+              scale: [1, 1.12, 1],
+            }}
+            transition={{
+              duration: 16,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute right-[-180px] top-[-100px] h-[500px] w-[500px] rounded-full bg-violet-200/40 blur-3xl"
+          />
 
           <div
-            className="absolute inset-0 opacity-[0.045]"
+            className="absolute inset-0 opacity-[0.035]"
             style={{
               backgroundImage:
-                "linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px)",
+                "linear-gradient(#0f172a 1px, transparent 1px), linear-gradient(90deg, #0f172a 1px, transparent 1px)",
               backgroundSize: "70px 70px",
             }}
           />
+
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white/80 to-transparent" />
         </div>
 
         <div className="shell relative">
+          {/* Back Button */}
+
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Link
+              to="/"
+              className="group inline-flex items-center gap-2.5 rounded-full border border-slate-200 bg-white/80 px-4 py-2.5 text-xs font-semibold text-slate-600 shadow-[0_8px_25px_rgba(15,23,42,0.05)] backdrop-blur-xl transition-all duration-300 hover:-translate-x-1 hover:border-slate-300 hover:text-slate-950"
+            >
+              <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-0.5" />
+              Back to Home
+            </Link>
+          </motion.div>
+
+          {/* Hero Content */}
+
+          <motion.div
+            initial={{ opacity: 0, y: 35 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="mx-auto max-w-5xl text-center"
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="mx-auto max-w-5xl pt-16 text-center sm:pt-20 lg:pt-24"
           >
             <div className="mb-6 flex items-center justify-center gap-3">
-              <span className="h-px w-10 bg-white/40" />
+              <span className="h-px w-10 bg-slate-300" />
 
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/55 sm:text-xs">
+              <span className="rounded-full border border-sky-100 bg-white/70 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.28em] text-sky-600 shadow-sm backdrop-blur-sm sm:text-xs">
                 About Zenvix
               </span>
 
-              <span className="h-px w-10 bg-white/40" />
+              <span className="h-px w-10 bg-slate-300" />
             </div>
 
-            <h1 className="text-4xl font-semibold leading-[1.03] tracking-[-0.055em] text-white sm:text-6xl lg:text-[5.2rem]">
+            <h1 className="text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-slate-950 sm:text-6xl lg:text-[5.2rem]">
               Learn with purpose.
-              <span className="block text-white/35">
+              <span className="block bg-gradient-to-r from-slate-500 via-sky-500 to-violet-500 bg-clip-text text-transparent">
                 Build your future.
               </span>
             </h1>
 
-            <p className="mx-auto mt-7 max-w-2xl text-sm leading-7 text-white/55 sm:text-base sm:leading-8">
+            <p className="mx-auto mt-7 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
               Zenvix is built around a simple idea — learning becomes more
               meaningful when it connects with the future you want to build.
             </p>
@@ -158,7 +211,7 @@ export default function AboutPage() {
             <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
                 to="/programs"
-                className="group inline-flex items-center gap-3 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-slate-950 transition-all duration-300 hover:bg-slate-100"
+                className="group inline-flex items-center gap-3 rounded-full bg-slate-950 px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.16)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-[0_18px_40px_rgba(15,23,42,0.2)]"
               >
                 Explore Programs
 
@@ -167,16 +220,17 @@ export default function AboutPage() {
 
               <Link
                 to="/contact"
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3.5 text-sm font-semibold text-white/80 transition-all duration-300 hover:border-white/30 hover:bg-white/5 hover:text-white"
+                className="group inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white hover:text-sky-600"
               >
-                Talk to Zenvix
+                Contact Zenvix
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </div>
           </motion.div>
 
-          {/* Hero bottom cards */}
+          {/* Hero Bottom Cards */}
 
-          <div className="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-3 sm:mt-20 sm:grid-cols-3">
             {[
               {
                 icon: GraduationCap,
@@ -203,21 +257,22 @@ export default function AboutPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{
                     duration: 0.6,
-                    delay: 0.2 + index * 0.1,
+                    delay: 0.3 + index * 0.1,
                   }}
-                  className="rounded-2xl border border-white/10 bg-white/[0.045] p-5 backdrop-blur-sm"
+                  whileHover={{ y: -4 }}
+                  className="group rounded-2xl border border-white/80 bg-white/75 p-5 shadow-[0_15px_40px_rgba(15,23,42,0.06)] backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-[0_20px_50px_rgba(15,23,42,0.1)]"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white">
-                      <Icon className="h-4 w-4" />
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-sky-50 text-sky-600 ring-1 ring-sky-100 transition-all duration-300 group-hover:bg-sky-500 group-hover:text-white">
+                      <Icon className="h-5 w-5" />
                     </div>
 
-                    <div>
-                      <p className="text-sm font-semibold text-white">
+                    <div className="text-left">
+                      <p className="text-sm font-semibold text-slate-950">
                         {item.title}
                       </p>
 
-                      <p className="mt-0.5 text-[11px] text-white/40">
+                      <p className="mt-0.5 text-[11px] text-slate-400">
                         {item.text}
                       </p>
                     </div>
@@ -234,7 +289,9 @@ export default function AboutPage() {
       ====================================================== */}
 
       <section className="relative bg-white py-24 sm:py-28 lg:py-32">
-        <div className="shell">
+        <div className="pointer-events-none absolute right-0 top-20 h-72 w-72 rounded-full bg-sky-50 blur-3xl" />
+
+        <div className="shell relative">
           <div className="grid items-center gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:gap-24">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -243,9 +300,9 @@ export default function AboutPage() {
               transition={{ duration: 0.7 }}
             >
               <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-9 bg-slate-900" />
+                <span className="h-px w-9 bg-sky-500" />
 
-                <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">
+                <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-sky-600">
                   Why Zenvix
                 </span>
               </div>
@@ -293,26 +350,48 @@ export default function AboutPage() {
           MISSION
       ====================================================== */}
 
-      <section className="relative overflow-hidden bg-slate-50 py-24 sm:py-28 lg:py-32">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-sky-50/60 py-24 sm:py-28 lg:py-32">
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-[-120px] top-1/2 h-80 w-80 -translate-y-1/2 rounded-full bg-sky-100/60 blur-3xl" />
+          <motion.div
+            animate={{
+              x: [0, 30, 0],
+              y: [0, -20, 0],
+            }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute left-[-120px] top-1/2 h-80 w-80 -translate-y-1/2 rounded-full bg-sky-100/70 blur-3xl"
+          />
 
-          <div className="absolute right-[-120px] top-20 h-72 w-72 rounded-full bg-violet-100/60 blur-3xl" />
+          <motion.div
+            animate={{
+              x: [0, -25, 0],
+              y: [0, 20, 0],
+            }}
+            transition={{
+              duration: 14,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute right-[-120px] top-20 h-72 w-72 rounded-full bg-violet-100/70 blur-3xl"
+          />
         </div>
 
         <div className="shell relative">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-5 flex items-center justify-center gap-3">
-              <span className="h-px w-9 bg-slate-900" />
+              <span className="h-px w-9 bg-sky-400" />
 
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-500">
+              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-sky-600">
                 Our Mission
               </span>
 
-              <span className="h-px w-9 bg-slate-900" />
+              <span className="h-px w-9 bg-sky-400" />
             </div>
 
-            <h2 className="text-3xl font-semibold tracking-[-0.045em] sm:text-4xl lg:text-5xl">
+            <h2 className="text-3xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-4xl lg:text-5xl">
               Make career learning
               <span className="block text-slate-400">
                 clearer and more practical.
@@ -340,20 +419,20 @@ export default function AboutPage() {
                     duration: 0.55,
                     delay: index * 0.08,
                   }}
-                  whileHover={{ y: -6 }}
-                  className="group relative overflow-hidden rounded-[1.4rem] border border-slate-200 bg-white p-6 shadow-[0_8px_30px_rgba(15,23,42,0.035)] transition-shadow duration-500 hover:shadow-[0_20px_45px_rgba(15,23,42,0.08)]"
+                  whileHover={{ y: -7 }}
+                  className="group relative overflow-hidden rounded-[1.4rem] border border-slate-200/80 bg-white/85 p-6 shadow-[0_10px_35px_rgba(15,23,42,0.045)] backdrop-blur-xl transition-shadow duration-500 hover:shadow-[0_22px_50px_rgba(15,23,42,0.1)]"
                 >
                   <div
                     className={`absolute -right-12 -top-12 h-32 w-32 rounded-full ${styles.glow} opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100`}
                   />
 
                   <div
-                    className={`relative flex h-11 w-11 items-center justify-center rounded-xl ${styles.icon}`}
+                    className={`relative flex h-11 w-11 items-center justify-center rounded-xl ring-1 ${styles.icon}`}
                   >
                     <Icon className="h-5 w-5" />
                   </div>
 
-                  <h3 className="relative mt-6 text-lg font-semibold tracking-tight">
+                  <h3 className="relative mt-6 text-lg font-semibold tracking-tight text-slate-950">
                     {value.title}
                   </h3>
 
@@ -375,7 +454,7 @@ export default function AboutPage() {
           JOURNEY
       ====================================================== */}
 
-      <section className="bg-white py-24 sm:py-28 lg:py-32">
+      <section className="relative bg-white py-24 sm:py-28 lg:py-32">
         <div className="shell">
           <div className="grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
             <motion.div
@@ -385,14 +464,14 @@ export default function AboutPage() {
               transition={{ duration: 0.7 }}
             >
               <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-9 bg-slate-900" />
+                <span className="h-px w-9 bg-sky-500" />
 
-                <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">
+                <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-sky-600">
                   The Zenvix Journey
                 </span>
               </div>
 
-              <h2 className="text-3xl font-semibold leading-[1.08] tracking-[-0.045em] sm:text-4xl lg:text-5xl">
+              <h2 className="text-3xl font-semibold leading-[1.08] tracking-[-0.045em] text-slate-950 sm:text-4xl lg:text-5xl">
                 A better way to move
                 <span className="block text-slate-400">
                   from learning to action.
@@ -416,11 +495,14 @@ export default function AboutPage() {
             </motion.div>
 
             <div className="relative">
-              <div className="absolute bottom-10 left-[25px] top-10 hidden w-px bg-slate-200 sm:block" />
+              {/* Timeline */}
+
+              <div className="absolute bottom-10 left-[25px] top-10 hidden w-px bg-gradient-to-b from-sky-200 via-violet-200 to-emerald-200 sm:block" />
 
               <div className="space-y-5">
                 {journey.map((item, index) => {
                   const Icon = item.icon;
+                  const styles = accentStyles[item.accent];
 
                   return (
                     <motion.div
@@ -434,11 +516,13 @@ export default function AboutPage() {
                       }}
                       className="group relative flex gap-5"
                     >
-                      <div className="relative z-10 flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border-4 border-white bg-slate-950 text-white shadow-[0_8px_25px_rgba(15,23,42,0.12)]">
+                      <div
+                        className={`relative z-10 flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border-4 border-white ${styles.icon} shadow-[0_8px_25px_rgba(15,23,42,0.1)] ring-1`}
+                      >
                         <Icon className="h-4 w-4" />
                       </div>
 
-                      <div className="flex-1 rounded-[1.35rem] border border-slate-200 bg-white p-5 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-slate-300 group-hover:shadow-[0_15px_35px_rgba(15,23,42,0.06)] sm:p-6">
+                      <div className="flex-1 rounded-[1.35rem] border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,23,42,0.025)] transition-all duration-300 group-hover:-translate-y-1 group-hover:border-sky-200 group-hover:shadow-[0_18px_40px_rgba(15,23,42,0.07)] sm:p-6">
                         <div className="flex items-center justify-between gap-4">
                           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
                             {item.number}
@@ -447,7 +531,7 @@ export default function AboutPage() {
                           <CheckCircle2 className="h-4 w-4 text-emerald-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                         </div>
 
-                        <h3 className="mt-3 text-lg font-semibold tracking-tight">
+                        <h3 className="mt-3 text-lg font-semibold tracking-tight text-slate-950">
                           {item.title}
                         </h3>
 
@@ -468,8 +552,14 @@ export default function AboutPage() {
           SUPPORT
       ====================================================== */}
 
-      <section className="bg-slate-950 py-24 sm:py-28 lg:py-32">
-        <div className="shell">
+      <section className="relative overflow-hidden bg-gradient-to-br from-sky-50 via-white to-violet-50 py-24 sm:py-28 lg:py-32">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-[-150px] top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-sky-200/40 blur-3xl" />
+
+          <div className="absolute right-[-150px] top-10 h-96 w-96 rounded-full bg-violet-200/40 blur-3xl" />
+        </div>
+
+        <div className="shell relative">
           <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
             <motion.div
               initial={{ opacity: 0, x: -25 }}
@@ -478,27 +568,38 @@ export default function AboutPage() {
               transition={{ duration: 0.7 }}
             >
               <div className="mb-5 flex items-center gap-3">
-                <Sparkles className="h-4 w-4 text-sky-300" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-sky-100">
+                  <Sparkles className="h-4 w-4 text-sky-500" />
+                </div>
 
-                <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-sky-300">
+                <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-sky-600">
                   More Than Learning
                 </span>
               </div>
 
-              <h2 className="max-w-3xl text-3xl font-semibold leading-[1.08] tracking-[-0.045em] text-white sm:text-4xl lg:text-5xl">
+              <h2 className="max-w-3xl text-3xl font-semibold leading-[1.08] tracking-[-0.045em] text-slate-950 sm:text-4xl lg:text-5xl">
                 Build skills.
-                <span className="block text-white/35">
+                <span className="block text-slate-400">
                   Build confidence.
                 </span>
                 <span className="block">Build momentum.</span>
               </h2>
 
-              <p className="mt-6 max-w-2xl text-sm leading-7 text-white/45 sm:text-base sm:leading-8">
+              <p className="mt-6 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
                 A strong career journey needs more than course completion.
                 Zenvix brings together learning, practical development and
                 career preparation to help learners take meaningful next
                 steps.
               </p>
+
+              <Link
+                to="/contact"
+                className="group mt-8 inline-flex items-center gap-3 rounded-full bg-slate-950 px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.14)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-800"
+              >
+                Talk to Zenvix
+
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Link>
             </motion.div>
 
             <motion.div
@@ -506,19 +607,19 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: 0.7 }}
-              className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-7 backdrop-blur-sm sm:p-8"
+              className="rounded-[2rem] border border-white/90 bg-white/80 p-7 shadow-[0_25px_70px_rgba(15,23,42,0.08)] backdrop-blur-xl sm:p-8"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-sky-400/10 text-sky-300">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-sky-50 text-sky-600 ring-1 ring-sky-100">
                   <HeartHandshake className="h-5 w-5" />
                 </div>
 
                 <div>
-                  <p className="text-sm font-semibold text-white">
+                  <p className="text-sm font-semibold text-slate-950">
                     Career Support
                   </p>
 
-                  <p className="mt-1 text-[11px] text-white/35">
+                  <p className="mt-1 text-[11px] text-slate-400">
                     Guidance beyond the classroom
                   </p>
                 </div>
@@ -533,11 +634,11 @@ export default function AboutPage() {
                 ].map((item) => (
                   <div
                     key={item}
-                    className="flex items-start gap-3 border-b border-white/8 pb-4 last:border-0 last:pb-0"
+                    className="flex items-start gap-3 border-b border-slate-100 pb-4 last:border-0 last:pb-0"
                   >
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
 
-                    <span className="text-sm leading-6 text-white/60">
+                    <span className="text-sm leading-6 text-slate-600">
                       {item}
                     </span>
                   </div>
@@ -561,7 +662,11 @@ export default function AboutPage() {
             transition={{ duration: 0.7 }}
             className="relative overflow-hidden rounded-[2rem] border border-slate-800 bg-slate-950 px-7 py-12 text-center shadow-[0_30px_80px_rgba(15,23,42,0.14)] sm:px-12 sm:py-16"
           >
-            <div className="pointer-events-none absolute left-1/2 top-[-180px] h-[380px] w-[650px] -translate-x-1/2 rounded-full bg-sky-500/10 blur-3xl" />
+            {/* CTA Glow */}
+
+            <div className="pointer-events-none absolute left-1/2 top-[-180px] h-[380px] w-[650px] -translate-x-1/2 rounded-full bg-sky-500/15 blur-3xl" />
+
+            <div className="pointer-events-none absolute bottom-[-200px] left-[-100px] h-[300px] w-[300px] rounded-full bg-violet-500/10 blur-3xl" />
 
             <div className="relative">
               <div className="mb-5 flex items-center justify-center gap-2">
@@ -577,7 +682,7 @@ export default function AboutPage() {
                 <span className="text-white/35"> start today.</span>
               </h2>
 
-              <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-white/45">
+              <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-white/55">
                 Explore the right learning path and take the next step toward
                 your career goals with Zenvix.
               </p>
@@ -594,9 +699,11 @@ export default function AboutPage() {
 
                 <Link
                   to="/contact"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3.5 text-sm font-semibold text-white/75 transition-all duration-300 hover:border-white/30 hover:bg-white/5 hover:text-white"
+                  className="group inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3.5 text-sm font-semibold text-white/80 transition-all duration-300 hover:border-white/30 hover:bg-white/5 hover:text-white"
                 >
                   Contact Zenvix
+
+                  <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </Link>
               </div>
             </div>

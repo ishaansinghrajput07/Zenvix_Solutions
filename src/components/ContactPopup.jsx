@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import axios from "axios";
 import {
   ArrowUpRight,
   CheckCircle2,
-  Mail,
   MessageCircle,
-  Send,
   Sparkles,
   X,
 } from "lucide-react";
@@ -25,17 +24,31 @@ const INITIAL_FORM = {
   name: "",
   email: "",
   phone: "",
+  interestedCourse: "",
   service: "",
   message: "",
 };
 
 const POPUP_DELAY = 45 * 1000;
 
+// =====================================================
+// API BASE URL
+// =====================================================
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+
 export default function ContactPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  // =====================================================
+  // OPEN POPUP AFTER 45 SECONDS
+  // =====================================================
 
   useEffect(() => {
     const alreadySubmitted =
@@ -54,6 +67,10 @@ export default function ContactPopup() {
 
     return () => window.clearTimeout(timer);
   }, []);
+
+  // =====================================================
+  // LOCK BODY SCROLL
+  // =====================================================
 
   useEffect(() => {
     if (!isOpen) return;
@@ -76,6 +93,10 @@ export default function ContactPopup() {
     };
   }, [isOpen]);
 
+  // =====================================================
+  // CLOSE POPUP
+  // =====================================================
+
   const handleClose = () => {
     setIsOpen(false);
 
@@ -84,6 +105,10 @@ export default function ContactPopup() {
       "true"
     );
   };
+
+  // =====================================================
+  // HANDLE INPUT CHANGE
+  // =====================================================
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -97,27 +122,42 @@ export default function ContactPopup() {
       ...previous,
       [name]: "",
     }));
+
+    setSubmitError("");
   };
+
+  // =====================================================
+  // VALIDATION
+  // =====================================================
 
   const validateForm = () => {
     const newErrors = {};
 
     if (!form.name.trim()) {
       newErrors.name = "Please enter your name.";
+    } else if (form.name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters.";
     }
 
     if (!form.email.trim()) {
       newErrors.email = "Please enter your email.";
     } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())
     ) {
       newErrors.email = "Please enter a valid email.";
     }
 
     if (!form.phone.trim()) {
       newErrors.phone = "Please enter your phone number.";
-    } else if (!/^[0-9+\-\s()]{8,18}$/.test(form.phone)) {
+    } else if (
+      !/^[0-9+\-\s()]{8,20}$/.test(form.phone.trim())
+    ) {
       newErrors.phone = "Please enter a valid phone number.";
+    }
+
+    if (!form.interestedCourse.trim()) {
+      newErrors.interestedCourse =
+        "Please enter the course or program.";
     }
 
     if (!form.service) {
@@ -125,7 +165,8 @@ export default function ContactPopup() {
     }
 
     if (!form.message.trim()) {
-      newErrors.message = "Please tell us a little about your goal.";
+      newErrors.message =
+        "Please tell us a little about your goal.";
     }
 
     setErrors(newErrors);
@@ -133,31 +174,93 @@ export default function ContactPopup() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (event) => {
+  // =====================================================
+  // SUBMIT LEAD TO BACKEND
+  // =====================================================
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (isSubmitting) return;
 
     const isValid = validateForm();
 
     if (!isValid) return;
 
-    /*
-      IMPORTANT:
-      Connect your backend/API here.
+    setIsSubmitting(true);
+    setSubmitError("");
 
-      Example:
+    try {
+      console.log(
+        "Submitting lead to:",
+        `${API_BASE_URL}/leads`
+      );
 
-      await axios.post("/api/contact", form);
+      const response = await axios.post(
+        `${API_BASE_URL}/leads`,
+        {
+          name: form.name.trim(),
+          email: form.email.trim().toLowerCase(),
+          phone: form.phone.trim(),
+          interestedCourse: form.interestedCourse.trim(),
+          service: form.service.trim(),
+          message: form.message.trim(),
+          source: "Website Popup",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+          timeout: 15000,
+        }
+      );
 
-      For now we show the production-style success state.
-    */
+      console.log("Lead submission response:", response.data);
 
-    sessionStorage.setItem(
-      "zenvix-contact-submitted",
-      "true"
-    );
+      if (response.data?.success) {
+        sessionStorage.setItem(
+          "zenvix-contact-submitted",
+          "true"
+        );
 
-    setSubmitted(true);
+        setSubmitted(true);
+        setErrors({});
+        setSubmitError("");
+      } else {
+        setSubmitError(
+          response.data?.message ||
+            "Unable to submit your enquiry."
+        );
+      }
+    } catch (error) {
+      console.error(
+        "Popup Lead Submission Error:",
+        error
+      );
+
+      if (error.response) {
+        setSubmitError(
+          error.response.data?.message ||
+            "Server could not process your enquiry."
+        );
+      } else if (error.request) {
+        setSubmitError(
+          "Unable to connect to the server. Please try again."
+        );
+      } else {
+        setSubmitError(
+          "Something went wrong. Please try again."
+        );
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  // =====================================================
+  // INPUT CLASS
+  // =====================================================
 
   const inputClass = (field) =>
     `w-full rounded-xl border ${
@@ -180,9 +283,7 @@ export default function ContactPopup() {
           aria-modal="true"
           aria-labelledby="contact-popup-title"
         >
-          {/* =====================================================
-              BACKDROP
-          ====================================================== */}
+          {/* BACKDROP */}
 
           <motion.button
             type="button"
@@ -194,9 +295,7 @@ export default function ContactPopup() {
             exit={{ opacity: 0 }}
           />
 
-          {/* =====================================================
-              MODAL
-          ====================================================== */}
+          {/* MODAL */}
 
           <motion.div
             initial={{
@@ -220,9 +319,7 @@ export default function ContactPopup() {
             }}
             className="relative z-10 flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-[1.75rem] border border-white/70 bg-white shadow-[0_30px_100px_rgba(15,23,42,0.25)] sm:max-h-[90vh] lg:flex-row"
           >
-            {/* =================================================
-                CLOSE
-            ================================================== */}
+            {/* CLOSE */}
 
             <button
               type="button"
@@ -233,9 +330,7 @@ export default function ContactPopup() {
               <X className="h-4 w-4" />
             </button>
 
-            {/* =================================================
-                LEFT PANEL
-            ================================================== */}
+            {/* LEFT PANEL */}
 
             <div className="relative hidden overflow-hidden bg-slate-950 p-8 text-white lg:flex lg:w-[39%] lg:flex-col lg:justify-between">
               <div className="pointer-events-none absolute -right-28 -top-28 h-72 w-72 rounded-full bg-sky-500/20 blur-3xl" />
@@ -256,8 +351,9 @@ export default function ContactPopup() {
                 </h2>
 
                 <p className="mt-4 text-sm leading-6 text-slate-400">
-                  Tell us what you're looking for and our team can help you
-                  identify the right learning or career direction.
+                  Tell us what you're looking for and our team
+                  can help you identify the right learning or
+                  career direction.
                 </p>
               </div>
 
@@ -301,16 +397,12 @@ export default function ContactPopup() {
               </div>
             </div>
 
-            {/* =================================================
-                RIGHT / FORM
-            ================================================== */}
+            {/* RIGHT FORM */}
 
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
               <div className="p-6 sm:p-8">
                 {!submitted ? (
                   <>
-                    {/* Header */}
-
                     <div className="pr-10">
                       <div className="flex items-center gap-2">
                         <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
@@ -328,19 +420,17 @@ export default function ContactPopup() {
                       </h2>
 
                       <p className="mt-2 max-w-lg text-xs leading-5 text-slate-500">
-                        Share a few details and we'll help you find the right
-                        next step.
+                        Share a few details and we'll help you
+                        find the right next step.
                       </p>
                     </div>
-
-                    {/* Form */}
 
                     <form
                       onSubmit={handleSubmit}
                       className="mt-7 space-y-4"
                       noValidate
                     >
-                      {/* Name + Email */}
+                      {/* NAME + EMAIL */}
 
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div>
@@ -396,7 +486,7 @@ export default function ContactPopup() {
                         </div>
                       </div>
 
-                      {/* Phone + Service */}
+                      {/* PHONE + SERVICE */}
 
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div>
@@ -462,7 +552,36 @@ export default function ContactPopup() {
                         </div>
                       </div>
 
-                      {/* Message */}
+                      {/* COURSE */}
+
+                      <div>
+                        <label
+                          htmlFor="popup-course"
+                          className="mb-1.5 block text-[10px] font-semibold text-slate-700"
+                        >
+                          Course / Program Interested In
+                        </label>
+
+                        <input
+                          id="popup-course"
+                          name="interestedCourse"
+                          type="text"
+                          value={form.interestedCourse}
+                          onChange={handleChange}
+                          placeholder="e.g. MERN Stack Development"
+                          className={inputClass(
+                            "interestedCourse"
+                          )}
+                        />
+
+                        {errors.interestedCourse && (
+                          <p className="mt-1 text-[9px] text-red-500">
+                            {errors.interestedCourse}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* MESSAGE */}
 
                       <div>
                         <label
@@ -491,30 +610,41 @@ export default function ContactPopup() {
                         )}
                       </div>
 
-                      {/* Submit */}
+                      {/* API ERROR */}
+
+                      {submitError && (
+                        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-[10px] text-red-600">
+                          {submitError}
+                        </div>
+                      )}
+
+                      {/* SUBMIT */}
 
                       <button
                         type="submit"
-                        className="group flex w-full items-center justify-center gap-3 rounded-xl bg-slate-950 px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-slate-800 hover:shadow-[0_12px_30px_rgba(15,23,42,0.15)] active:scale-[0.99]"
+                        disabled={isSubmitting}
+                        className="group flex w-full items-center justify-center gap-3 rounded-xl bg-slate-950 px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-slate-800 hover:shadow-[0_12px_30px_rgba(15,23,42,0.15)] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
                       >
-                        Get Career Guidance
+                        {isSubmitting
+                          ? "Sending Enquiry..."
+                          : "Get Career Guidance"}
 
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
-                          <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                        </span>
+                        {!isSubmitting && (
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
+                            <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                          </span>
+                        )}
                       </button>
 
                       <p className="flex items-center justify-center gap-1.5 text-center text-[9px] leading-4 text-slate-400">
                         <CheckCircle2 className="h-3 w-3 shrink-0 text-emerald-500" />
-                        Your information is used only to respond to your
-                        enquiry.
+                        Your information is used only to respond
+                        to your enquiry.
                       </p>
                     </form>
                   </>
                 ) : (
-                  /* =================================================
-                     SUCCESS STATE
-                  ================================================== */
+                  /* SUCCESS STATE */
 
                   <motion.div
                     initial={{ opacity: 0, y: 15 }}
@@ -530,8 +660,9 @@ export default function ContactPopup() {
                     </h2>
 
                     <p className="mt-3 max-w-sm text-sm leading-6 text-slate-500">
-                      We've received your enquiry. Our team will review your
-                      details and get back to you soon.
+                      We've received your enquiry. Our team will
+                      review your details and get back to you
+                      soon.
                     </p>
 
                     <button

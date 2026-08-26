@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -29,6 +28,10 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
 
+  // =====================================================
+  // HANDLE INPUT
+  // =====================================================
+
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
 
@@ -45,22 +48,24 @@ export default function Login() {
     setServerError("");
   };
 
+  // =====================================================
+  // VALIDATION
+  // =====================================================
+
   const validateForm = () => {
     const newErrors = {};
+    const email = formData.email.trim();
 
-    if (!formData.email.trim()) {
+    if (!email) {
       newErrors.email = "Email address is required.";
-    } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-    ) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       newErrors.email = "Please enter a valid email address.";
     }
 
     if (!formData.password) {
       newErrors.password = "Password is required.";
     } else if (formData.password.length < 6) {
-      newErrors.password =
-        "Password must be at least 6 characters.";
+      newErrors.password = "Password must be at least 6 characters.";
     }
 
     setErrors(newErrors);
@@ -68,55 +73,151 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // =====================================================
+  // LOGIN
+  // =====================================================
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!validateForm()) return;
+    console.log("LOGIN BUTTON CLICKED");
 
-    setIsLoading(true);
     setServerError("");
 
+    const isValid = validateForm();
+
+    if (!isValid) {
+      console.log("LOGIN VALIDATION FAILED");
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
+      console.log("LOGIN REQUEST STARTED");
+
       const response = await loginUser({
         email: formData.email.trim(),
         password: formData.password,
       });
 
-      if (!response?.success || !response?.token || !response?.user) {
+      console.log("LOGIN RESPONSE:", response);
+
+      // =================================================
+      // CHECK LOGIN RESPONSE
+      // =================================================
+
+      if (!response?.success) {
         throw new Error(
-          response?.message || "Unable to login. Please try again."
+          response?.message || "Unable to login. Please try again.",
         );
       }
 
-      const storage = formData.remember
-        ? localStorage
-        : sessionStorage;
+      if (!response?.token) {
+        throw new Error(
+          "Login successful, but authentication token is missing.",
+        );
+      }
 
-      const otherStorage = formData.remember
-        ? sessionStorage
-        : localStorage;
+      // =================================================
+      // CLEAR OLD AUTH DATA
+      // =================================================
 
-      otherStorage.removeItem("zenvix_token");
-      otherStorage.removeItem("zenvix_user");
+      localStorage.removeItem("zenvix_token");
+      localStorage.removeItem("zenvix_user");
+
+      sessionStorage.removeItem("zenvix_token");
+      sessionStorage.removeItem("zenvix_user");
+
+      // =================================================
+      // SAVE AUTH DATA
+      // =================================================
+
+      const storage = formData.remember ? localStorage : sessionStorage;
 
       storage.setItem("zenvix_token", response.token);
-      storage.setItem(
-        "zenvix_user",
-        JSON.stringify(response.user)
-      );
 
-      /*
-       * Login successful.
-       *
-       * For now we send the user to the student dashboard.
-       * Dashboard will be created in the next step.
-       */
+      if (response.user) {
+        storage.setItem("zenvix_user", JSON.stringify(response.user));
+      }
 
-      navigate("/dashboard", {
-        replace: true,
-      });
+      console.log("LOGIN SUCCESSFUL");
+      console.log("TOKEN SAVED");
+      console.log("LOGIN USER:", response.user);
+
+      // =================================================
+      // GET USER ROLE
+      // =================================================
+
+      const userRole = String(
+        response?.user?.role ||
+          response?.user?.userRole ||
+          response?.user?.accountType ||
+          "",
+      )
+        .trim()
+        .toLowerCase();
+
+      console.log("USER ROLE:", userRole);
+
+     // =================================================
+// GET REDIRECT INTENT
+// =================================================
+
+const params = new URLSearchParams(window.location.search);
+const redirectParam = params.get("redirect");
+
+let redirectPath = "";
+
+try {
+  redirectPath = redirectParam
+    ? decodeURIComponent(redirectParam)
+    : "";
+} catch {
+  redirectPath = redirectParam || "";
+}
+
+console.log("LOGIN REDIRECT:", redirectPath);
+
+// =================================================
+// ADMIN LOGIN
+// =================================================
+
+if (userRole === "admin") {
+  console.log("GOING TO ADMIN DASHBOARD");
+
+  navigate("/admin/dashboard", {
+    replace: true,
+  });
+
+  return;
+}
+
+// =================================================
+// STUDENT - ENROLLMENT FLOW
+// =================================================
+
+if (redirectPath.startsWith("/enrollment")) {
+  console.log("GOING TO ENROLLMENT FORM");
+
+  navigate(redirectPath, {
+    replace: true,
+  });
+
+  return;
+}
+
+// =================================================
+// NORMAL STUDENT LOGIN
+// =================================================
+
+console.log("GOING TO STUDENT DASHBOARD");
+
+navigate("/dashboard", {
+  replace: true,
+});
     } catch (error) {
-      console.error("Login Error:", error);
+      console.error("LOGIN ERROR:", error);
 
       const message =
         error?.response?.data?.message ||
@@ -129,11 +230,15 @@ export default function Login() {
     }
   };
 
+  // =====================================================
+  // UI
+  // =====================================================
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-white">
       {/* =====================================================
           BACKGROUND
-      ====================================================== */}
+      ===================================================== */}
 
       <div className="pointer-events-none absolute inset-0">
         <motion.div
@@ -174,7 +279,7 @@ export default function Login() {
 
       {/* =====================================================
           TOP NAV
-      ====================================================== */}
+      ===================================================== */}
 
       <div className="relative z-10 px-5 py-5 sm:px-8 sm:py-7">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
@@ -198,14 +303,13 @@ export default function Login() {
 
       {/* =====================================================
           CONTENT
-      ====================================================== */}
+      ===================================================== */}
 
       <div className="relative z-10 flex min-h-[calc(100vh-90px)] items-center justify-center px-5 pb-12 pt-8">
         <div className="grid w-full max-w-5xl overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.08)] lg:grid-cols-[0.9fr_1.1fr]">
-
           {/* =================================================
               LEFT PANEL
-          ================================================== */}
+          ================================================= */}
 
           <div className="relative hidden overflow-hidden bg-slate-950 p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-12">
             <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-sky-500/15 blur-3xl" />
@@ -218,9 +322,7 @@ export default function Login() {
                   <Sparkles className="h-4 w-4" />
                 </div>
 
-                <span className="text-sm font-bold tracking-tight">
-                  Zenvix
-                </span>
+                <span className="text-sm font-bold tracking-tight">Zenvix</span>
               </div>
 
               <div className="max-w-sm">
@@ -233,15 +335,13 @@ export default function Login() {
                   <br />
                   Build.
                   <br />
-                  <span className="text-slate-500">
-                    Get hired.
-                  </span>
+                  <span className="text-slate-500">Get hired.</span>
                 </h1>
 
                 <p className="mt-6 text-sm leading-7 text-slate-400">
-                  Access your learning experience, track your progress,
-                  explore career resources and continue building your
-                  professional future.
+                  Access your learning experience, track your progress, explore
+                  career resources and continue building your professional
+                  future.
                 </p>
               </div>
             </div>
@@ -267,11 +367,10 @@ export default function Login() {
 
           {/* =================================================
               LOGIN FORM
-          ================================================== */}
+          ================================================= */}
 
           <div className="p-6 sm:p-10 lg:p-12">
             <div className="mx-auto max-w-md">
-
               {/* Mobile Brand */}
 
               <div className="mb-8 flex items-center gap-2 lg:hidden">
@@ -279,9 +378,7 @@ export default function Login() {
                   <Sparkles className="h-4 w-4" />
                 </div>
 
-                <span className="text-sm font-bold text-slate-950">
-                  Zenvix
-                </span>
+                <span className="text-sm font-bold text-slate-950">Zenvix</span>
               </div>
 
               {/* Header */}
@@ -326,11 +423,7 @@ export default function Login() {
 
               {/* Form */}
 
-              <form
-                onSubmit={handleSubmit}
-                className="mt-8 space-y-5"
-              >
-
+              <form onSubmit={handleSubmit} className="mt-8 space-y-5">
                 {/* Email */}
 
                 <div>
@@ -401,11 +494,7 @@ export default function Login() {
                     <input
                       id="password"
                       name="password"
-                      type={
-                        showPassword
-                          ? "text"
-                          : "password"
-                      }
+                      type={showPassword ? "text" : "password"}
                       autoComplete="current-password"
                       value={formData.password}
                       onChange={handleChange}
@@ -416,16 +505,10 @@ export default function Login() {
 
                     <button
                       type="button"
-                      onClick={() =>
-                        setShowPassword(
-                          (previous) => !previous
-                        )
-                      }
+                      onClick={() => setShowPassword((previous) => !previous)}
                       disabled={isLoading}
                       aria-label={
-                        showPassword
-                          ? "Hide password"
-                          : "Show password"
+                        showPassword ? "Hide password" : "Show password"
                       }
                       className="ml-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-700 disabled:cursor-not-allowed"
                     >
@@ -476,7 +559,6 @@ export default function Login() {
                   ) : (
                     <>
                       Sign In
-
                       <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                     </>
                   )}

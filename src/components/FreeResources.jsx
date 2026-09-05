@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   Code2,
   Download,
-  ExternalLink,
   FileText,
   Filter,
   GraduationCap,
@@ -257,64 +256,64 @@ const colorStyles = {
   violet: {
     icon: "bg-violet-50 text-violet-600",
     badge: "bg-violet-50 text-violet-600",
-    glow: "bg-violet-400/10",
     accent: "bg-violet-500",
+    border: "hover:border-violet-200",
   },
 
   sky: {
     icon: "bg-sky-50 text-sky-600",
     badge: "bg-sky-50 text-sky-600",
-    glow: "bg-sky-400/10",
     accent: "bg-sky-500",
+    border: "hover:border-sky-200",
   },
 
   emerald: {
     icon: "bg-emerald-50 text-emerald-600",
     badge: "bg-emerald-50 text-emerald-600",
-    glow: "bg-emerald-400/10",
     accent: "bg-emerald-500",
+    border: "hover:border-emerald-200",
   },
 
   orange: {
     icon: "bg-orange-50 text-orange-600",
     badge: "bg-orange-50 text-orange-600",
-    glow: "bg-orange-400/10",
     accent: "bg-orange-500",
+    border: "hover:border-orange-200",
   },
 
   amber: {
     icon: "bg-amber-50 text-amber-600",
     badge: "bg-amber-50 text-amber-600",
-    glow: "bg-amber-400/10",
     accent: "bg-amber-500",
+    border: "hover:border-amber-200",
   },
 
   cyan: {
     icon: "bg-cyan-50 text-cyan-600",
     badge: "bg-cyan-50 text-cyan-600",
-    glow: "bg-cyan-400/10",
     accent: "bg-cyan-500",
+    border: "hover:border-cyan-200",
   },
 
   blue: {
     icon: "bg-blue-50 text-blue-600",
     badge: "bg-blue-50 text-blue-600",
-    glow: "bg-blue-400/10",
     accent: "bg-blue-500",
+    border: "hover:border-blue-200",
   },
 
   indigo: {
     icon: "bg-indigo-50 text-indigo-600",
     badge: "bg-indigo-50 text-indigo-600",
-    glow: "bg-indigo-400/10",
     accent: "bg-indigo-500",
+    border: "hover:border-indigo-200",
   },
 
   pink: {
     icon: "bg-pink-50 text-pink-600",
     badge: "bg-pink-50 text-pink-600",
-    glow: "bg-pink-400/10",
     accent: "bg-pink-500",
+    border: "hover:border-pink-200",
   },
 };
 
@@ -355,46 +354,10 @@ export default function FreeResources() {
     });
   }, [activeCategory, search, showFeaturedOnly]);
 
-  const handleDownload = (resource) => {
-    if (!resource.file) return;
-
-    const link = document.createElement("a");
-    link.href = resource.file;
-    link.download = resource.file.split("/").pop();
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
-    <main className="relative overflow-hidden bg-white pt-[120px]">
-      {/* =====================================================
-          BACKGROUND
-      ====================================================== */}
+    <main className="relative w-full bg-white py-[30px]">
+      <div className="relative w-full px-[30px] sm:px-[30px] lg:px-[30px]">
 
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
-      >
-        <div className="absolute -left-48 top-0 h-[430px] w-[430px] rounded-full bg-violet-500/[0.06] blur-3xl" />
-
-        <div className="absolute -right-48 top-[520px] h-[430px] w-[430px] rounded-full bg-sky-500/[0.055] blur-3xl" />
-
-        <div
-          className="absolute inset-0 opacity-[0.18]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #E8ECF2 1px, transparent 1px), linear-gradient(to bottom, #E8ECF2 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
-            maskImage:
-              "radial-gradient(ellipse 75% 55% at 50% 0%, black 30%, transparent 100%)",
-            WebkitMaskImage:
-              "radial-gradient(ellipse 75% 55% at 50% 0%, black 30%, transparent 100%)",
-          }}
-        />
-      </div>
-
-      <div className="shell">
         {/* =====================================================
             HERO
         ====================================================== */}
@@ -411,26 +374,26 @@ export default function FreeResources() {
           transition={{
             duration: 0.7,
           }}
-          className="mx-auto max-w-4xl text-center"
+          className="mx-auto max-w-4xl pt-[50px] text-center"
         >
-          <div className="mb-6 flex items-center justify-center gap-3">
-            <span className="h-px w-9 bg-slate-900" />
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <span className="h-px w-8 bg-teal-700" />
 
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-500">
+            <span className="text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
               Free Resource Hub
             </span>
 
-            <span className="h-px w-9 bg-slate-900" />
+            <span className="h-px w-8 bg-teal-700" />
           </div>
 
-          <h1 className="text-4xl font-semibold leading-[1.04] tracking-[-0.05em] text-slate-950 sm:text-5xl lg:text-[4.4rem]">
+          <h1 className="text-[38px] font-black leading-[1.1] tracking-[-0.025em] text-slate-950 sm:text-[46px] lg:text-[52px]">
             Learn more.
-            <span className="block text-slate-400">
+            <span className="block text-teal-700">
               Prepare better.
             </span>
           </h1>
 
-          <p className="mx-auto mt-7 max-w-2xl text-sm leading-7 text-slate-500 sm:text-base">
+          <p className="mx-auto mt-5 max-w-2xl text-[15px] font-medium leading-7 text-slate-500 sm:text-[16px]">
             Explore free career resources, interview preparation materials,
             resume guides, coding resources and practical tools designed to
             help you take your next step with confidence.
@@ -438,29 +401,35 @@ export default function FreeResources() {
 
           {/* SEARCH */}
 
-          <div className="mx-auto mt-9 flex max-w-2xl items-center rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_15px_45px_rgba(15,23,42,0.06)]">
-            <Search
-              size={19}
-              className="ml-3 shrink-0 text-slate-400"
-            />
+          <div className="mx-auto mt-7 max-w-xl">
+            <div className="flex items-center rounded-xl border border-slate-200 bg-white p-1.5 shadow-[0_8px_30px_rgba(15,23,42,0.05)] transition-all duration-300 focus-within:border-teal-300 focus-within:shadow-[0_10px_35px_rgba(15,23,42,0.08)]">
 
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search interview questions, resume guides, coding..."
-              className="w-full bg-transparent px-3 py-3 text-sm text-slate-800 outline-none placeholder:text-slate-400"
-            />
+              <Search
+                className="ml-3 h-4 w-4 shrink-0 text-slate-400"
+              />
 
-            {search && (
-              <button
-                type="button"
-                onClick={() => setSearch("")}
-                className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200"
-              >
-                <X size={14} />
-              </button>
-            )}
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search interview questions, resume guides, coding..."
+                className="w-full bg-transparent px-3 py-2.5 text-[13px] font-medium text-slate-700 outline-none placeholder:text-slate-400"
+              />
+
+              {search ? (
+                <button
+                  type="button"
+                  onClick={() => setSearch("")}
+                  className="mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition hover:bg-slate-200"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              ) : (
+                <div className="hidden rounded-lg bg-yellow-400 px-4 py-2 text-[11px] font-black text-slate-950 sm:block">
+                  Search
+                </div>
+              )}
+            </div>
           </div>
         </motion.section>
 
@@ -481,7 +450,7 @@ export default function FreeResources() {
             duration: 0.6,
             delay: 0.15,
           }}
-          className="mx-auto mt-12 grid max-w-5xl grid-cols-2 overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.05)] sm:grid-cols-4"
+          className="mx-auto mt-[60px] grid max-w-5xl grid-cols-2 overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-[0_10px_35px_rgba(15,23,42,0.04)] sm:grid-cols-4"
         >
           {[
             {
@@ -489,24 +458,32 @@ export default function FreeResources() {
               title: "Interview",
               description: "Prepare smarter",
               route: "/interview-preparation",
+              color: "text-violet-600",
+              bg: "bg-violet-50",
             },
             {
               icon: BriefcaseBusiness,
               title: "Jobs",
               description: "Get job ready",
               route: "/job-preparation",
+              color: "text-emerald-600",
+              bg: "bg-emerald-50",
             },
             {
               icon: FileText,
               title: "Resume",
               description: "Build your profile",
               route: "/career",
+              color: "text-orange-600",
+              bg: "bg-orange-50",
             },
             {
               icon: GraduationCap,
               title: "Career",
               description: "Find your direction",
               route: "/career",
+              color: "text-sky-600",
+              bg: "bg-sky-50",
             },
           ].map((item, index) => {
             const Icon = item.icon;
@@ -521,23 +498,24 @@ export default function FreeResources() {
                     : ""
                 }`}
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-700 transition group-hover:bg-slate-950 group-hover:text-white">
-                  <Icon size={17} />
+                <div
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${item.bg} ${item.color} transition-transform duration-300 group-hover:scale-105`}
+                >
+                  <Icon className="h-4 w-4" />
                 </div>
 
                 <div>
-                  <p className="text-xs font-bold text-slate-900 sm:text-sm">
+                  <p className="!m-0 text-[13px] font-black text-slate-900">
                     {item.title}
                   </p>
 
-                  <p className="mt-0.5 text-[10px] text-slate-400">
+                  <p className="!m-0 mt-0.5 text-[10px] font-medium text-slate-400">
                     {item.description}
                   </p>
                 </div>
 
                 <ArrowUpRight
-                  size={13}
-                  className="ml-auto text-slate-300 transition group-hover:text-slate-900"
+                  className="ml-auto h-3.5 w-3.5 text-slate-300 transition group-hover:text-slate-900"
                 />
               </Link>
             );
@@ -548,25 +526,23 @@ export default function FreeResources() {
             FEATURED RESOURCES
         ====================================================== */}
 
-        <section className="mt-28">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <section className="mx-auto mt-[60px] max-w-7xl">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+
             <div>
               <div className="mb-4 flex items-center gap-3">
-                <Sparkles
-                  size={14}
-                  className="text-violet-500"
-                />
+                <span className="h-px w-8 bg-teal-700" />
 
-                <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-500">
-                  Featured
+                <span className="text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
+                  Featured Resources
                 </span>
               </div>
 
-              <h2 className="text-3xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-4xl">
+              <h2 className="text-[38px] font-black leading-[1.1] tracking-[-0.025em] text-slate-950 sm:text-[46px] lg:text-[52px]">
                 Start with these.
               </h2>
 
-              <p className="mt-3 max-w-xl text-sm leading-6 text-slate-500">
+              <p className="mt-4 max-w-xl text-[15px] font-medium leading-7 text-slate-500">
                 High-value resources selected to help you prepare for the
                 most important stages of your career journey.
               </p>
@@ -577,13 +553,13 @@ export default function FreeResources() {
               onClick={() =>
                 setShowFeaturedOnly((value) => !value)
               }
-              className={`inline-flex w-fit items-center gap-2 rounded-full border px-4 py-2.5 text-xs font-semibold transition ${
+              className={`inline-flex w-fit items-center gap-2 rounded-xl px-4 py-2.5 text-[11px] font-black transition-all duration-300 ${
                 showFeaturedOnly
-                  ? "border-slate-950 bg-slate-950 text-white"
-                  : "border-slate-200 bg-white text-slate-700 hover:border-slate-950"
+                  ? "bg-yellow-400 text-slate-950"
+                  : "border border-slate-200 bg-white text-slate-500 hover:border-teal-700 hover:text-teal-700"
               }`}
             >
-              <Filter size={13} />
+              <Filter className="h-3.5 w-3.5" />
 
               {showFeaturedOnly
                 ? "Showing Featured"
@@ -591,13 +567,14 @@ export default function FreeResources() {
             </button>
           </div>
 
-          <div className="mt-10 grid gap-5 lg:grid-cols-3">
+          <div className="mt-[35px] grid gap-5 lg:grid-cols-3">
             {resources
               .filter((resource) => resource.featured)
               .slice(0, 3)
               .map((resource, index) => {
                 const Icon = resource.icon;
-                const styles = colorStyles[resource.color];
+                const styles =
+                  colorStyles[resource.color] ?? colorStyles.sky;
 
                 return (
                   <motion.article
@@ -612,6 +589,7 @@ export default function FreeResources() {
                     }}
                     viewport={{
                       once: true,
+                      amount: 0.1,
                     }}
                     transition={{
                       duration: 0.5,
@@ -620,60 +598,56 @@ export default function FreeResources() {
                     whileHover={{
                       y: -5,
                     }}
-                    className="group relative overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-[0_10px_35px_rgba(15,23,42,0.04)] transition-all duration-500 hover:border-slate-300 hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)]"
+                    className={`group relative flex h-full flex-col overflow-hidden rounded-[20px] border border-slate-200 bg-white p-6 shadow-[0_8px_28px_rgba(15,23,42,0.035)] transition-all duration-300 hover:shadow-[0_18px_45px_rgba(15,23,42,0.08)] ${styles.border}`}
                   >
-                    <div
-                      className={`pointer-events-none absolute -right-20 -top-20 h-44 w-44 rounded-full ${styles.glow} opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100`}
-                    />
-
-                    <div className="relative flex items-start justify-between">
+                    <div className="flex items-start justify-between">
                       <div
-                        className={`flex h-12 w-12 items-center justify-center rounded-xl ${styles.icon}`}
+                        className={`flex h-11 w-11 items-center justify-center rounded-xl ${styles.icon}`}
                       >
-                        <Icon size={20} />
+                        <Icon className="h-5 w-5" />
                       </div>
 
-                      <span
-                        className={`rounded-full px-2.5 py-1 text-[9px] font-semibold ${styles.badge}`}
-                      >
+                      <span className="rounded-full bg-yellow-50 px-3 py-1.5 text-[9px] font-black text-yellow-700">
                         FREE
                       </span>
                     </div>
 
-                    <div className="relative mt-6">
+                    <div className="mt-6">
                       <div className="flex items-center gap-2">
-                        <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-slate-400">
+                        <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">
                           {resource.type}
                         </span>
 
                         <span className="h-1 w-1 rounded-full bg-slate-300" />
 
-                        <span className="text-[9px] font-medium text-slate-400">
+                        <span className="text-[10px] font-semibold text-slate-400">
                           {resource.category}
                         </span>
                       </div>
 
-                      <h3 className="mt-2 text-lg font-semibold tracking-tight text-slate-950">
+                      <h3 className="mt-3 text-[20px] font-black leading-[1.2] tracking-[-0.015em] text-slate-950">
                         {resource.title}
                       </h3>
 
-                      <p className="mt-3 text-[11px] leading-5.5 text-slate-500">
+                      <p className="mt-3 text-[13px] font-medium leading-6 text-slate-500">
                         {resource.description}
                       </p>
                     </div>
 
-                    <div className="relative mt-5 flex flex-wrap gap-1.5">
+                    <div className="mt-5 flex flex-wrap gap-1.5">
                       {resource.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full border border-slate-100 bg-slate-50 px-2.5 py-1 text-[9px] text-slate-500"
+                          className="rounded-full border border-slate-100 bg-slate-50 px-2.5 py-1 text-[9px] font-semibold text-slate-500"
                         >
                           {tag}
                         </span>
                       ))}
                     </div>
 
-                    <ResourceAction resource={resource} />
+                    <div className="mt-auto">
+                      <ResourceAction resource={resource} />
+                    </div>
 
                     <div
                       className={`absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 ${styles.accent} transition-transform duration-500 group-hover:scale-x-100`}
@@ -688,25 +662,23 @@ export default function FreeResources() {
             ALL RESOURCES
         ====================================================== */}
 
-        <section className="mt-28">
+        <section className="mx-auto mt-[60px] max-w-7xl pb-[30px]">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+
             <div>
               <div className="mb-4 flex items-center gap-3">
-                <BookOpen
-                  size={14}
-                  className="text-sky-500"
-                />
+                <span className="h-px w-8 bg-teal-700" />
 
-                <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-500">
+                <span className="text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
                   Resource Library
                 </span>
               </div>
 
-              <h2 className="text-3xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-4xl">
+              <h2 className="text-[38px] font-black leading-[1.1] tracking-[-0.025em] text-slate-950 sm:text-[46px] lg:text-[52px]">
                 Explore everything.
               </h2>
 
-              <p className="mt-3 text-sm text-slate-500">
+              <p className="mt-4 text-[15px] font-medium leading-7 text-slate-500">
                 {filteredResources.length} resources available
               </p>
             </div>
@@ -716,7 +688,6 @@ export default function FreeResources() {
             <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
               {categories.map((category) => {
                 const Icon = category.icon;
-
                 const active =
                   activeCategory === category.name;
 
@@ -727,14 +698,13 @@ export default function FreeResources() {
                     onClick={() =>
                       setActiveCategory(category.name)
                     }
-                    className={`flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-2.5 text-[10px] font-semibold transition ${
+                    className={`flex shrink-0 items-center gap-2 rounded-xl px-3.5 py-2.5 text-[10px] font-black transition-all duration-300 ${
                       active
-                        ? "border-slate-950 bg-slate-950 text-white"
-                        : "border-slate-200 bg-white text-slate-500 hover:border-slate-400 hover:text-slate-900"
+                        ? "bg-yellow-400 text-slate-950"
+                        : "border border-slate-200 bg-white text-slate-500 hover:border-teal-700 hover:text-teal-700"
                     }`}
                   >
-                    <Icon size={12} />
-
+                    <Icon className="h-3.5 w-3.5" />
                     {category.name}
                   </button>
                 );
@@ -744,11 +714,12 @@ export default function FreeResources() {
 
           {/* RESOURCE GRID */}
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-[35px] grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             <AnimatePresence mode="popLayout">
               {filteredResources.map((resource, index) => {
                 const Icon = resource.icon;
-                const styles = colorStyles[resource.color];
+                const styles =
+                  colorStyles[resource.color] ?? colorStyles.sky;
 
                 return (
                   <motion.article
@@ -773,64 +744,68 @@ export default function FreeResources() {
                     whileHover={{
                       y: -4,
                     }}
-                    className="group relative overflow-hidden rounded-[1.35rem] border border-slate-200 bg-white p-5 shadow-[0_7px_28px_rgba(15,23,42,0.03)] transition-all duration-500 hover:border-slate-300 hover:shadow-[0_16px_40px_rgba(15,23,42,0.07)]"
+                    className={`group relative flex h-full flex-col overflow-hidden rounded-[20px] border border-slate-200 bg-white p-5 shadow-[0_7px_28px_rgba(15,23,42,0.03)] transition-all duration-300 hover:shadow-[0_16px_40px_rgba(15,23,42,0.07)] ${styles.border}`}
                   >
-                    <div className="relative flex items-start justify-between">
+                    <div className="flex items-start justify-between">
                       <div
                         className={`flex h-10 w-10 items-center justify-center rounded-xl ${styles.icon}`}
                       >
-                        <Icon size={17} />
+                        <Icon className="h-4 w-4" />
                       </div>
 
                       <div className="flex items-center gap-2">
                         {resource.featured && (
-                          <span className="rounded-full bg-amber-50 px-2 py-1 text-[8px] font-bold text-amber-600">
+                          <span className="rounded-full bg-amber-50 px-2 py-1 text-[8px] font-black text-amber-600">
                             FEATURED
                           </span>
                         )}
 
-                        <span className="rounded-full bg-emerald-50 px-2 py-1 text-[8px] font-bold text-emerald-600">
+                        <span className="rounded-full bg-emerald-50 px-2 py-1 text-[8px] font-black text-emerald-600">
                           FREE
                         </span>
                       </div>
                     </div>
 
-                    <div className="relative mt-5">
+                    <div className="mt-5">
                       <div className="flex items-center gap-2">
                         <span
-                          className={`text-[9px] font-bold uppercase tracking-[0.17em] ${styles.badge.split(" ").pop()}`}
+                          className={`text-[9px] font-black uppercase tracking-[0.17em] ${styles.badge
+                            .split(" ")
+                            .pop()}`}
                         >
                           {resource.category}
                         </span>
 
                         <span className="h-1 w-1 rounded-full bg-slate-300" />
 
-                        <span className="text-[9px] text-slate-400">
+                        <span className="text-[9px] font-semibold text-slate-400">
                           {resource.type}
                         </span>
                       </div>
 
-                      <h3 className="mt-2 text-[15px] font-semibold tracking-tight text-slate-950">
+                      <h3 className="mt-2 text-[16px] font-black leading-[1.25] tracking-[-0.01em] text-slate-950">
                         {resource.title}
                       </h3>
 
-                      <p className="mt-2.5 line-clamp-3 text-[11px] leading-5 text-slate-500">
+                      <p className="mt-2.5 line-clamp-3 text-[12px] font-medium leading-5 text-slate-500">
                         {resource.description}
                       </p>
                     </div>
 
-                    <div className="relative mt-4 flex flex-wrap gap-1.5">
+                    <div className="mt-4 flex flex-wrap gap-1.5">
                       {resource.tags.slice(0, 3).map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full border border-slate-100 bg-slate-50 px-2 py-1 text-[8px] font-medium text-slate-500"
+                          className="rounded-full border border-slate-100 bg-slate-50 px-2 py-1 text-[8px] font-semibold text-slate-500"
                         >
                           {tag}
                         </span>
                       ))}
                     </div>
 
-                    <ResourceAction resource={resource} />
+                    <div className="mt-auto">
+                      <ResourceAction resource={resource} />
+                    </div>
 
                     <div
                       className={`absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 ${styles.accent} transition-transform duration-500 group-hover:scale-x-100`}
@@ -844,16 +819,16 @@ export default function FreeResources() {
           {/* EMPTY */}
 
           {filteredResources.length === 0 && (
-            <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50 py-20 text-center">
+            <div className="mt-5 rounded-[20px] border border-dashed border-slate-200 bg-slate-50 px-6 py-20 text-center">
               <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm">
-                <Search size={19} />
+                <Search className="h-5 w-5" />
               </div>
 
-              <h3 className="mt-5 text-lg font-semibold text-slate-900">
+              <h3 className="mt-5 text-[20px] font-black text-slate-900">
                 No resources found
               </h3>
 
-              <p className="mx-auto mt-2 max-w-sm text-sm text-slate-500">
+              <p className="mx-auto mt-2 max-w-sm text-[14px] font-medium leading-6 text-slate-500">
                 Try another search term or select a different category.
               </p>
 
@@ -864,7 +839,7 @@ export default function FreeResources() {
                   setActiveCategory("All");
                   setShowFeaturedOnly(false);
                 }}
-                className="mt-5 rounded-full bg-slate-950 px-5 py-2.5 text-xs font-semibold text-white"
+                className="mt-5 rounded-xl bg-yellow-400 px-5 py-2.5 text-[11px] font-black text-slate-950 transition hover:bg-yellow-300"
               >
                 Clear Filters
               </button>
@@ -888,28 +863,32 @@ export default function FreeResources() {
           viewport={{
             once: true,
           }}
-          className="my-24 rounded-[1.75rem] bg-slate-950 p-8 sm:p-10 lg:p-12"
+          transition={{
+            duration: 0.6,
+          }}
+          className="mx-auto my-[30px] max-w-7xl rounded-[24px] border border-slate-200 bg-white p-8 shadow-[0_12px_40px_rgba(15,23,42,0.05)] sm:p-10 lg:p-14"
         >
           <div className="grid items-center gap-8 lg:grid-cols-[1fr_auto]">
+
             <div>
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-violet-300">
-                  <Sparkles size={17} />
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600">
+                  <Sparkles className="h-4 w-4" />
                 </div>
 
-                <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">
-                  Need more guidance?
+                <span className="text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
+                  Need More Guidance?
                 </span>
               </div>
 
-              <h2 className="mt-6 max-w-2xl text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+              <h2 className="mt-5 max-w-2xl text-[30px] font-black leading-[1.15] tracking-[-0.025em] text-slate-950 sm:text-[38px]">
                 Free resources are a start.
-                <span className="block text-slate-500">
+                <span className="block text-teal-700">
                   Your journey can go further.
                 </span>
               </h2>
 
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">
+              <p className="mt-4 max-w-xl text-[15px] font-medium leading-7 text-slate-500">
                 Explore structured programs and career support designed to
                 help you build practical skills and prepare for your next
                 opportunity.
@@ -919,19 +898,18 @@ export default function FreeResources() {
             <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
               <Link
                 to="/programs"
-                className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+                className="group inline-flex items-center justify-center gap-3 rounded-xl bg-yellow-400 px-6 py-3.5 text-[14px] font-black text-slate-950 transition-all duration-300 hover:bg-yellow-300"
               >
                 Explore Programs
 
-                <ArrowUpRight
-                  size={15}
-                  className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                />
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-black/10">
+                  <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </span>
               </Link>
 
               <Link
                 to="/career"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-[14px] font-black text-slate-700 transition-all duration-300 hover:border-teal-700 hover:text-teal-700"
               >
                 Career Support
               </Link>
@@ -953,19 +931,22 @@ function ResourceAction({ resource }) {
       <button
         type="button"
         onClick={() => {
+          if (!resource.file) return;
+
           const link = document.createElement("a");
           link.href = resource.file;
           link.download = resource.file.split("/").pop();
+
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
         }}
-        className="relative mt-6 flex w-full items-center justify-between border-t border-slate-100 pt-4 text-[10px] font-semibold text-slate-900"
+        className="relative mt-6 flex w-full items-center justify-between border-t border-slate-100 pt-4 text-[11px] font-black text-slate-900"
       >
         <span>{resource.action}</span>
 
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 transition-all duration-300 group-hover:bg-slate-950 group-hover:text-white">
-          <Download size={13} />
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 text-slate-500 transition-all duration-300 group-hover:bg-yellow-400 group-hover:text-slate-950">
+          <Download className="h-3.5 w-3.5" />
         </span>
       </button>
     );
@@ -974,15 +955,12 @@ function ResourceAction({ resource }) {
   return (
     <Link
       to={resource.route}
-      className="relative mt-6 flex w-full items-center justify-between border-t border-slate-100 pt-4 text-[10px] font-semibold text-slate-900"
+      className="relative mt-6 flex w-full items-center justify-between border-t border-slate-100 pt-4 text-[11px] font-black text-slate-900"
     >
       <span>{resource.action}</span>
 
-      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 transition-all duration-300 group-hover:bg-slate-950 group-hover:text-white">
-        <ArrowUpRight
-          size={13}
-          className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-        />
+      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 text-slate-500 transition-all duration-300 group-hover:bg-yellow-400 group-hover:text-slate-950">
+        <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
       </span>
     </Link>
   );

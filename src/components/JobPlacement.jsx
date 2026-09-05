@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion'
+
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   BriefcaseBusiness,
@@ -8,133 +9,71 @@ import {
   Sparkles,
   Target,
   UserCheck,
-} from 'lucide-react'
+} from "lucide-react";
+
+/* =========================================================
+   PLACEMENT STEPS
+========================================================= */
 
 const placementSteps = [
   {
-    number: '01',
-    title: 'Complete Your Training',
+    number: "01",
+    title: "Complete Your Training",
     description:
-      'Build practical, job-ready skills through structured learning and real-world projects.',
+      "Build practical, job-ready skills through structured learning and real-world projects.",
     icon: CheckCircle2,
-    color: '#8B5CF6',
-    bg: 'bg-violet-50',
-    border: 'border-violet-100',
+    color: "#8B5CF6",
+    bg: "bg-violet-50",
+    border: "border-violet-100",
   },
   {
-    number: '02',
-    title: 'Become Career Ready',
+    number: "02",
+    title: "Become Career Ready",
     description:
-      'Prepare your resume, portfolio and professional profile with focused career guidance.',
+      "Prepare your resume, portfolio and professional profile with focused career guidance.",
     icon: FileText,
-    color: '#4C74F0',
-    bg: 'bg-blue-50',
-    border: 'border-blue-100',
+    color: "#4C74F0",
+    bg: "bg-blue-50",
+    border: "border-blue-100",
   },
   {
-    number: '03',
-    title: 'Prepare for Interviews',
+    number: "03",
+    title: "Prepare for Interviews",
     description:
-      'Practice interviews, strengthen communication and build confidence for real opportunities.',
+      "Practice interviews, strengthen communication and build confidence for real opportunities.",
     icon: Target,
-    color: '#14B8C9',
-    bg: 'bg-cyan-50',
-    border: 'border-cyan-100',
+    color: "#14B8C9",
+    bg: "bg-cyan-50",
+    border: "border-cyan-100",
   },
   {
-    number: '04',
-    title: 'Get Placement Support',
+    number: "04",
+    title: "Get Placement Support",
     description:
-      'Receive ongoing guidance and support as you move through the job search and hiring process.',
+      "Receive ongoing guidance and support as you move through the job search and hiring process.",
     icon: UserCheck,
-    color: '#12A76B',
-    bg: 'bg-emerald-50',
-    border: 'border-emerald-100',
+    color: "#12A76B",
+    bg: "bg-emerald-50",
+    border: "border-emerald-100",
   },
-]
+];
+
+/* =========================================================
+   COMPONENT
+========================================================= */
 
 export default function JobPlacement() {
   return (
     <section
       id="job-placement"
-      className="relative overflow-hidden bg-white py-12 sm:py-14 lg:py-16"
+      className="relative overflow-hidden bg-white py-[30px]"
     >
       {/* =====================================================
-          PREMIUM WHITE BLUR BACKGROUND
+          MAIN CONTAINER
+          SAME AS WHO IS ZENVIX FOR
       ====================================================== */}
 
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 overflow-hidden"
-      >
-        {/* Soft Violet Glow */}
-        <motion.div
-          animate={{
-            x: [0, 30, 0],
-            y: [0, -20, 0],
-            scale: [1, 1.06, 1],
-          }}
-          transition={{
-            duration: 14,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute -left-40 -top-44 h-[520px] w-[520px] rounded-full bg-violet-200/25 blur-[110px]"
-        />
-
-        {/* Soft Sky Glow */}
-        <motion.div
-          animate={{
-            x: [0, -25, 0],
-            y: [0, 25, 0],
-            scale: [1, 1.08, 1],
-          }}
-          transition={{
-            duration: 16,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute -right-44 top-[-40px] h-[520px] w-[520px] rounded-full bg-sky-200/30 blur-[115px]"
-        />
-
-        {/* Soft Emerald Glow */}
-        <motion.div
-          animate={{
-            x: [0, 20, 0],
-            y: [0, -18, 0],
-            scale: [1, 1.05, 1],
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute bottom-[-260px] left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-emerald-200/20 blur-[120px]"
-        />
-
-        {/* Center White Light */}
-        <div className="absolute left-1/2 top-1/2 h-[500px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/80 blur-[100px]" />
-
-        {/* Very Subtle Grid */}
-        <div
-          className="absolute inset-0 opacity-[0.025]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#0f172a 1px, transparent 1px), linear-gradient(90deg, #0f172a 1px, transparent 1px)',
-            backgroundSize: '72px 72px',
-            maskImage:
-              'radial-gradient(ellipse 80% 70% at 50% 50%, black 10%, transparent 85%)',
-            WebkitMaskImage:
-              'radial-gradient(ellipse 80% 70% at 50% 50%, black 10%, transparent 85%)',
-          }}
-        />
-      </div>
-
-      {/* =====================================================
-          CONTENT
-      ====================================================== */}
-
-      <div className="shell relative z-10">
+      <div className="relative w-full px-[30px] sm:px-[30px] lg:px-[30px]">
 
         {/* =====================================================
             HEADER
@@ -143,7 +82,7 @@ export default function JobPlacement() {
         <motion.div
           initial={{
             opacity: 0,
-            y: 18,
+            y: 30,
           }}
           whileInView={{
             opacity: 1,
@@ -154,36 +93,34 @@ export default function JobPlacement() {
             amount: 0.3,
           }}
           transition={{
-            duration: 0.6,
-            ease: 'easeOut',
+            duration: 0.7,
           }}
-          className="mx-auto max-w-3xl text-center"
+          className="w-full pt-[50px] text-center"
         >
-          {/* Label */}
+          {/* LABEL */}
 
-          <div className="mb-3 flex items-center justify-center gap-3">
-            <span className="h-px w-7 bg-slate-200" />
+          <div className="mb-5 flex items-center justify-center gap-3">
+            <span className="h-px w-10 bg-slate-900" />
 
-            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.24em] text-emerald-600">
+            <p className="text-[14px] font-[900] uppercase tracking-[0.18em] text-teal-700">
               From Learning to Employment
-            </span>
+            </p>
 
-            <span className="h-px w-7 bg-slate-200" />
+            <span className="h-px w-10 bg-slate-900" />
           </div>
 
-          {/* Heading */}
+          {/* HEADING */}
 
-          <h2 className="text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-slate-950 sm:text-4xl lg:text-[3rem]">
+          <h2 className="text-[38px] font-[900] leading-[1.1] tracking-[-0.025em] text-slate-950 sm:text-[46px] lg:text-[52px]">
             Your course doesn't end
-
-            <span className="block bg-gradient-to-r from-violet-500 via-sky-500 to-emerald-500 bg-clip-text text-transparent">
+            <span className="block font-[900] text-teal-700">
               when the training ends.
             </span>
           </h2>
 
-          {/* Description */}
+          {/* DESCRIPTION */}
 
-          <p className="mx-auto mt-4 max-w-2xl text-[13px] leading-6 text-slate-500 sm:text-sm">
+          <p className="mx-auto mt-5 max-w-3xl text-[15px] font-semibold leading-7 text-slate-500 sm:text-[16px]">
             Zenvix takes your journey beyond learning — with practical
             training, career preparation and job placement support designed
             to help you move toward employment.
@@ -197,7 +134,7 @@ export default function JobPlacement() {
         <motion.div
           initial={{
             opacity: 0,
-            y: 18,
+            y: 20,
           }}
           whileInView={{
             opacity: 1,
@@ -211,13 +148,15 @@ export default function JobPlacement() {
             duration: 0.7,
             delay: 0.1,
           }}
-          className="mx-auto mt-8 max-w-5xl"
+          className="mt-10 w-full"
         >
           <div
             className="
-              relative overflow-hidden
+              relative
+              overflow-hidden
               rounded-[1.5rem]
-              border border-slate-200/80
+              border
+              border-slate-200/80
               bg-white/90
               p-5
               shadow-[0_20px_70px_rgba(15,23,42,0.07)]
@@ -247,18 +186,18 @@ export default function JobPlacement() {
                     <Sparkles className="h-3.5 w-3.5 text-white" />
                   </span>
 
-                  <p className="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-400">
+                  <p className="text-[9px] font-[900] uppercase tracking-[0.22em] text-slate-400">
                     Zenvix Career Path
                   </p>
 
                 </div>
 
-                <p className="mt-2 text-sm font-semibold text-slate-900">
+                <p className="mt-2 text-[14px] font-[900] leading-tight text-slate-900">
                   A guided path from training to placement
                 </p>
               </div>
 
-              {/* Career Focused Badge */}
+              {/* CAREER FOCUSED */}
 
               <div className="flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 shadow-sm">
 
@@ -268,7 +207,7 @@ export default function JobPlacement() {
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
                 </span>
 
-                <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-emerald-600">
+                <span className="text-[9px] font-[900] uppercase tracking-[0.14em] text-emerald-600">
                   Career Focused
                 </span>
 
@@ -279,27 +218,70 @@ export default function JobPlacement() {
                 JOURNEY STEPS
             ================================================== */}
 
-            <div className="relative mt-6">
+            <div className="relative mt-7">
 
-              {/* Connecting Line */}
+              {/* =================================================
+                  DESKTOP LINE
 
-              <div className="absolute left-[8%] right-[8%] top-5 hidden h-[2px] overflow-hidden rounded-full bg-gradient-to-r from-violet-200 via-sky-200 to-emerald-200 lg:block" />
+                  ICON = 40px
+                  ICON CENTER = 20px
 
-              {/* Small Line Glow */}
+                  Therefore line is EXACTLY at top 20px.
+              ================================================== */}
 
-              <div className="absolute left-[12%] right-[12%] top-[19px] hidden h-[4px] rounded-full bg-gradient-to-r from-violet-100 via-sky-100 to-emerald-100 opacity-60 blur-[5px] lg:block" />
+              <div
+                className="
+                  pointer-events-none
+                  absolute
+                  left-[12.5%]
+                  right-[12.5%]
+                  top-[20px]
+                  z-0
+                  hidden
+                  h-[2px]
+                  rounded-full
+                  bg-gradient-to-r
+                  from-violet-200
+                  via-sky-200
+                  to-emerald-200
+                  lg:block
+                "
+              />
 
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+              {/* LINE GLOW */}
+
+              <div
+                className="
+                  pointer-events-none
+                  absolute
+                  left-[12.5%]
+                  right-[12.5%]
+                  top-[18px]
+                  z-0
+                  hidden
+                  h-[5px]
+                  rounded-full
+                  bg-gradient-to-r
+                  from-violet-100
+                  via-sky-100
+                  to-emerald-100
+                  opacity-60
+                  blur-[5px]
+                  lg:block
+                "
+              />
+
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
 
                 {placementSteps.map((step, index) => {
-                  const Icon = step.icon
+                  const Icon = step.icon;
 
                   return (
                     <motion.div
                       key={step.number}
                       initial={{
                         opacity: 0,
-                        y: 12,
+                        y: 20,
                       }}
                       whileInView={{
                         opacity: 1,
@@ -307,18 +289,22 @@ export default function JobPlacement() {
                       }}
                       viewport={{
                         once: true,
+                        amount: 0.2,
                       }}
                       transition={{
-                        duration: 0.45,
-                        delay: 0.12 + index * 0.08,
+                        duration: 0.5,
+                        delay: index * 0.07,
                       }}
                       className="group relative"
                     >
+
                       {/* =================================================
                           ICON + NUMBER
                       ================================================== */}
 
                       <div className="relative z-10 flex items-center gap-3 lg:block">
+
+                        {/* ICON */}
 
                         <motion.div
                           whileHover={{
@@ -326,20 +312,26 @@ export default function JobPlacement() {
                             y: -3,
                           }}
                           transition={{
-                            type: 'spring',
+                            type: "spring",
                             stiffness: 300,
                             damping: 20,
                           }}
                           className={`
                             relative
-                            flex h-10 w-10 shrink-0
-                            items-center justify-center
+                            z-20
+                            flex
+                            h-10
+                            w-10
+                            shrink-0
+                            items-center
+                            justify-center
                             rounded-xl
                             border
                             ${step.border}
                             ${step.bg}
                             shadow-[0_6px_18px_rgba(15,23,42,0.06)]
-                            transition-shadow duration-300
+                            transition-shadow
+                            duration-300
                             group-hover:shadow-[0_10px_25px_rgba(15,23,42,0.10)]
                           `}
                         >
@@ -351,6 +343,8 @@ export default function JobPlacement() {
                             }}
                           />
                         </motion.div>
+
+                        {/* NUMBER */}
 
                         <span
                           className="
@@ -374,17 +368,17 @@ export default function JobPlacement() {
 
                       <div className="ml-[52px] mt-0 lg:ml-0 lg:mt-5">
 
-                        <h3 className="text-[13px] font-bold leading-5 text-slate-900">
+                        <h3 className="text-[16px] font-[900] leading-tight tracking-[-0.015em] text-slate-950">
                           {step.title}
                         </h3>
 
-                        <p className="mt-1.5 text-[10.5px] leading-5 text-slate-500">
+                        <p className="mt-2.5 text-[11px] font-semibold leading-5 text-slate-500">
                           {step.description}
                         </p>
 
                       </div>
                     </motion.div>
-                  )
+                  );
                 })}
 
               </div>
@@ -396,39 +390,39 @@ export default function JobPlacement() {
             FEATURE ROW
         ====================================================== */}
 
-        <div className="mx-auto mt-5 grid max-w-5xl gap-3 sm:grid-cols-3">
+        <div className="mt-7 grid w-full gap-4 sm:grid-cols-3">
 
           {[
             {
               icon: BriefcaseBusiness,
-              title: 'Career Focused',
-              text: 'Training aligned with real career goals.',
-              color: '#8B5CF6',
-              bg: 'bg-violet-50',
+              title: "Career Focused",
+              text: "Training aligned with real career goals.",
+              color: "#8B5CF6",
+              bg: "bg-violet-50",
             },
             {
               icon: Search,
-              title: 'Job Search Support',
-              text: 'Guidance throughout your job search.',
-              color: '#14B8C9',
-              bg: 'bg-cyan-50',
+              title: "Job Search Support",
+              text: "Guidance throughout your job search.",
+              color: "#14B8C9",
+              bg: "bg-cyan-50",
             },
             {
               icon: Sparkles,
-              title: 'Built for Progress',
-              text: 'A clear path from learner to professional.',
-              color: '#12A76B',
-              bg: 'bg-emerald-50',
+              title: "Built for Progress",
+              text: "A clear path from learner to professional.",
+              color: "#12A76B",
+              bg: "bg-emerald-50",
             },
           ].map((item, index) => {
-            const Icon = item.icon
+            const Icon = item.icon;
 
             return (
               <motion.div
                 key={item.title}
                 initial={{
                   opacity: 0,
-                  y: 10,
+                  y: 12,
                 }}
                 whileInView={{
                   opacity: 1,
@@ -438,38 +432,42 @@ export default function JobPlacement() {
                   once: true,
                 }}
                 transition={{
-                  duration: 0.4,
-                  delay: index * 0.08,
+                  duration: 0.5,
+                  delay: index * 0.07,
+                }}
+                whileHover={{
+                  y: -4,
                 }}
                 className="
                   group
-                  rounded-xl
-                  border border-slate-200/80
-                  bg-white/80
-                  px-4 py-3
-                  shadow-[0_8px_25px_rgba(15,23,42,0.035)]
-                  backdrop-blur
+                  rounded-[1.35rem]
+                  border
+                  border-slate-200
+                  bg-white
+                  p-5
+                  shadow-[0_8px_28px_rgba(15,23,42,0.035)]
                   transition-all
                   duration-300
-                  hover:-translate-y-0.5
-                  hover:border-slate-200
-                  hover:bg-white
-                  hover:shadow-[0_12px_30px_rgba(15,23,42,0.08)]
+                  hover:shadow-[0_18px_45px_rgba(15,23,42,0.08)]
                 "
               >
                 <div className="flex items-center gap-3">
 
                   <span
                     className={`
-                      flex h-8 w-8 shrink-0
-                      items-center justify-center
-                      rounded-lg
+                      flex
+                      h-10
+                      w-10
+                      shrink-0
+                      items-center
+                      justify-center
+                      rounded-xl
                       ${item.bg}
-                      shadow-sm
                     `}
                   >
                     <Icon
-                      size={14}
+                      size={16}
+                      strokeWidth={2.4}
                       style={{
                         color: item.color,
                       }}
@@ -477,18 +475,18 @@ export default function JobPlacement() {
                   </span>
 
                   <div>
-                    <p className="text-[11px] font-bold text-slate-900">
+                    <p className="text-[13px] font-[900] text-slate-950">
                       {item.title}
                     </p>
 
-                    <p className="mt-0.5 text-[9.5px] leading-4 text-slate-500">
+                    <p className="mt-1 text-[10px] font-semibold leading-5 text-slate-500">
                       {item.text}
                     </p>
                   </div>
 
                 </div>
               </motion.div>
-            )
+            );
           })}
         </div>
 
@@ -499,7 +497,7 @@ export default function JobPlacement() {
         <motion.div
           initial={{
             opacity: 0,
-            y: 10,
+            y: 12,
           }}
           whileInView={{
             opacity: 1,
@@ -509,74 +507,94 @@ export default function JobPlacement() {
             once: true,
           }}
           transition={{
-            duration: 0.5,
+            duration: 0.6,
             delay: 0.15,
           }}
-          className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row"
+          className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row"
         >
 
-          {/* Primary CTA */}
+          {/* PRIMARY */}
 
           <a
             href="#programs"
             className="
               group
-              inline-flex items-center gap-2
-              rounded-full
-              bg-slate-950
-              px-5 py-2.5
-              text-[11px]
-              font-semibold
-              text-white
-              shadow-[0_10px_25px_rgba(15,23,42,0.12)]
+              inline-flex
+              items-center
+              gap-2.5
+              rounded-xl
+              bg-yellow-400
+              px-5
+              py-3
+              text-[12px]
+              font-[900]
+              text-black
+              shadow-[0_8px_20px_rgba(250,204,21,0.25)]
               transition-all
               duration-300
               hover:-translate-y-0.5
-              hover:bg-slate-800
-              hover:shadow-[0_15px_35px_rgba(15,23,42,0.16)]
+              hover:bg-yellow-300
+              hover:shadow-[0_12px_25px_rgba(250,204,21,0.35)]
+              active:translate-y-0
             "
           >
             Explore Programs
 
             <ArrowRight
-              size={14}
+              size={15}
+              strokeWidth={2.8}
               className="transition-transform duration-300 group-hover:translate-x-1"
             />
           </a>
 
-          {/* Secondary CTA */}
+          {/* SECONDARY */}
 
           <a
             href="#contact"
             className="
               group
-              inline-flex items-center gap-1.5
-              rounded-full
-              border border-slate-200
+              inline-flex
+              items-center
+              gap-2
+              rounded-xl
+              border
+              border-slate-200
               bg-white
-              px-5 py-2.5
-              text-[11px]
-              font-semibold
-              text-slate-700
+              px-5
+              py-3
+              text-[12px]
+              font-[900]
+              text-slate-950
               shadow-[0_5px_18px_rgba(15,23,42,0.04)]
               transition-all
               duration-300
               hover:-translate-y-0.5
               hover:border-slate-300
               hover:bg-slate-50
-              hover:shadow-[0_8px_22px_rgba(15,23,42,0.07)]
             "
           >
             Talk to Zenvix
 
             <ArrowRight
-              size={13}
+              size={15}
+              strokeWidth={2.5}
               className="transition-transform duration-300 group-hover:translate-x-1"
             />
           </a>
 
         </motion.div>
+
+        {/* =====================================================
+            DISCLAIMER
+        ====================================================== */}
+
+        <p className="mx-auto mt-5 max-w-4xl text-center text-[12px] font-bold leading-6 text-slate-500">
+          Career support is designed to improve your readiness and access to
+          opportunities. Outcomes may vary based on skills, performance,
+          experience and market conditions.
+        </p>
+
       </div>
     </section>
-  )
+  );
 }

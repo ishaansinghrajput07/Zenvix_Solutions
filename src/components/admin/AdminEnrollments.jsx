@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import axios from "axios";
 import {
   AlertCircle,
   BookOpen,
@@ -31,76 +30,195 @@ import {
 import { toast } from "react-hot-toast";
 
 /* ============================================================
-   API
+   LOCAL STORAGE
 ============================================================ */
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
-
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+const STORAGE_KEYS = {
+  enrollments: "zenvix_enrollments",
+  courses: "zenvixCourses",
+};
 
 /* ============================================================
-   TOKEN
+   LOCAL STORAGE HELPERS
 ============================================================ */
 
-const getToken = () =>
-  localStorage.getItem("zenvix_token") ||
-  sessionStorage.getItem("zenvix_token") ||
-  null;
+const readLocalArray = (key) => {
+  try {
+    const raw = localStorage.getItem(key);
+
+    if (!raw) {
+      return [];
+    }
+
+    const parsed = JSON.parse(raw);
+
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.error(`LocalStorage read error for ${key}:`, error);
+
+    return [];
+  }
+};
+
+const writeLocalArray = (key, items) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(items));
+
+    return true;
+  } catch (error) {
+    console.error(`LocalStorage write error for ${key}:`, error);
+
+    return false;
+  }
+};
+
+const createId = () => {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
+    return crypto.randomUUID();
+  }
+
+  return `ZEN-${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2, 8)}`;
+};
+
+const sortNewest = (items) => {
+  return [...items].sort((a, b) => {
+    const dateA = new Date(
+      a?.createdAt ||
+        a?.submittedAt ||
+        a?.updatedAt ||
+        0,
+    ).getTime();
+
+    const dateB = new Date(
+      b?.createdAt ||
+        b?.submittedAt ||
+        b?.updatedAt ||
+        0,
+    ).getTime();
+
+    return dateB - dateA;
+  });
+};
 
 /* ============================================================
    HELPERS
 ============================================================ */
 
 const getId = (item) => {
-  if (!item) return "";
+  if (!item) {
+    return "";
+  }
 
   if (typeof item === "string") {
     return item;
   }
 
-  return item._id || item.id || "";
+  return (
+    item._id ||
+    item.id ||
+    item.courseId ||
+    item.programId ||
+    ""
+  );
 };
 
-const getStudent = (enrollment) => enrollment?.student || null;
+const getStudent = (enrollment) => {
+  return enrollment?.student || null;
+};
 
-const getCourse = (enrollment) => enrollment?.course || null;
+const getCourse = (enrollment) => {
+  return enrollment?.course || null;
+};
 
 const getStudentName = (enrollment) =>
-  enrollment?.studentName || getStudent(enrollment)?.name || "Unnamed Student";
+  enrollment?.studentName ||
+  enrollment?.name ||
+  getStudent(enrollment)?.name ||
+  `${enrollment?.firstName || ""} ${
+    enrollment?.lastName || ""
+  }`.trim() ||
+  "Unnamed Student";
 
 const getStudentEmail = (enrollment) =>
-  enrollment?.studentEmail || getStudent(enrollment)?.email || "No email";
+  enrollment?.studentEmail ||
+  enrollment?.email ||
+  getStudent(enrollment)?.email ||
+  "No email";
 
 const getStudentPhone = (enrollment) =>
-  enrollment?.studentPhone || getStudent(enrollment)?.phone || "No phone";
+  enrollment?.studentPhone ||
+  enrollment?.phone ||
+  getStudent(enrollment)?.phone ||
+  "No phone";
+
+const getEnrollmentCourseId = (enrollment) => {
+  return (
+    getId(getCourse(enrollment)) ||
+    enrollment?.courseId ||
+    enrollment?.programId ||
+    enrollment?.course?.id ||
+    enrollment?.course?._id ||
+    ""
+  );
+};
 
 const getCourseTitle = (enrollment) =>
   getCourse(enrollment)?.title ||
   enrollment?.courseTitle ||
+  enrollment?.courseName ||
+  enrollment?.programTitle ||
+  enrollment?.course?.name ||
+  enrollment?.courseId ||
+  enrollment?.programId ||
   "Course unavailable";
 
-const getCourseCategory = (enrollment) => getCourse(enrollment)?.category || "";
+const getCourseCategory = (enrollment) =>
+  getCourse(enrollment)?.category ||
+  enrollment?.courseCategory ||
+  "";
 
-const getCourseLevel = (enrollment) => getCourse(enrollment)?.level || "";
+const getCourseLevel = (enrollment) =>
+  getCourse(enrollment)?.level ||
+  enrollment?.courseLevel ||
+  "";
 
-const getStatus = (enrollment) => String(enrollment?.status || "Pending");
+const getStatus = (enrollment) => {
+  const status = String(
+    enrollment?.status || "Pending",
+  );
+
+  /*
+    Enrollment form currently saves "New".
+    Admin panel treats "New" as "Pending".
+  */
+  if (status.toLowerCase() === "new") {
+    return "Pending";
+  }
+
+  return status;
+};
 
 const getAccessStatus = (enrollment) => {
   if (enrollment?.accessStatus) {
     return enrollment.accessStatus;
   }
 
-  if (enrollment?.status === "Approved" && enrollment?.accessGranted) {
+  if (
+    enrollment?.status === "Approved" &&
+    enrollment?.accessGranted === true
+  ) {
     return "Granted";
   }
 
-  if (enrollment?.status === "Approved" && !enrollment?.accessGranted) {
+  if (
+    enrollment?.status === "Approved" &&
+    enrollment?.accessGranted === false
+  ) {
     return "Revoked";
   }
 
@@ -134,47 +252,15 @@ const formatDate = (value, includeTime = false) => {
   }
 };
 
-const normalizeEnrollments = (data) => {
-  if (Array.isArray(data)) {
-    return data;
-  }
-
-  if (Array.isArray(data?.enrollments)) {
-    return data.enrollments;
-  }
-
-  if (Array.isArray(data?.data)) {
-    return data.data;
-  }
-
-  if (Array.isArray(data?.results)) {
-    return data.results;
-  }
-
-  return [];
-};
-
-const normalizeStats = (data) => {
-  if (Array.isArray(data)) {
-    return data;
-  }
-
-  if (Array.isArray(data?.stats)) {
-    return data.stats;
-  }
-
-  if (Array.isArray(data?.data)) {
-    return data.data;
-  }
-
-  return [];
-};
-
 /* ============================================================
    STATUS CONFIG
 ============================================================ */
 
-const STATUS_OPTIONS = ["Pending", "Approved", "Rejected"];
+const STATUS_OPTIONS = [
+  "Pending",
+  "Approved",
+  "Rejected",
+];
 
 const STATUS_META = {
   Pending: {
@@ -266,98 +352,182 @@ function getAccessMeta(status) {
 
 export default function AdminEnrollments() {
   const [enrollments, setEnrollments] = useState([]);
+
   const [courseStats, setCourseStats] = useState([]);
 
   const [loading, setLoading] = useState(true);
+
   const [refreshing, setRefreshing] = useState(false);
 
   const [error, setError] = useState("");
 
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
-  const [courseFilter, setCourseFilter] = useState("All");
 
-  const [selectedEnrollment, setSelectedEnrollment] = useState(null);
+  const [statusFilter, setStatusFilter] =
+    useState("All");
 
-  const [actionEnrollment, setActionEnrollment] = useState(null);
+  const [courseFilter, setCourseFilter] =
+    useState("All");
+
+  const [selectedEnrollment, setSelectedEnrollment] =
+    useState(null);
+
+  const [actionEnrollment, setActionEnrollment] =
+    useState(null);
 
   const [actionType, setActionType] = useState("");
 
   const [adminNote, setAdminNote] = useState("");
 
-  const [processingId, setProcessingId] = useState("");
+  const [processingId, setProcessingId] =
+    useState("");
 
   /* ==========================================================
-     FETCH ENROLLMENTS
+     FETCH ENROLLMENTS FROM LOCAL STORAGE
   ========================================================== */
 
-  const fetchEnrollments = useCallback(async (showLoader = true) => {
-    const token = getToken();
+  const fetchEnrollments = useCallback(
+    (showLoader = true) => {
+      try {
+        if (showLoader) {
+          setLoading(true);
+        } else {
+          setRefreshing(true);
+        }
 
-    if (!token) {
-      setError("Authentication token not found. Please login again.");
+        setError("");
 
-      setLoading(false);
-      return;
-    }
+        const storedEnrollments =
+          readLocalArray(
+            STORAGE_KEYS.enrollments,
+          );
 
-    try {
-      if (showLoader) {
-        setLoading(true);
-      } else {
-        setRefreshing(true);
-      }
+        const sortedEnrollments =
+          sortNewest(storedEnrollments);
 
-      setError("");
-
-      const response = await api.get("/admin/enrollments", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setEnrollments(normalizeEnrollments(response.data));
-    } catch (err) {
-      console.error("Admin Enrollments Error:", err);
-
-      if (err?.response?.status === 401) {
-        setError("Your admin session has expired. Please login again.");
-      } else if (err?.response?.status === 403) {
-        setError("You do not have permission to access enrollments.");
-      } else {
-        setError(
-          err?.response?.data?.message ||
-            err?.message ||
-            "Unable to load enrollment requests.",
+        setEnrollments(sortedEnrollments);
+      } catch (err) {
+        console.error(
+          "Local Admin Enrollments Error:",
+          err,
         );
+
+        setError(
+          "Unable to load enrollment requests from local storage.",
+        );
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
       }
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
   /* ==========================================================
-     FETCH COURSE STATS
+     BUILD COURSE STATS LOCALLY
   ========================================================== */
 
-  const fetchCourseStats = useCallback(async () => {
-    const token = getToken();
-
-    if (!token) {
-      return;
-    }
-
+  const fetchCourseStats = useCallback(() => {
     try {
-      const response = await api.get("/admin/enrollments/stats", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const storedEnrollments =
+        readLocalArray(
+          STORAGE_KEYS.enrollments,
+        );
+
+      const storedCourses =
+        readLocalArray(
+          STORAGE_KEYS.courses,
+        );
+
+      const statsMap = new Map();
+
+      /*
+        First create entries from actual courses.
+      */
+
+      storedCourses.forEach((course) => {
+        const courseId = getId(course);
+
+        if (!courseId) {
+          return;
+        }
+
+        statsMap.set(String(courseId), {
+          course,
+          totalEnrollments: 0,
+          pendingRequests: 0,
+          approvedStudents: 0,
+        });
       });
 
-      setCourseStats(normalizeStats(response.data));
-    } catch (err) {
-      console.error("Enrollment Stats Error:", err);
+      /*
+        Then calculate enrollment counts.
+      */
+
+      storedEnrollments.forEach((enrollment) => {
+        const courseId =
+          getEnrollmentCourseId(enrollment);
+
+        const courseKey = String(
+          courseId || "unknown",
+        );
+
+        if (!statsMap.has(courseKey)) {
+          statsMap.set(courseKey, {
+            course: {
+              id: courseId,
+              title: getCourseTitle(enrollment),
+              category:
+                getCourseCategory(enrollment),
+              level:
+                getCourseLevel(enrollment),
+            },
+            totalEnrollments: 0,
+            pendingRequests: 0,
+            approvedStudents: 0,
+          });
+        }
+
+        const stat = statsMap.get(courseKey);
+
+        stat.totalEnrollments += 1;
+
+        const status = getStatus(enrollment);
+
+        if (status === "Pending") {
+          stat.pendingRequests += 1;
+        }
+
+        if (
+          status === "Approved" &&
+          getAccessStatus(enrollment) === "Granted"
+        ) {
+          stat.approvedStudents += 1;
+        }
+      });
+
+      const stats = Array.from(
+        statsMap.values(),
+      )
+        .filter(
+          (item) => item.totalEnrollments > 0,
+        )
+        .sort((a, b) =>
+          String(
+            a?.course?.title || "",
+          ).localeCompare(
+            String(
+              b?.course?.title || "",
+            ),
+          ),
+        );
+
+      setCourseStats(stats);
+    } catch (error) {
+      console.error(
+        "Local Enrollment Stats Error:",
+        error,
+      );
 
       setCourseStats([]);
     }
@@ -370,7 +540,63 @@ export default function AdminEnrollments() {
   useEffect(() => {
     fetchEnrollments();
     fetchCourseStats();
-  }, [fetchEnrollments, fetchCourseStats]);
+
+    const handleEnrollmentAdded = () => {
+      fetchEnrollments(false);
+      fetchCourseStats();
+    };
+
+    const handleEnrollmentUpdated = () => {
+      fetchEnrollments(false);
+      fetchCourseStats();
+    };
+
+    const handleStorage = (event) => {
+      if (
+        !event.key ||
+        event.key === STORAGE_KEYS.enrollments ||
+        event.key === STORAGE_KEYS.courses
+      ) {
+        fetchEnrollments(false);
+        fetchCourseStats();
+      }
+    };
+
+    window.addEventListener(
+      "enrollmentAdded",
+      handleEnrollmentAdded,
+    );
+
+    window.addEventListener(
+      "enrollmentUpdated",
+      handleEnrollmentUpdated,
+    );
+
+    window.addEventListener(
+      "storage",
+      handleStorage,
+    );
+
+    return () => {
+      window.removeEventListener(
+        "enrollmentAdded",
+        handleEnrollmentAdded,
+      );
+
+      window.removeEventListener(
+        "enrollmentUpdated",
+        handleEnrollmentUpdated,
+      );
+
+      window.removeEventListener(
+        "storage",
+        handleStorage,
+      );
+    };
+  }, [
+    fetchEnrollments,
+    fetchCourseStats,
+  ]);
 
   /* ==========================================================
      COURSE OPTIONS
@@ -380,19 +606,23 @@ export default function AdminEnrollments() {
     const map = new Map();
 
     enrollments.forEach((enrollment) => {
-      const course = getCourse(enrollment);
-      const courseId = getId(course);
+      const courseId =
+        getEnrollmentCourseId(enrollment);
+
+      const courseTitle =
+        getCourseTitle(enrollment);
 
       if (courseId) {
-        map.set(courseId, {
-          id: courseId,
-          title: course?.title || "Unknown Course",
+        map.set(String(courseId), {
+          id: String(courseId),
+          title: courseTitle,
         });
       }
     });
 
-    return Array.from(map.values()).sort((a, b) =>
-      a.title.localeCompare(b.title),
+    return Array.from(map.values()).sort(
+      (a, b) =>
+        a.title.localeCompare(b.title),
     );
   }, [enrollments]);
 
@@ -402,23 +632,30 @@ export default function AdminEnrollments() {
 
   const statistics = useMemo(() => {
     const pending = enrollments.filter(
-      (item) => getStatus(item) === "Pending",
+      (item) =>
+        getStatus(item) === "Pending",
     ).length;
 
     const approved = enrollments.filter(
-      (item) => getStatus(item) === "Approved",
+      (item) =>
+        getStatus(item) === "Approved",
     ).length;
 
     const rejected = enrollments.filter(
-      (item) => getStatus(item) === "Rejected",
+      (item) =>
+        getStatus(item) === "Rejected",
     ).length;
 
     const granted = enrollments.filter(
-      (item) => getAccessStatus(item) === "Granted",
+      (item) =>
+        getAccessStatus(item) ===
+        "Granted",
     ).length;
 
     const revoked = enrollments.filter(
-      (item) => getAccessStatus(item) === "Revoked",
+      (item) =>
+        getAccessStatus(item) ===
+        "Revoked",
     ).length;
 
     return {
@@ -436,60 +673,88 @@ export default function AdminEnrollments() {
   ========================================================== */
 
   const filteredEnrollments = useMemo(() => {
-    const query = search.trim().toLowerCase();
+    const query = search
+      .trim()
+      .toLowerCase();
 
-    return enrollments.filter((enrollment) => {
-      const status = getStatus(enrollment);
+    return enrollments.filter(
+      (enrollment) => {
+        const status =
+          getStatus(enrollment);
 
-      const course = getCourse(enrollment);
+        const courseId =
+          getEnrollmentCourseId(
+            enrollment,
+          );
 
-      const courseId = getId(course);
+        const matchesStatus =
+          statusFilter === "All" ||
+          status.toLowerCase() ===
+            statusFilter.toLowerCase();
 
-      const matchesStatus =
-        statusFilter === "All" ||
-        status.toLowerCase() === statusFilter.toLowerCase();
+        const matchesCourse =
+          courseFilter === "All" ||
+          String(courseId) ===
+            String(courseFilter);
 
-      const matchesCourse = courseFilter === "All" || courseId === courseFilter;
+        if (
+          !matchesStatus ||
+          !matchesCourse
+        ) {
+          return false;
+        }
 
-      if (!matchesStatus || !matchesCourse) {
-        return false;
-      }
+        if (!query) {
+          return true;
+        }
 
-      if (!query) {
-        return true;
-      }
+        const searchable = [
+          getStudentName(enrollment),
+          getStudentEmail(enrollment),
+          getStudentPhone(enrollment),
+          getCourseTitle(enrollment),
+          getCourseCategory(enrollment),
+          getCourseLevel(enrollment),
+          enrollment?.education,
+          enrollment?.experience,
+          enrollment?.careerGoal,
+          enrollment?.message,
+          enrollment?.adminNote,
+          enrollment?.source,
+          enrollment?.status,
+          enrollment?.accessStatus,
+          enrollment?.courseId,
+          enrollment?.programId,
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
 
-      const searchable = [
-        getStudentName(enrollment),
-        getStudentEmail(enrollment),
-        getStudentPhone(enrollment),
-        getCourseTitle(enrollment),
-        getCourseCategory(enrollment),
-        getCourseLevel(enrollment),
-        enrollment?.education,
-        enrollment?.experience,
-        enrollment?.message,
-        enrollment?.adminNote,
-        enrollment?.source,
-        enrollment?.status,
-        enrollment?.accessStatus,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-
-      return searchable.includes(query);
-    });
-  }, [enrollments, search, statusFilter, courseFilter]);
+        return searchable.includes(query);
+      },
+    );
+  }, [
+    enrollments,
+    search,
+    statusFilter,
+    courseFilter,
+  ]);
 
   /* ==========================================================
      OPEN ACTION
   ========================================================== */
 
-  const openAction = (enrollment, type) => {
+  const openAction = (
+    enrollment,
+    type,
+  ) => {
     setActionEnrollment(enrollment);
+
     setActionType(type);
-    setAdminNote(enrollment?.adminNote || "");
+
+    setAdminNote(
+      enrollment?.adminNote || "",
+    );
   };
 
   /* ==========================================================
@@ -502,7 +767,9 @@ export default function AdminEnrollments() {
     }
 
     setActionEnrollment(null);
+
     setActionType("");
+
     setAdminNote("");
   };
 
@@ -515,116 +782,209 @@ export default function AdminEnrollments() {
       return;
     }
 
-    const enrollmentId = getId(actionEnrollment);
+    const enrollmentId =
+      getId(actionEnrollment);
 
     if (!enrollmentId) {
-      toast.error("Enrollment ID not found.");
-      return;
-    }
+      toast.error(
+        "Enrollment ID not found.",
+      );
 
-    const token = getToken();
-
-    if (!token) {
-      toast.error("Authentication token not found.");
-      return;
-    }
-
-    let endpoint = "";
-
-    /*
-      IMPORTANT:
-      "restore" intentionally uses the existing
-      approve endpoint.
-
-      This means the backend does not need a new
-      route if its existing approve controller
-      supports approving an already-approved/revoked
-      enrollment again.
-    */
-
-    if (actionType === "approve" || actionType === "restore") {
-      endpoint = `/admin/enrollments/${enrollmentId}/approve`;
-    }
-
-    if (actionType === "reject") {
-      endpoint = `/admin/enrollments/${enrollmentId}/reject`;
-    }
-
-    if (actionType === "revoke") {
-      endpoint = `/admin/enrollments/${enrollmentId}/revoke`;
-    }
-
-    if (!endpoint) {
       return;
     }
 
     try {
       setProcessingId(enrollmentId);
 
-      const response = await api.patch(
-        endpoint,
-        {
-          adminNote: adminNote.trim(),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const existingEnrollments =
+        readLocalArray(
+          STORAGE_KEYS.enrollments,
+        );
+
+      const currentEnrollment =
+        existingEnrollments.find(
+          (item) =>
+            String(getId(item)) ===
+            String(enrollmentId),
+        );
+
+      if (!currentEnrollment) {
+        toast.error(
+          "Enrollment no longer exists.",
+        );
+
+        return;
+      }
+
+      const now =
+        new Date().toISOString();
+
+      let updatedEnrollment = {
+        ...currentEnrollment,
+        adminNote:
+          adminNote.trim(),
+        updatedAt: now,
+      };
+
+      /* ======================================================
+         APPROVE
+      ====================================================== */
+
+      if (
+        actionType === "approve" ||
+        actionType === "restore"
+      ) {
+        updatedEnrollment = {
+          ...updatedEnrollment,
+
+          status: "Approved",
+
+          accessStatus: "Granted",
+
+          accessGranted: true,
+
+          reviewedAt:
+            currentEnrollment.reviewedAt ||
+            now,
+
+          accessGrantedAt: now,
+
+          accessRevokedAt: null,
+        };
+      }
+
+      /* ======================================================
+         REJECT
+      ====================================================== */
+
+      if (
+        actionType === "reject"
+      ) {
+        updatedEnrollment = {
+          ...updatedEnrollment,
+
+          status: "Rejected",
+
+          accessStatus: "Not Granted",
+
+          accessGranted: false,
+
+          reviewedAt: now,
+
+          accessRevokedAt: null,
+        };
+      }
+
+      /* ======================================================
+         REVOKE
+      ====================================================== */
+
+      if (
+        actionType === "revoke"
+      ) {
+        updatedEnrollment = {
+          ...updatedEnrollment,
+
+          status: "Approved",
+
+          accessStatus: "Revoked",
+
+          accessGranted: false,
+
+          accessRevokedAt: now,
+        };
+      }
+
+      const updatedEnrollments =
+        existingEnrollments.map(
+          (item) =>
+            String(getId(item)) ===
+            String(enrollmentId)
+              ? updatedEnrollment
+              : item,
+        );
+
+      const saved = writeLocalArray(
+        STORAGE_KEYS.enrollments,
+        updatedEnrollments,
       );
 
-      const updatedEnrollment = response?.data?.enrollment;
+      if (!saved) {
+        throw new Error(
+          "Unable to save enrollment.",
+        );
+      }
 
-      if (updatedEnrollment) {
-        setEnrollments((previous) =>
-          previous.map((item) =>
-            getId(item) === enrollmentId
-              ? {
-                  ...item,
-                  ...updatedEnrollment,
-                }
-              : item,
-          ),
+      const sortedEnrollments =
+        sortNewest(
+          updatedEnrollments,
         );
 
-        setSelectedEnrollment((previous) =>
-          previous && getId(previous) === enrollmentId
-            ? {
-                ...previous,
-                ...updatedEnrollment,
-              }
+      setEnrollments(
+        sortedEnrollments,
+      );
+
+      setSelectedEnrollment(
+        (previous) =>
+          previous &&
+          String(getId(previous)) ===
+            String(enrollmentId)
+            ? updatedEnrollment
             : previous,
+      );
+
+      window.dispatchEvent(
+        new Event("enrollmentUpdated"),
+      );
+
+      if (
+        actionType === "approve"
+      ) {
+        toast.success(
+          "Course access granted successfully.",
         );
-      } else {
-        await fetchEnrollments(false);
       }
 
-      if (actionType === "approve") {
-        toast.success("Course access granted successfully.");
+      if (
+        actionType === "restore"
+      ) {
+        toast.success(
+          "Course access restored successfully.",
+        );
       }
 
-      if (actionType === "restore") {
-        toast.success("Course access restored successfully.");
+      if (
+        actionType === "reject"
+      ) {
+        toast.success(
+          "Enrollment request rejected.",
+        );
       }
 
-      if (actionType === "reject") {
-        toast.success("Enrollment request rejected.");
-      }
-
-      if (actionType === "revoke") {
-        toast.success("Course access revoked successfully.");
+      if (
+        actionType === "revoke"
+      ) {
+        toast.success(
+          "Course access revoked successfully.",
+        );
       }
 
       setActionEnrollment(null);
+
       setActionType("");
+
       setAdminNote("");
 
       fetchCourseStats();
     } catch (err) {
-      console.error("Enrollment Action Error:", err);
+      console.error(
+        "Local Enrollment Action Error:",
+        err,
+      );
 
       toast.error(
-        err?.response?.data?.message || "Unable to update enrollment.",
+        err?.message ||
+          "Unable to update enrollment.",
       );
     } finally {
       setProcessingId("");
@@ -636,7 +996,17 @@ export default function AdminEnrollments() {
   ========================================================== */
 
   const handleRefresh = async () => {
-    await Promise.all([fetchEnrollments(false), fetchCourseStats()]);
+    setRefreshing(true);
+
+    try {
+      fetchEnrollments(false);
+
+      fetchCourseStats();
+    } finally {
+      setTimeout(() => {
+        setRefreshing(false);
+      }, 300);
+    }
   };
 
   /* ==========================================================
@@ -650,12 +1020,14 @@ export default function AdminEnrollments() {
           <div className="mb-8 h-36 animate-pulse rounded-[2rem] bg-white shadow-sm" />
 
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div
-                key={index}
-                className="h-32 animate-pulse rounded-2xl bg-white shadow-sm"
-              />
-            ))}
+            {Array.from({ length: 4 }).map(
+              (_, index) => (
+                <div
+                  key={index}
+                  className="h-32 animate-pulse rounded-2xl bg-white shadow-sm"
+                />
+              ),
+            )}
           </div>
 
           <div className="mt-6 h-[500px] animate-pulse rounded-3xl bg-white shadow-sm" />
@@ -681,12 +1053,16 @@ export default function AdminEnrollments() {
               Unable to load enrollments
             </h1>
 
-            <p className="mt-3 text-sm leading-6 text-slate-500">{error}</p>
+            <p className="mt-3 text-sm leading-6 text-slate-500">
+              {error}
+            </p>
 
             <button
               onClick={() => {
                 setError("");
+
                 fetchEnrollments();
+
                 fetchCourseStats();
               }}
               className="mt-7 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-indigo-700"
@@ -742,8 +1118,13 @@ export default function AdminEnrollments() {
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <RefreshCw
-                className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
+                className={`h-4 w-4 ${
+                  refreshing
+                    ? "animate-spin"
+                    : ""
+                }`}
               />
+
               Refresh Enrollments
             </button>
           </div>
@@ -821,9 +1202,15 @@ export default function AdminEnrollments() {
               icon={Clock3}
               iconClass="text-amber-500"
               onClick={() =>
-                setStatusFilter(statusFilter === "Pending" ? "All" : "Pending")
+                setStatusFilter(
+                  statusFilter === "Pending"
+                    ? "All"
+                    : "Pending",
+                )
               }
-              active={statusFilter === "Pending"}
+              active={
+                statusFilter === "Pending"
+              }
             />
 
             <OverviewItem
@@ -833,10 +1220,14 @@ export default function AdminEnrollments() {
               iconClass="text-emerald-500"
               onClick={() =>
                 setStatusFilter(
-                  statusFilter === "Approved" ? "All" : "Approved",
+                  statusFilter === "Approved"
+                    ? "All"
+                    : "Approved",
                 )
               }
-              active={statusFilter === "Approved"}
+              active={
+                statusFilter === "Approved"
+              }
             />
 
             <OverviewItem
@@ -846,10 +1237,14 @@ export default function AdminEnrollments() {
               iconClass="text-red-500"
               onClick={() =>
                 setStatusFilter(
-                  statusFilter === "Rejected" ? "All" : "Rejected",
+                  statusFilter === "Rejected"
+                    ? "All"
+                    : "Rejected",
                 )
               }
-              active={statusFilter === "Rejected"}
+              active={
+                statusFilter === "Rejected"
+              }
             />
 
             <OverviewItem
@@ -857,8 +1252,12 @@ export default function AdminEnrollments() {
               value={statistics.granted}
               icon={ShieldCheck}
               iconClass="text-indigo-500"
-              onClick={() => setStatusFilter("Approved")}
-              active={statusFilter === "Approved"}
+              onClick={() =>
+                setStatusFilter("Approved")
+              }
+              active={
+                statusFilter === "Approved"
+              }
             />
           </div>
         </section>
@@ -886,58 +1285,81 @@ export default function AdminEnrollments() {
             </div>
 
             <div className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-3">
-              {courseStats.map((stat, index) => (
-                <motion.div
-                  key={getId(stat.course) || index}
-                  initial={{
-                    opacity: 0,
-                    y: 8,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  transition={{
-                    delay: Math.min(index * 0.04, 0.2),
-                  }}
-                  className="rounded-2xl border border-slate-100 bg-slate-50 p-4"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-black text-slate-900">
-                        {stat?.course?.title || "Deleted Course"}
-                      </p>
-
-                      {stat?.course?.category && (
-                        <p className="mt-1 text-[10px] font-medium text-slate-400">
-                          {stat.course.category}
+              {courseStats.map(
+                (stat, index) => (
+                  <motion.div
+                    key={
+                      getId(stat.course) ||
+                      index
+                    }
+                    initial={{
+                      opacity: 0,
+                      y: 8,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    transition={{
+                      delay: Math.min(
+                        index * 0.04,
+                        0.2,
+                      ),
+                    }}
+                    className="rounded-2xl border border-slate-100 bg-slate-50 p-4"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-black text-slate-900">
+                          {stat?.course
+                            ?.title ||
+                            "Deleted Course"}
                         </p>
-                      )}
+
+                        {stat?.course
+                          ?.category && (
+                          <p className="mt-1 text-[10px] font-medium text-slate-400">
+                            {
+                              stat.course
+                                .category
+                            }
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-indigo-600 shadow-sm">
+                        <BookOpen className="h-4 w-4" />
+                      </div>
                     </div>
 
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-indigo-600 shadow-sm">
-                      <BookOpen className="h-4 w-4" />
+                    <div className="mt-4 grid grid-cols-3 gap-2">
+                      <MiniStat
+                        label="Total"
+                        value={
+                          stat.totalEnrollments ??
+                          0
+                        }
+                      />
+
+                      <MiniStat
+                        label="Pending"
+                        value={
+                          stat.pendingRequests ??
+                          0
+                        }
+                      />
+
+                      <MiniStat
+                        label="Active"
+                        value={
+                          stat.approvedStudents ??
+                          0
+                        }
+                      />
                     </div>
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-3 gap-2">
-                    <MiniStat
-                      label="Total"
-                      value={stat.totalEnrollments ?? 0}
-                    />
-
-                    <MiniStat
-                      label="Pending"
-                      value={stat.pendingRequests ?? 0}
-                    />
-
-                    <MiniStat
-                      label="Active"
-                      value={stat.approvedStudents ?? 0}
-                    />
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ),
+              )}
             </div>
           </section>
         )}
@@ -954,7 +1376,9 @@ export default function AdminEnrollments() {
               </h2>
 
               <p className="mt-1 text-xs text-slate-500">
-                Showing {filteredEnrollments.length} of {enrollments.length}{" "}
+                Showing{" "}
+                {filteredEnrollments.length}{" "}
+                of {enrollments.length}{" "}
                 requests
               </p>
             </div>
@@ -965,7 +1389,11 @@ export default function AdminEnrollments() {
 
                 <input
                   value={search}
-                  onChange={(event) => setSearch(event.target.value)}
+                  onChange={(event) =>
+                    setSearch(
+                      event.target.value,
+                    )
+                  }
                   placeholder="Search enrollments..."
                   className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm font-medium outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 sm:w-64"
                 />
@@ -974,16 +1402,27 @@ export default function AdminEnrollments() {
               <div className="relative">
                 <select
                   value={statusFilter}
-                  onChange={(event) => setStatusFilter(event.target.value)}
+                  onChange={(event) =>
+                    setStatusFilter(
+                      event.target.value,
+                    )
+                  }
                   className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-4 pr-10 text-sm font-semibold text-slate-700 outline-none transition focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 sm:w-40"
                 >
-                  <option value="All">All Status</option>
+                  <option value="All">
+                    All Status
+                  </option>
 
-                  {STATUS_OPTIONS.map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
+                  {STATUS_OPTIONS.map(
+                    (status) => (
+                      <option
+                        key={status}
+                        value={status}
+                      >
+                        {status}
+                      </option>
+                    ),
+                  )}
                 </select>
 
                 <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -992,16 +1431,27 @@ export default function AdminEnrollments() {
               <div className="relative">
                 <select
                   value={courseFilter}
-                  onChange={(event) => setCourseFilter(event.target.value)}
+                  onChange={(event) =>
+                    setCourseFilter(
+                      event.target.value,
+                    )
+                  }
                   className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-4 pr-10 text-sm font-semibold text-slate-700 outline-none transition focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 sm:w-48"
                 >
-                  <option value="All">All Courses</option>
+                  <option value="All">
+                    All Courses
+                  </option>
 
-                  {courseOptions.map((course) => (
-                    <option key={course.id} value={course.id}>
-                      {course.title}
-                    </option>
-                  ))}
+                  {courseOptions.map(
+                    (course) => (
+                      <option
+                        key={course.id}
+                        value={course.id}
+                      >
+                        {course.title}
+                      </option>
+                    ),
+                  )}
                 </select>
 
                 <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -1048,194 +1498,257 @@ export default function AdminEnrollments() {
               </thead>
 
               <tbody className="divide-y divide-slate-100">
-                {filteredEnrollments.map((enrollment, index) => {
-                  const id = getId(enrollment);
+                {filteredEnrollments.map(
+                  (enrollment, index) => {
+                    const id =
+                      getId(enrollment);
 
-                  const name = getStudentName(enrollment);
+                    const name =
+                      getStudentName(
+                        enrollment,
+                      );
 
-                  const status = getStatus(enrollment);
+                    const status =
+                      getStatus(
+                        enrollment,
+                      );
 
-                  const access = getAccessStatus(enrollment);
+                    const access =
+                      getAccessStatus(
+                        enrollment,
+                      );
 
-                  const statusMeta = getStatusMeta(status);
+                    const statusMeta =
+                      getStatusMeta(status);
 
-                  const accessMeta = getAccessMeta(access);
+                    const accessMeta =
+                      getAccessMeta(access);
 
-                  return (
-                    <motion.tr
-                      key={id || index}
-                      initial={{
-                        opacity: 0,
-                      }}
-                      animate={{
-                        opacity: 1,
-                      }}
-                      transition={{
-                        delay: Math.min(index * 0.02, 0.3),
-                      }}
-                      className="group transition hover:bg-indigo-50/30"
-                    >
-                      <td className="px-6 py-5">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-black text-white shadow-sm">
-                            {name.charAt(0).toUpperCase()}
+                    return (
+                      <motion.tr
+                        key={
+                          id || index
+                        }
+                        initial={{
+                          opacity: 0,
+                        }}
+                        animate={{
+                          opacity: 1,
+                        }}
+                        transition={{
+                          delay: Math.min(
+                            index * 0.02,
+                            0.3,
+                          ),
+                        }}
+                        className="group transition hover:bg-indigo-50/30"
+                      >
+                        <td className="px-6 py-5">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-black text-white shadow-sm">
+                              {name
+                                .charAt(
+                                  0,
+                                )
+                                .toUpperCase()}
+                            </div>
+
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-black text-slate-900">
+                                {name}
+                              </p>
+
+                              <p className="mt-0.5 text-[10px] text-slate-400">
+                                Enrollment #
+                                {String(
+                                  id,
+                                ).slice(
+                                  -6,
+                                )}
+                              </p>
+                            </div>
                           </div>
+                        </td>
 
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-black text-slate-900">
-                              {name}
-                            </p>
+                        <td className="px-6 py-5">
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-2">
+                              <Mail className="h-3.5 w-3.5 text-slate-400" />
 
-                            <p className="mt-0.5 text-[10px] text-slate-400">
-                              Enrollment #{String(id).slice(-6)}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="px-6 py-5">
-                        <div className="space-y-1.5">
-                          <div className="flex items-center gap-2">
-                            <Mail className="h-3.5 w-3.5 text-slate-400" />
-
-                            <span className="max-w-[190px] truncate text-xs font-medium text-slate-600">
-                              {getStudentEmail(enrollment)}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <Phone className="h-3.5 w-3.5 text-slate-400" />
-
-                            <span className="text-xs font-medium text-slate-600">
-                              {getStudentPhone(enrollment)}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="px-6 py-5">
-                        <div className="max-w-[220px]">
-                          <p className="truncate text-xs font-black text-slate-800">
-                            {getCourseTitle(enrollment)}
-                          </p>
-
-                          <div className="mt-1 flex items-center gap-2">
-                            {getCourseCategory(enrollment) && (
-                              <span className="truncate text-[10px] font-medium text-slate-400">
-                                {getCourseCategory(enrollment)}
+                              <span className="max-w-[190px] truncate text-xs font-medium text-slate-600">
+                                {getStudentEmail(
+                                  enrollment,
+                                )}
                               </span>
-                            )}
+                            </div>
 
-                            {getCourseLevel(enrollment) && (
-                              <>
-                                <span className="h-1 w-1 rounded-full bg-slate-300" />
+                            <div className="flex items-center gap-2">
+                              <Phone className="h-3.5 w-3.5 text-slate-400" />
 
-                                <span className="text-[10px] font-medium text-slate-400">
-                                  {getCourseLevel(enrollment)}
+                              <span className="text-xs font-medium text-slate-600">
+                                {getStudentPhone(
+                                  enrollment,
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td className="px-6 py-5">
+                          <div className="max-w-[220px]">
+                            <p className="truncate text-xs font-black text-slate-800">
+                              {getCourseTitle(
+                                enrollment,
+                              )}
+                            </p>
+
+                            <div className="mt-1 flex items-center gap-2">
+                              {getCourseCategory(
+                                enrollment,
+                              ) && (
+                                <span className="truncate text-[10px] font-medium text-slate-400">
+                                  {getCourseCategory(
+                                    enrollment,
+                                  )}
                                 </span>
+                              )}
+
+                              {getCourseLevel(
+                                enrollment,
+                              ) && (
+                                <>
+                                  <span className="h-1 w-1 rounded-full bg-slate-300" />
+
+                                  <span className="text-[10px] font-medium text-slate-400">
+                                    {getCourseLevel(
+                                      enrollment,
+                                    )}
+                                  </span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+
+                        <td className="px-6 py-5">
+                          <span
+                            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-black ${statusMeta.bg} ${statusMeta.text} ${statusMeta.border}`}
+                          >
+                            <span
+                              className={`h-1.5 w-1.5 rounded-full ${statusMeta.dot}`}
+                            />
+
+                            {status}
+                          </span>
+                        </td>
+
+                        <td className="px-6 py-5">
+                          <span
+                            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-black ${accessMeta.bg} ${accessMeta.text} ${accessMeta.border}`}
+                          >
+                            <span
+                              className={`h-1.5 w-1.5 rounded-full ${accessMeta.dot}`}
+                            />
+
+                            {accessMeta.label}
+                          </span>
+                        </td>
+
+                        <td className="px-6 py-5">
+                          <span className="text-xs font-medium text-slate-500">
+                            {formatDate(
+                              enrollment.createdAt ||
+                                enrollment.submittedAt,
+                            )}
+                          </span>
+                        </td>
+
+                        <td className="px-6 py-5">
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() =>
+                                setSelectedEnrollment(
+                                  enrollment,
+                                )
+                              }
+                              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600"
+                              title="View enrollment"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </button>
+
+                            {status ===
+                              "Pending" && (
+                              <>
+                                <button
+                                  onClick={() =>
+                                    openAction(
+                                      enrollment,
+                                      "approve",
+                                    )
+                                  }
+                                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-100 text-emerald-600 transition hover:bg-emerald-50"
+                                  title="Approve and grant access"
+                                >
+                                  <UserCheck className="h-4 w-4" />
+                                </button>
+
+                                <button
+                                  onClick={() =>
+                                    openAction(
+                                      enrollment,
+                                      "reject",
+                                    )
+                                  }
+                                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-red-100 text-red-500 transition hover:bg-red-50"
+                                  title="Reject enrollment"
+                                >
+                                  <UserX className="h-4 w-4" />
+                                </button>
                               </>
                             )}
+
+                            {status ===
+                              "Approved" &&
+                              access ===
+                                "Granted" && (
+                                <button
+                                  onClick={() =>
+                                    openAction(
+                                      enrollment,
+                                      "revoke",
+                                    )
+                                  }
+                                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-100 text-amber-600 transition hover:bg-amber-50"
+                                  title="Revoke course access"
+                                >
+                                  <Ban className="h-4 w-4" />
+                                </button>
+                              )}
+
+                            {status ===
+                              "Approved" &&
+                              access ===
+                                "Revoked" && (
+                                <button
+                                  onClick={() =>
+                                    openAction(
+                                      enrollment,
+                                      "restore",
+                                    )
+                                  }
+                                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-100 text-emerald-600 transition hover:bg-emerald-50"
+                                  title="Grant access again"
+                                >
+                                  <RotateCcw className="h-4 w-4" />
+                                </button>
+                              )}
                           </div>
-                        </div>
-                      </td>
-
-                      <td className="px-6 py-5">
-                        <span
-                          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-black ${statusMeta.bg} ${statusMeta.text} ${statusMeta.border}`}
-                        >
-                          <span
-                            className={`h-1.5 w-1.5 rounded-full ${statusMeta.dot}`}
-                          />
-
-                          {status}
-                        </span>
-                      </td>
-
-                      <td className="px-6 py-5">
-                        <span
-                          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-black ${accessMeta.bg} ${accessMeta.text} ${accessMeta.border}`}
-                        >
-                          <span
-                            className={`h-1.5 w-1.5 rounded-full ${accessMeta.dot}`}
-                          />
-
-                          {accessMeta.label}
-                        </span>
-                      </td>
-
-                      <td className="px-6 py-5">
-                        <span className="text-xs font-medium text-slate-500">
-                          {formatDate(enrollment.createdAt)}
-                        </span>
-                      </td>
-
-                      {/* ACTIONS */}
-
-                      <td className="px-6 py-5">
-                        <div className="flex justify-end gap-2">
-                          {/* VIEW */}
-
-                          <button
-                            onClick={() => setSelectedEnrollment(enrollment)}
-                            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600"
-                            title="View enrollment"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </button>
-
-                          {/* PENDING ACTIONS */}
-
-                          {status === "Pending" && (
-                            <>
-                              <button
-                                onClick={() =>
-                                  openAction(enrollment, "approve")
-                                }
-                                className="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-100 text-emerald-600 transition hover:bg-emerald-50"
-                                title="Approve and grant access"
-                              >
-                                <UserCheck className="h-4 w-4" />
-                              </button>
-
-                              <button
-                                onClick={() => openAction(enrollment, "reject")}
-                                className="flex h-9 w-9 items-center justify-center rounded-xl border border-red-100 text-red-500 transition hover:bg-red-50"
-                                title="Reject enrollment"
-                              >
-                                <UserX className="h-4 w-4" />
-                              </button>
-                            </>
-                          )}
-
-                          {/* ACTIVE ACCESS */}
-
-                          {status === "Approved" && access === "Granted" && (
-                            <button
-                              onClick={() => openAction(enrollment, "revoke")}
-                              className="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-100 text-amber-600 transition hover:bg-amber-50"
-                              title="Revoke course access"
-                            >
-                              <Ban className="h-4 w-4" />
-                            </button>
-                          )}
-
-                          {/* REVOKED ACCESS
-                                RESTORE BUTTON */}
-
-                          {status === "Approved" && access === "Revoked" && (
-                            <button
-                              onClick={() => openAction(enrollment, "restore")}
-                              className="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-100 text-emerald-600 transition hover:bg-emerald-50"
-                              title="Grant access again"
-                            >
-                              <RotateCcw className="h-4 w-4" />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </motion.tr>
-                  );
-                })}
+                        </td>
+                      </motion.tr>
+                    );
+                  },
+                )}
               </tbody>
             </table>
           </div>
@@ -1245,186 +1758,250 @@ export default function AdminEnrollments() {
           ================================================== */}
 
           <div className="divide-y divide-slate-100 lg:hidden">
-            {filteredEnrollments.map((enrollment, index) => {
-              const id = getId(enrollment);
+            {filteredEnrollments.map(
+              (enrollment, index) => {
+                const id =
+                  getId(enrollment);
 
-              const name = getStudentName(enrollment);
+                const name =
+                  getStudentName(
+                    enrollment,
+                  );
 
-              const status = getStatus(enrollment);
+                const status =
+                  getStatus(enrollment);
 
-              const access = getAccessStatus(enrollment);
+                const access =
+                  getAccessStatus(
+                    enrollment,
+                  );
 
-              const statusMeta = getStatusMeta(status);
+                const statusMeta =
+                  getStatusMeta(status);
 
-              const accessMeta = getAccessMeta(access);
+                const accessMeta =
+                  getAccessMeta(access);
 
-              return (
-                <motion.div
-                  key={id || index}
-                  initial={{
-                    opacity: 0,
-                    y: 8,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  className="p-5"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-black text-white">
-                        {name.charAt(0).toUpperCase()}
+                return (
+                  <motion.div
+                    key={
+                      id || index
+                    }
+                    initial={{
+                      opacity: 0,
+                      y: 8,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    className="p-5"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-black text-white">
+                          {name
+                            .charAt(0)
+                            .toUpperCase()}
+                        </div>
+
+                        <div className="min-w-0">
+                          <h3 className="truncate text-sm font-black text-slate-900">
+                            {name}
+                          </h3>
+
+                          <p className="mt-1 truncate text-xs text-slate-400">
+                            {getStudentEmail(
+                              enrollment,
+                            )}
+                          </p>
+                        </div>
                       </div>
 
-                      <div className="min-w-0">
-                        <h3 className="truncate text-sm font-black text-slate-900">
-                          {name}
-                        </h3>
+                      <span
+                        className={`shrink-0 rounded-full border px-2.5 py-1 text-[9px] font-black ${statusMeta.bg} ${statusMeta.text} ${statusMeta.border}`}
+                      >
+                        {status}
+                      </span>
+                    </div>
 
-                        <p className="mt-1 truncate text-xs text-slate-400">
-                          {getStudentEmail(enrollment)}
+                    <div className="mt-5 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4">
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="h-4 w-4 text-indigo-500" />
+
+                        <p className="text-[9px] font-black uppercase tracking-wider text-indigo-400">
+                          Course
+                        </p>
+                      </div>
+
+                      <p className="mt-2 text-sm font-black text-indigo-900">
+                        {getCourseTitle(
+                          enrollment,
+                        )}
+                      </p>
+
+                      {(getCourseCategory(
+                        enrollment,
+                      ) ||
+                        getCourseLevel(
+                          enrollment,
+                        )) && (
+                        <p className="mt-1 text-[10px] font-medium text-indigo-500">
+                          {[
+                            getCourseCategory(
+                              enrollment,
+                            ),
+                            getCourseLevel(
+                              enrollment,
+                            ),
+                          ]
+                            .filter(
+                              Boolean,
+                            )
+                            .join(
+                              " • ",
+                            )}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="mt-3 grid grid-cols-2 gap-3">
+                      <div className="rounded-xl bg-slate-50 p-3">
+                        <p className="text-[9px] font-black uppercase tracking-wider text-slate-400">
+                          Phone
+                        </p>
+
+                        <p className="mt-1 truncate text-xs font-semibold text-slate-700">
+                          {getStudentPhone(
+                            enrollment,
+                          )}
+                        </p>
+                      </div>
+
+                      <div className="rounded-xl bg-slate-50 p-3">
+                        <p className="text-[9px] font-black uppercase tracking-wider text-slate-400">
+                          Requested
+                        </p>
+
+                        <p className="mt-1 text-xs font-semibold text-slate-700">
+                          {formatDate(
+                            enrollment.createdAt ||
+                              enrollment.submittedAt,
+                          )}
                         </p>
                       </div>
                     </div>
 
-                    <span
-                      className={`shrink-0 rounded-full border px-2.5 py-1 text-[9px] font-black ${statusMeta.bg} ${statusMeta.text} ${statusMeta.border}`}
-                    >
-                      {status}
-                    </span>
-                  </div>
-
-                  <div className="mt-5 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4">
-                    <div className="flex items-center gap-2">
-                      <BookOpen className="h-4 w-4 text-indigo-500" />
-
-                      <p className="text-[9px] font-black uppercase tracking-wider text-indigo-400">
-                        Course
-                      </p>
-                    </div>
-
-                    <p className="mt-2 text-sm font-black text-indigo-900">
-                      {getCourseTitle(enrollment)}
-                    </p>
-
-                    {(getCourseCategory(enrollment) ||
-                      getCourseLevel(enrollment)) && (
-                      <p className="mt-1 text-[10px] font-medium text-indigo-500">
-                        {[
-                          getCourseCategory(enrollment),
-                          getCourseLevel(enrollment),
-                        ]
-                          .filter(Boolean)
-                          .join(" • ")}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="mt-3 grid grid-cols-2 gap-3">
-                    <div className="rounded-xl bg-slate-50 p-3">
-                      <p className="text-[9px] font-black uppercase tracking-wider text-slate-400">
-                        Phone
-                      </p>
-
-                      <p className="mt-1 truncate text-xs font-semibold text-slate-700">
-                        {getStudentPhone(enrollment)}
-                      </p>
-                    </div>
-
-                    <div className="rounded-xl bg-slate-50 p-3">
-                      <p className="text-[9px] font-black uppercase tracking-wider text-slate-400">
-                        Requested
-                      </p>
-
-                      <p className="mt-1 text-xs font-semibold text-slate-700">
-                        {formatDate(enrollment.createdAt)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-3">
-                    <div
-                      className={`flex items-center justify-between rounded-xl border px-3 py-3 ${accessMeta.bg} ${accessMeta.border}`}
-                    >
-                      <span className="text-[9px] font-black uppercase tracking-wider text-slate-500">
-                        Course Access
-                      </span>
-
-                      <span
-                        className={`text-[10px] font-black ${accessMeta.text}`}
+                    <div className="mt-3">
+                      <div
+                        className={`flex items-center justify-between rounded-xl border px-3 py-3 ${accessMeta.bg} ${accessMeta.border}`}
                       >
-                        {accessMeta.label}
-                      </span>
-                    </div>
-                  </div>
+                        <span className="text-[9px] font-black uppercase tracking-wider text-slate-500">
+                          Course Access
+                        </span>
 
-                  <div className="mt-4 flex gap-2">
-                    <button
-                      onClick={() => setSelectedEnrollment(enrollment)}
-                      className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
-                    >
-                      <Eye className="h-4 w-4" />
-                      View
-                    </button>
-
-                    {/* PENDING */}
-
-                    {status === "Pending" && (
-                      <>
-                        <button
-                          onClick={() => openAction(enrollment, "approve")}
-                          className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-100 text-emerald-600 transition hover:bg-emerald-50"
-                          title="Approve"
+                        <span
+                          className={`text-[10px] font-black ${accessMeta.text}`}
                         >
-                          <UserCheck className="h-4 w-4" />
-                        </button>
+                          {
+                            accessMeta.label
+                          }
+                        </span>
+                      </div>
+                    </div>
 
-                        <button
-                          onClick={() => openAction(enrollment, "reject")}
-                          className="flex h-10 w-10 items-center justify-center rounded-xl border border-red-100 text-red-500 transition hover:bg-red-50"
-                          title="Reject"
-                        >
-                          <UserX className="h-4 w-4" />
-                        </button>
-                      </>
-                    )}
-
-                    {/* ACTIVE ACCESS */}
-
-                    {status === "Approved" && access === "Granted" && (
+                    <div className="mt-4 flex gap-2">
                       <button
-                        onClick={() => openAction(enrollment, "revoke")}
-                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-amber-100 text-amber-600 transition hover:bg-amber-50"
-                        title="Revoke access"
+                        onClick={() =>
+                          setSelectedEnrollment(
+                            enrollment,
+                          )
+                        }
+                        className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
                       >
-                        <Ban className="h-4 w-4" />
+                        <Eye className="h-4 w-4" />
+                        View
                       </button>
-                    )}
 
-                    {/* REVOKED ACCESS
-                          RESTORE */}
+                      {status ===
+                        "Pending" && (
+                        <>
+                          <button
+                            onClick={() =>
+                              openAction(
+                                enrollment,
+                                "approve",
+                              )
+                            }
+                            className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-100 text-emerald-600 transition hover:bg-emerald-50"
+                            title="Approve"
+                          >
+                            <UserCheck className="h-4 w-4" />
+                          </button>
 
-                    {status === "Approved" && access === "Revoked" && (
-                      <button
-                        onClick={() => openAction(enrollment, "restore")}
-                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-100 text-emerald-600 transition hover:bg-emerald-50"
-                        title="Grant access again"
-                      >
-                        <CheckCircle2 className="h-4 w-4" />
-                      </button>
-                    )}
-                  </div>
-                </motion.div>
-              );
-            })}
+                          <button
+                            onClick={() =>
+                              openAction(
+                                enrollment,
+                                "reject",
+                              )
+                            }
+                            className="flex h-10 w-10 items-center justify-center rounded-xl border border-red-100 text-red-500 transition hover:bg-red-50"
+                            title="Reject"
+                          >
+                            <UserX className="h-4 w-4" />
+                          </button>
+                        </>
+                      )}
+
+                      {status ===
+                        "Approved" &&
+                        access ===
+                          "Granted" && (
+                          <button
+                            onClick={() =>
+                              openAction(
+                                enrollment,
+                                "revoke",
+                              )
+                            }
+                            className="flex h-10 w-10 items-center justify-center rounded-xl border border-amber-100 text-amber-600 transition hover:bg-amber-50"
+                            title="Revoke access"
+                          >
+                            <Ban className="h-4 w-4" />
+                          </button>
+                        )}
+
+                      {status ===
+                        "Approved" &&
+                        access ===
+                          "Revoked" && (
+                          <button
+                            onClick={() =>
+                              openAction(
+                                enrollment,
+                                "restore",
+                              )
+                            }
+                            className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-100 text-emerald-600 transition hover:bg-emerald-50"
+                            title="Grant access again"
+                          >
+                            <CheckCircle2 className="h-4 w-4" />
+                          </button>
+                        )}
+                    </div>
+                  </motion.div>
+                );
+              },
+            )}
           </div>
 
           {/* ==================================================
               EMPTY STATE
           ================================================== */}
 
-          {filteredEnrollments.length === 0 && (
+          {filteredEnrollments.length ===
+            0 && (
             <div className="px-6 py-20 text-center">
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50">
                 <GraduationCap className="h-7 w-7 text-indigo-500" />
@@ -1435,17 +2012,31 @@ export default function AdminEnrollments() {
               </h3>
 
               <p className="mx-auto mt-2 max-w-md text-xs leading-6 text-slate-500">
-                {search || statusFilter !== "All" || courseFilter !== "All"
+                {search ||
+                statusFilter !==
+                  "All" ||
+                courseFilter !==
+                  "All"
                   ? "Try changing your search or filters."
                   : "Student enrollment requests will appear here automatically."}
               </p>
 
-              {(search || statusFilter !== "All" || courseFilter !== "All") && (
+              {(search ||
+                statusFilter !==
+                  "All" ||
+                courseFilter !==
+                  "All") && (
                 <button
                   onClick={() => {
                     setSearch("");
-                    setStatusFilter("All");
-                    setCourseFilter("All");
+
+                    setStatusFilter(
+                      "All",
+                    );
+
+                    setCourseFilter(
+                      "All",
+                    );
                   }}
                   className="mt-5 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-xs font-bold text-white transition hover:bg-indigo-700"
                 >
@@ -1466,7 +2057,11 @@ export default function AdminEnrollments() {
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div
               className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
-              onClick={() => setSelectedEnrollment(null)}
+              onClick={() =>
+                setSelectedEnrollment(
+                  null,
+                )
+              }
             />
 
             <motion.div
@@ -1489,7 +2084,11 @@ export default function AdminEnrollments() {
             >
               <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 px-6 py-7 text-white sm:px-8">
                 <button
-                  onClick={() => setSelectedEnrollment(null)}
+                  onClick={() =>
+                    setSelectedEnrollment(
+                      null,
+                    )
+                  }
                   className="absolute right-5 top-5 flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 transition hover:bg-white/20"
                 >
                   <X className="h-4 w-4" />
@@ -1497,7 +2096,11 @@ export default function AdminEnrollments() {
 
                 <div className="flex items-center gap-4">
                   <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-xl font-black backdrop-blur">
-                    {getStudentName(selectedEnrollment).charAt(0).toUpperCase()}
+                    {getStudentName(
+                      selectedEnrollment,
+                    )
+                      .charAt(0)
+                      .toUpperCase()}
                   </div>
 
                   <div className="min-w-0">
@@ -1506,11 +2109,15 @@ export default function AdminEnrollments() {
                     </p>
 
                     <h2 className="mt-1 truncate text-2xl font-black">
-                      {getStudentName(selectedEnrollment)}
+                      {getStudentName(
+                        selectedEnrollment,
+                      )}
                     </h2>
 
                     <p className="mt-1 truncate text-xs text-white/60">
-                      {getCourseTitle(selectedEnrollment)}
+                      {getCourseTitle(
+                        selectedEnrollment,
+                      )}
                     </p>
                   </div>
                 </div>
@@ -1520,86 +2127,142 @@ export default function AdminEnrollments() {
                 <div className="grid gap-3 sm:grid-cols-2">
                   <StatusBox
                     label="Enrollment Status"
-                    value={getStatus(selectedEnrollment)}
-                    meta={getStatusMeta(getStatus(selectedEnrollment))}
+                    value={getStatus(
+                      selectedEnrollment,
+                    )}
+                    meta={getStatusMeta(
+                      getStatus(
+                        selectedEnrollment,
+                      ),
+                    )}
                   />
 
                   <StatusBox
                     label="Course Access"
-                    value={getAccessStatus(selectedEnrollment)}
-                    meta={getAccessMeta(getAccessStatus(selectedEnrollment))}
+                    value={getAccessStatus(
+                      selectedEnrollment,
+                    )}
+                    meta={getAccessMeta(
+                      getAccessStatus(
+                        selectedEnrollment,
+                      ),
+                    )}
                   />
                 </div>
 
-                <ModalSection icon={Users} title="Student Information">
+                <ModalSection
+                  icon={Users}
+                  title="Student Information"
+                >
                   <div className="grid gap-4 sm:grid-cols-2">
                     <DetailItem
                       icon={Users}
                       label="Name"
-                      value={getStudentName(selectedEnrollment)}
+                      value={getStudentName(
+                        selectedEnrollment,
+                      )}
                     />
 
                     <DetailItem
                       icon={Mail}
                       label="Email"
-                      value={getStudentEmail(selectedEnrollment)}
+                      value={getStudentEmail(
+                        selectedEnrollment,
+                      )}
                     />
 
                     <DetailItem
                       icon={Phone}
                       label="Phone"
-                      value={getStudentPhone(selectedEnrollment)}
+                      value={getStudentPhone(
+                        selectedEnrollment,
+                      )}
                     />
 
                     <DetailItem
                       icon={CalendarDays}
                       label="Requested"
-                      value={formatDate(selectedEnrollment.createdAt, true)}
+                      value={formatDate(
+                        selectedEnrollment.createdAt ||
+                          selectedEnrollment.submittedAt,
+                        true,
+                      )}
                     />
                   </div>
                 </ModalSection>
 
-                <ModalSection icon={BookOpen} title="Course Information">
+                <ModalSection
+                  icon={BookOpen}
+                  title="Course Information"
+                >
                   <div className="grid gap-4 sm:grid-cols-2">
                     <DetailItem
                       icon={BookOpen}
                       label="Course"
-                      value={getCourseTitle(selectedEnrollment)}
+                      value={getCourseTitle(
+                        selectedEnrollment,
+                      )}
                     />
 
                     <DetailItem
                       label="Category"
                       value={
-                        getCourseCategory(selectedEnrollment) || "Not specified"
+                        getCourseCategory(
+                          selectedEnrollment,
+                        ) ||
+                        "Not specified"
                       }
                     />
 
                     <DetailItem
                       label="Level"
                       value={
-                        getCourseLevel(selectedEnrollment) || "Not specified"
+                        getCourseLevel(
+                          selectedEnrollment,
+                        ) ||
+                        "Not specified"
                       }
                     />
 
                     <DetailItem
                       label="Source"
-                      value={selectedEnrollment?.source || "Website"}
+                      value={
+                        selectedEnrollment?.source ||
+                        "Website"
+                      }
                     />
                   </div>
                 </ModalSection>
 
-                <ModalSection icon={School} title="Application Details">
+                <ModalSection
+                  icon={School}
+                  title="Application Details"
+                >
                   <div className="grid gap-4 sm:grid-cols-2">
                     <DetailItem
                       icon={School}
                       label="Education"
-                      value={selectedEnrollment?.education || "Not provided"}
+                      value={
+                        selectedEnrollment?.education ||
+                        "Not provided"
+                      }
                     />
 
                     <DetailItem
                       icon={BriefcaseBusiness}
                       label="Experience"
-                      value={selectedEnrollment?.experience || "Not provided"}
+                      value={
+                        selectedEnrollment?.experience ||
+                        "Not provided"
+                      }
+                    />
+
+                    <DetailItem
+                      label="Career Goal"
+                      value={
+                        selectedEnrollment?.careerGoal ||
+                        "Not provided"
+                      }
                     />
                   </div>
                 </ModalSection>
@@ -1615,7 +2278,9 @@ export default function AdminEnrollments() {
                     </div>
 
                     <p className="mt-2 whitespace-pre-line text-sm leading-7 text-slate-700">
-                      {selectedEnrollment.message}
+                      {
+                        selectedEnrollment.message
+                      }
                     </p>
                   </div>
                 )}
@@ -1627,36 +2292,50 @@ export default function AdminEnrollments() {
                     </p>
 
                     <p className="mt-2 whitespace-pre-line text-sm leading-7 text-indigo-900">
-                      {selectedEnrollment.adminNote}
+                      {
+                        selectedEnrollment.adminNote
+                      }
                     </p>
                   </div>
                 )}
 
-                <ModalSection icon={CalendarDays} title="Enrollment Timeline">
+                <ModalSection
+                  icon={CalendarDays}
+                  title="Enrollment Timeline"
+                >
                   <div className="space-y-3">
                     <TimelineItem
                       label="Request Submitted"
-                      date={selectedEnrollment.createdAt}
+                      date={
+                        selectedEnrollment.createdAt ||
+                        selectedEnrollment.submittedAt
+                      }
                     />
 
                     {selectedEnrollment.reviewedAt && (
                       <TimelineItem
                         label="Reviewed"
-                        date={selectedEnrollment.reviewedAt}
+                        date={
+                          selectedEnrollment.reviewedAt
+                        }
                       />
                     )}
 
                     {selectedEnrollment.accessGrantedAt && (
                       <TimelineItem
                         label="Access Granted"
-                        date={selectedEnrollment.accessGrantedAt}
+                        date={
+                          selectedEnrollment.accessGrantedAt
+                        }
                       />
                     )}
 
                     {selectedEnrollment.accessRevokedAt && (
                       <TimelineItem
                         label="Access Revoked"
-                        date={selectedEnrollment.accessRevokedAt}
+                        date={
+                          selectedEnrollment.accessRevokedAt
+                        }
                       />
                     )}
                   </div>
@@ -1666,21 +2345,30 @@ export default function AdminEnrollments() {
 
                 <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                   <button
-                    onClick={() => setSelectedEnrollment(null)}
+                    onClick={() =>
+                      setSelectedEnrollment(
+                        null,
+                      )
+                    }
                     className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
                   >
                     Close
                   </button>
 
-                  {/* PENDING */}
-
-                  {getStatus(selectedEnrollment) === "Pending" && (
+                  {getStatus(
+                    selectedEnrollment,
+                  ) === "Pending" && (
                     <>
                       <button
                         onClick={() => {
-                          setSelectedEnrollment(null);
+                          setSelectedEnrollment(
+                            null,
+                          );
 
-                          openAction(selectedEnrollment, "reject");
+                          openAction(
+                            selectedEnrollment,
+                            "reject",
+                          );
                         }}
                         className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-100 px-5 py-3 text-sm font-bold text-red-600 transition hover:bg-red-50"
                       >
@@ -1690,9 +2378,14 @@ export default function AdminEnrollments() {
 
                       <button
                         onClick={() => {
-                          setSelectedEnrollment(null);
+                          setSelectedEnrollment(
+                            null,
+                          );
 
-                          openAction(selectedEnrollment, "approve");
+                          openAction(
+                            selectedEnrollment,
+                            "approve",
+                          );
                         }}
                         className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-700"
                       >
@@ -1702,15 +2395,22 @@ export default function AdminEnrollments() {
                     </>
                   )}
 
-                  {/* ACTIVE ACCESS */}
-
-                  {getStatus(selectedEnrollment) === "Approved" &&
-                    getAccessStatus(selectedEnrollment) === "Granted" && (
+                  {getStatus(
+                    selectedEnrollment,
+                  ) === "Approved" &&
+                    getAccessStatus(
+                      selectedEnrollment,
+                    ) === "Granted" && (
                       <button
                         onClick={() => {
-                          setSelectedEnrollment(null);
+                          setSelectedEnrollment(
+                            null,
+                          );
 
-                          openAction(selectedEnrollment, "revoke");
+                          openAction(
+                            selectedEnrollment,
+                            "revoke",
+                          );
                         }}
                         className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-3 text-sm font-bold text-white transition hover:bg-amber-600"
                       >
@@ -1719,16 +2419,22 @@ export default function AdminEnrollments() {
                       </button>
                     )}
 
-                  {/* REVOKED ACCESS
-                      RESTORE BUTTON */}
-
-                  {getStatus(selectedEnrollment) === "Approved" &&
-                    getAccessStatus(selectedEnrollment) === "Revoked" && (
+                  {getStatus(
+                    selectedEnrollment,
+                  ) === "Approved" &&
+                    getAccessStatus(
+                      selectedEnrollment,
+                    ) === "Revoked" && (
                       <button
                         onClick={() => {
-                          setSelectedEnrollment(null);
+                          setSelectedEnrollment(
+                            null,
+                          );
 
-                          openAction(selectedEnrollment, "restore");
+                          openAction(
+                            selectedEnrollment,
+                            "restore",
+                          );
                         }}
                         className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-700"
                       >
@@ -1778,7 +2484,9 @@ export default function AdminEnrollments() {
               className="relative w-full max-w-lg rounded-[2rem] bg-white p-7 shadow-2xl sm:p-8"
             >
               <button
-                disabled={Boolean(processingId)}
+                disabled={Boolean(
+                  processingId,
+                )}
                 onClick={closeAction}
                 className="absolute right-5 top-5 flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 disabled:opacity-50"
               >
@@ -1789,22 +2497,31 @@ export default function AdminEnrollments() {
 
               <div
                 className={`mx-auto flex h-14 w-14 items-center justify-center rounded-2xl ${
-                  actionType === "approve" || actionType === "restore"
+                  actionType ===
+                    "approve" ||
+                  actionType ===
+                    "restore"
                     ? "bg-emerald-50"
-                    : actionType === "reject"
+                    : actionType ===
+                        "reject"
                       ? "bg-red-50"
                       : "bg-amber-50"
                 }`}
               >
-                {(actionType === "approve" || actionType === "restore") && (
+                {(actionType ===
+                  "approve" ||
+                  actionType ===
+                    "restore") && (
                   <UserCheck className="h-6 w-6 text-emerald-600" />
                 )}
 
-                {actionType === "reject" && (
+                {actionType ===
+                  "reject" && (
                   <UserX className="h-6 w-6 text-red-500" />
                 )}
 
-                {actionType === "revoke" && (
+                {actionType ===
+                  "revoke" && (
                   <Ban className="h-6 w-6 text-amber-600" />
                 )}
               </div>
@@ -1813,59 +2530,83 @@ export default function AdminEnrollments() {
 
               <div className="mt-5 text-center">
                 <h2 className="text-xl font-black text-slate-950">
-                  {actionType === "approve" && "Approve Enrollment?"}
+                  {actionType ===
+                    "approve" &&
+                    "Approve Enrollment?"}
 
-                  {actionType === "restore" && "Grant Access Again?"}
+                  {actionType ===
+                    "restore" &&
+                    "Grant Access Again?"}
 
-                  {actionType === "reject" && "Reject Enrollment?"}
+                  {actionType ===
+                    "reject" &&
+                    "Reject Enrollment?"}
 
-                  {actionType === "revoke" && "Revoke Course Access?"}
+                  {actionType ===
+                    "revoke" &&
+                    "Revoke Course Access?"}
                 </h2>
 
                 <p className="mt-2 text-sm leading-6 text-slate-500">
-                  {actionType === "approve" && (
+                  {actionType ===
+                    "approve" && (
                     <>
                       Approving{" "}
                       <strong className="text-slate-700">
-                        {getStudentName(actionEnrollment)}
+                        {getStudentName(
+                          actionEnrollment,
+                        )}
                       </strong>{" "}
                       will grant access to{" "}
                       <strong className="text-slate-700">
-                        {getCourseTitle(actionEnrollment)}
+                        {getCourseTitle(
+                          actionEnrollment,
+                        )}
                       </strong>
                       .
                     </>
                   )}
 
-                  {actionType === "restore" && (
+                  {actionType ===
+                    "restore" && (
                     <>
                       This will restore course access for{" "}
                       <strong className="text-slate-700">
-                        {getStudentName(actionEnrollment)}
+                        {getStudentName(
+                          actionEnrollment,
+                        )}
                       </strong>{" "}
                       and allow the student to access{" "}
                       <strong className="text-slate-700">
-                        {getCourseTitle(actionEnrollment)}
+                        {getCourseTitle(
+                          actionEnrollment,
+                        )}
                       </strong>{" "}
                       again.
                     </>
                   )}
 
-                  {actionType === "reject" && (
+                  {actionType ===
+                    "reject" && (
                     <>
                       You are about to reject the enrollment request from{" "}
                       <strong className="text-slate-700">
-                        {getStudentName(actionEnrollment)}
+                        {getStudentName(
+                          actionEnrollment,
+                        )}
                       </strong>
                       .
                     </>
                   )}
 
-                  {actionType === "revoke" && (
+                  {actionType ===
+                    "revoke" && (
                     <>
                       This will remove course access from{" "}
                       <strong className="text-slate-700">
-                        {getStudentName(actionEnrollment)}
+                        {getStudentName(
+                          actionEnrollment,
+                        )}
                       </strong>
                       .
                     </>
@@ -1885,11 +2626,18 @@ export default function AdminEnrollments() {
 
                 <textarea
                   value={adminNote}
-                  onChange={(event) => setAdminNote(event.target.value)}
-                  disabled={Boolean(processingId)}
+                  onChange={(event) =>
+                    setAdminNote(
+                      event.target.value,
+                    )
+                  }
+                  disabled={Boolean(
+                    processingId,
+                  )}
                   rows={4}
                   placeholder={
-                    actionType === "restore"
+                    actionType ===
+                    "restore"
                       ? "Add a note about restoring access..."
                       : "Add a note for this enrollment..."
                   }
@@ -1901,7 +2649,9 @@ export default function AdminEnrollments() {
 
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <button
-                  disabled={Boolean(processingId)}
+                  disabled={Boolean(
+                    processingId,
+                  )}
                   onClick={closeAction}
                   className="rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -1909,12 +2659,20 @@ export default function AdminEnrollments() {
                 </button>
 
                 <button
-                  disabled={Boolean(processingId)}
-                  onClick={handleEnrollmentAction}
+                  disabled={Boolean(
+                    processingId,
+                  )}
+                  onClick={
+                    handleEnrollmentAction
+                  }
                   className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                    actionType === "approve" || actionType === "restore"
+                    actionType ===
+                      "approve" ||
+                    actionType ===
+                      "restore"
                       ? "bg-emerald-600 hover:bg-emerald-700"
-                      : actionType === "reject"
+                      : actionType ===
+                          "reject"
                         ? "bg-red-500 hover:bg-red-600"
                         : "bg-amber-500 hover:bg-amber-600"
                   }`}
@@ -1926,25 +2684,30 @@ export default function AdminEnrollments() {
                     </>
                   ) : (
                     <>
-                      {(actionType === "approve" ||
-                        actionType === "restore") && (
+                      {(actionType ===
+                        "approve" ||
+                        actionType ===
+                          "restore") && (
                         <>
                           <CheckCircle2 className="h-4 w-4" />
 
-                          {actionType === "restore"
+                          {actionType ===
+                          "restore"
                             ? "Grant Access"
                             : "Approve"}
                         </>
                       )}
 
-                      {actionType === "reject" && (
+                      {actionType ===
+                        "reject" && (
                         <>
                           <CircleX className="h-4 w-4" />
                           Reject
                         </>
                       )}
 
-                      {actionType === "revoke" && (
+                      {actionType ===
+                        "revoke" && (
                         <>
                           <Ban className="h-4 w-4" />
                           Revoke
@@ -2029,16 +2792,24 @@ function OverviewItem({
     <button
       onClick={onClick}
       className={`p-5 text-left transition hover:bg-slate-50 ${
-        active ? "bg-indigo-50/50" : ""
+        active
+          ? "bg-indigo-50/50"
+          : ""
       }`}
     >
       <div className="flex items-center gap-2">
-        <Icon className={`h-4 w-4 ${iconClass}`} />
+        <Icon
+          className={`h-4 w-4 ${iconClass}`}
+        />
 
-        <span className="text-[10px] font-bold text-slate-500">{label}</span>
+        <span className="text-[10px] font-bold text-slate-500">
+          {label}
+        </span>
       </div>
 
-      <p className="mt-2 text-2xl font-black text-slate-900">{value}</p>
+      <p className="mt-2 text-2xl font-black text-slate-900">
+        {value}
+      </p>
     </button>
   );
 }
@@ -2047,14 +2818,19 @@ function OverviewItem({
    MINI STAT
 ============================================================ */
 
-function MiniStat({ label, value }) {
+function MiniStat({
+  label,
+  value,
+}) {
   return (
     <div className="rounded-xl bg-white p-2.5 text-center">
       <p className="text-[8px] font-black uppercase tracking-wider text-slate-400">
         {label}
       </p>
 
-      <p className="mt-1 text-sm font-black text-slate-800">{value}</p>
+      <p className="mt-1 text-sm font-black text-slate-800">
+        {value}
+      </p>
     </div>
   );
 }
@@ -2063,17 +2839,29 @@ function MiniStat({ label, value }) {
    STATUS BOX
 ============================================================ */
 
-function StatusBox({ label, value, meta }) {
+function StatusBox({
+  label,
+  value,
+  meta,
+}) {
   return (
-    <div className={`rounded-2xl border p-4 ${meta.bg} ${meta.border}`}>
+    <div
+      className={`rounded-2xl border p-4 ${meta.bg} ${meta.border}`}
+    >
       <p className="text-[9px] font-black uppercase tracking-[0.15em] text-slate-400">
         {label}
       </p>
 
       <div className="mt-2 flex items-center gap-2">
-        <span className={`h-2 w-2 rounded-full ${meta.dot}`} />
+        <span
+          className={`h-2 w-2 rounded-full ${meta.dot}`}
+        />
 
-        <span className={`text-sm font-black ${meta.text}`}>{value}</span>
+        <span
+          className={`text-sm font-black ${meta.text}`}
+        >
+          {value}
+        </span>
       </div>
     </div>
   );
@@ -2083,7 +2871,11 @@ function StatusBox({ label, value, meta }) {
    MODAL SECTION
 ============================================================ */
 
-function ModalSection({ icon: Icon, title, children }) {
+function ModalSection({
+  icon: Icon,
+  title,
+  children,
+}) {
   return (
     <section className="mt-6">
       <div className="mb-3 flex items-center gap-2">
@@ -2105,11 +2897,17 @@ function ModalSection({ icon: Icon, title, children }) {
    DETAIL ITEM
 ============================================================ */
 
-function DetailItem({ icon: Icon, label, value }) {
+function DetailItem({
+  icon: Icon,
+  label,
+  value,
+}) {
   return (
     <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
       <div className="flex items-center gap-2">
-        {Icon && <Icon className="h-3.5 w-3.5 text-slate-400" />}
+        {Icon && (
+          <Icon className="h-3.5 w-3.5 text-slate-400" />
+        )}
 
         <p className="text-[9px] font-black uppercase tracking-[0.15em] text-slate-400">
           {label}
@@ -2127,7 +2925,10 @@ function DetailItem({ icon: Icon, label, value }) {
    TIMELINE ITEM
 ============================================================ */
 
-function TimelineItem({ label, date }) {
+function TimelineItem({
+  label,
+  date,
+}) {
   return (
     <div className="flex items-center gap-3">
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-50">
@@ -2135,10 +2936,15 @@ function TimelineItem({ label, date }) {
       </div>
 
       <div className="flex min-w-0 flex-1 items-center justify-between gap-4 rounded-xl bg-slate-50 px-4 py-3">
-        <span className="text-xs font-bold text-slate-700">{label}</span>
+        <span className="text-xs font-bold text-slate-700">
+          {label}
+        </span>
 
         <span className="shrink-0 text-[10px] font-medium text-slate-400">
-          {formatDate(date, true)}
+          {formatDate(
+            date,
+            true,
+          )}
         </span>
       </div>
     </div>

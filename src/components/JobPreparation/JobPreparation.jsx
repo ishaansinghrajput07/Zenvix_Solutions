@@ -9,15 +9,17 @@ import {
   Github,
   Globe2,
   Linkedin,
-  MessageCircle,
   Search,
   Send,
   Target,
   TrendingUp,
   UserRound,
-  Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+
+/* =========================================================
+   PREPARATION AREAS
+========================================================= */
 
 const preparationAreas = [
   {
@@ -94,71 +96,71 @@ const preparationAreas = [
   },
 ];
 
+/* =========================================================
+   ACCENT STYLES
+========================================================= */
+
 const accentStyles = {
   sky: {
     icon: "bg-sky-50 text-sky-600",
-    glow: "bg-sky-400/20",
-    text: "text-sky-500",
-    dot: "bg-sky-400",
-    hover: "group-hover:border-sky-200",
+    text: "text-sky-600",
+    dot: "bg-sky-500",
+    hover: "hover:border-sky-200",
   },
 
   cyan: {
     icon: "bg-cyan-50 text-cyan-600",
-    glow: "bg-cyan-400/20",
-    text: "text-cyan-500",
-    dot: "bg-cyan-400",
-    hover: "group-hover:border-cyan-200",
+    text: "text-cyan-600",
+    dot: "bg-cyan-500",
+    hover: "hover:border-cyan-200",
   },
 
   violet: {
     icon: "bg-violet-50 text-violet-600",
-    glow: "bg-violet-400/20",
-    text: "text-violet-500",
-    dot: "bg-violet-400",
-    hover: "group-hover:border-violet-200",
+    text: "text-violet-600",
+    dot: "bg-violet-500",
+    hover: "hover:border-violet-200",
   },
 
   emerald: {
     icon: "bg-emerald-50 text-emerald-600",
-    glow: "bg-emerald-400/20",
-    text: "text-emerald-500",
-    dot: "bg-emerald-400",
-    hover: "group-hover:border-emerald-200",
+    text: "text-emerald-600",
+    dot: "bg-emerald-500",
+    hover: "hover:border-emerald-200",
   },
 
   amber: {
     icon: "bg-amber-50 text-amber-600",
-    glow: "bg-amber-400/20",
-    text: "text-amber-500",
-    dot: "bg-amber-400",
-    hover: "group-hover:border-amber-200",
+    text: "text-amber-600",
+    dot: "bg-amber-500",
+    hover: "hover:border-amber-200",
   },
 
   pink: {
     icon: "bg-pink-50 text-pink-600",
-    glow: "bg-pink-400/20",
-    text: "text-pink-500",
-    dot: "bg-pink-400",
-    hover: "group-hover:border-pink-200",
+    text: "text-pink-600",
+    dot: "bg-pink-500",
+    hover: "hover:border-pink-200",
   },
 
   orange: {
     icon: "bg-orange-50 text-orange-600",
-    glow: "bg-orange-400/20",
-    text: "text-orange-500",
-    dot: "bg-orange-400",
-    hover: "group-hover:border-orange-200",
+    text: "text-orange-600",
+    dot: "bg-orange-500",
+    hover: "hover:border-orange-200",
   },
 
   indigo: {
     icon: "bg-indigo-50 text-indigo-600",
-    glow: "bg-indigo-400/20",
-    text: "text-indigo-500",
-    dot: "bg-indigo-400",
-    hover: "group-hover:border-indigo-200",
+    text: "text-indigo-600",
+    dot: "bg-indigo-500",
+    hover: "hover:border-indigo-200",
   },
 };
+
+/* =========================================================
+   JOB JOURNEY
+========================================================= */
 
 const jobJourney = [
   {
@@ -187,6 +189,10 @@ const jobJourney = [
   },
 ];
 
+/* =========================================================
+   PROFILE CHECKLIST
+========================================================= */
+
 const profileChecklist = [
   "Professional ATS-friendly resume",
   "Clear career objective",
@@ -198,134 +204,114 @@ const profileChecklist = [
   "Consistent professional branding",
 ];
 
+/* =========================================================
+   JOB PLATFORMS
+========================================================= */
+
 const jobPlatforms = [
   {
     title: "LinkedIn",
     description: "Professional networking and job opportunities",
     icon: Linkedin,
+    accent: "sky",
   },
   {
     title: "GitHub",
     description: "Showcase your technical work and projects",
     icon: Github,
+    accent: "violet",
   },
   {
     title: "Job Portals",
     description: "Discover relevant openings and opportunities",
     icon: BriefcaseBusiness,
+    accent: "emerald",
   },
   {
     title: "Portfolio",
     description: "Present your skills and work professionally",
     icon: Globe2,
+    accent: "amber",
   },
 ];
 
+/* =========================================================
+   REUSABLE MOTION
+========================================================= */
+
+const fadeUp = {
+  initial: {
+    opacity: 0,
+    y: 25,
+  },
+  whileInView: {
+    opacity: 1,
+    y: 0,
+  },
+  viewport: {
+    once: true,
+    amount: 0.15,
+  },
+  transition: {
+    duration: 0.6,
+  },
+};
+
+/* =========================================================
+   COMPONENT
+========================================================= */
+
 export default function JobPreparation() {
   return (
-    <section className="relative overflow-hidden bg-white py-24 sm:py-28 lg:py-32">
-      {/* =====================================================
-          BACKGROUND
-      ====================================================== */}
+    <section className="relative w-full bg-white py-[30px]">
+      <div className="relative w-full px-[30px] sm:px-[30px] lg:px-[30px]">
 
-      <div className="pointer-events-none absolute inset-0">
-        <motion.div
-          animate={{
-            x: [0, 35, 0],
-            y: [0, -20, 0],
-          }}
-          transition={{
-            duration: 14,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute -left-48 top-10 h-[28rem] w-[28rem] rounded-full bg-sky-100/50 blur-3xl"
-        />
-
-        <motion.div
-          animate={{
-            x: [0, -30, 0],
-            y: [0, 25, 0],
-          }}
-          transition={{
-            duration: 16,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute -right-48 bottom-0 h-[30rem] w-[30rem] rounded-full bg-violet-100/40 blur-3xl"
-        />
-
-        <div
-          className="absolute inset-0 opacity-[0.018]"
-          style={{
-            backgroundImage:
-              "linear-gradient(#0f172a 1px, transparent 1px), linear-gradient(90deg, #0f172a 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-      </div>
-
-      <div className="shell relative">
         {/* =====================================================
             HERO
         ====================================================== */}
 
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 25,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-            amount: 0.2,
-          }}
-          transition={{
-            duration: 0.7,
-          }}
-          className="mx-auto max-w-4xl text-center"
+          {...fadeUp}
+          className="mx-auto max-w-4xl pt-[50px] text-center"
         >
-          <div className="mb-5 flex items-center justify-center gap-3">
-            <span className="h-px w-9 bg-slate-900" />
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <span className="h-px w-8 bg-teal-700" />
 
-            <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-500">
+            <p className="!m-0 text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
               Job Preparation
             </p>
 
-            <span className="h-px w-9 bg-slate-900" />
+            <span className="h-px w-8 bg-teal-700" />
           </div>
 
-          <h1 className="text-4xl font-semibold leading-[1.04] tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-[4rem]">
+          <h1 className="text-[38px] font-black leading-[1.1] tracking-[-0.025em] text-slate-950 sm:text-[46px] lg:text-[52px]">
             Prepare smarter.
-            <span className="block text-slate-400">
+            <span className="block text-teal-700">
               Find the right opportunity.
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-sm leading-7 text-slate-500 sm:text-base">
+          <p className="mx-auto mt-5 max-w-2xl text-[15px] font-medium leading-7 text-slate-500 sm:text-[16px]">
             A structured approach to job preparation that helps you build a
             stronger professional profile, discover relevant opportunities,
             apply strategically, and move forward with confidence.
           </p>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               to="/contact"
-              className="group inline-flex items-center gap-2 rounded-full bg-slate-950 px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-slate-800"
+              className="group inline-flex items-center gap-2 rounded-xl bg-yellow-400 px-6 py-3.5 text-[14px] font-black text-slate-950 transition-all duration-300 hover:bg-yellow-300"
             >
               Start Your Job Preparation
 
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-black/10">
                 <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </span>
             </Link>
 
             <a
               href="#job-support"
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 transition-all duration-300 hover:border-slate-950 hover:text-slate-950"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-[14px] font-black text-slate-700 transition-all duration-300 hover:border-teal-700 hover:text-teal-700"
             >
               Explore Job Support
             </a>
@@ -337,43 +323,28 @@ export default function JobPreparation() {
         ====================================================== */}
 
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 25,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-          }}
-          transition={{
-            duration: 0.7,
-            delay: 0.15,
-          }}
-          className="mx-auto mt-14 max-w-5xl"
+          {...fadeUp}
+          className="mx-auto mt-[50px] max-w-6xl"
         >
-          <div className="relative overflow-hidden rounded-[1.75rem] bg-slate-950 p-6 shadow-[0_25px_70px_rgba(15,23,42,0.12)] sm:p-8 lg:p-10">
-            <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-sky-500/10 blur-3xl" />
+          <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-[0_12px_40px_rgba(15,23,42,0.05)] sm:p-8 lg:p-10">
+            <div className="grid items-center gap-8 lg:grid-cols-[1fr_auto]">
 
-            <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_auto]">
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-sky-400">
-                    <TrendingUp className="h-4 w-4" />
-                  </span>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
+                    <TrendingUp className="h-5 w-5" />
+                  </div>
 
-                  <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-sky-400">
+                  <p className="!m-0 text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
                     Career Ready
-                  </span>
+                  </p>
                 </div>
 
-                <h2 className="mt-5 max-w-2xl text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+                <h2 className="mt-5 max-w-2xl text-[28px] font-black leading-[1.15] tracking-[-0.025em] text-slate-950 sm:text-[34px]">
                   Build a profile employers can understand.
                 </h2>
 
-                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
+                <p className="mt-4 max-w-2xl text-[15px] font-medium leading-7 text-slate-500">
                   Your job search becomes stronger when your skills, resume,
                   portfolio, projects, professional profiles, and applications
                   tell one clear story.
@@ -385,18 +356,22 @@ export default function JobPreparation() {
                   {
                     icon: UserRound,
                     title: "Profile",
+                    color: "bg-sky-50 text-sky-600",
                   },
                   {
                     icon: Search,
                     title: "Search",
+                    color: "bg-violet-50 text-violet-600",
                   },
                   {
                     icon: Send,
                     title: "Apply",
+                    color: "bg-emerald-50 text-emerald-600",
                   },
                   {
                     icon: TrendingUp,
                     title: "Grow",
+                    color: "bg-amber-50 text-amber-600",
                   },
                 ].map((item) => {
                   const Icon = item.icon;
@@ -404,11 +379,15 @@ export default function JobPreparation() {
                   return (
                     <div
                       key={item.title}
-                      className="flex min-w-[105px] flex-col items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-4"
+                      className="flex min-w-[110px] flex-col items-center justify-center rounded-xl border border-slate-200 bg-slate-50/70 px-5 py-4 transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-sm"
                     >
-                      <Icon className="h-5 w-5 text-sky-400" />
+                      <div
+                        className={`flex h-9 w-9 items-center justify-center rounded-lg ${item.color}`}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </div>
 
-                      <span className="mt-2 text-[10px] font-medium text-slate-300">
+                      <span className="mt-2 text-[12px] font-black text-slate-700">
                         {item.title}
                       </span>
                     </div>
@@ -425,41 +404,27 @@ export default function JobPreparation() {
 
         <motion.div
           id="job-support"
-          initial={{
-            opacity: 0,
-            y: 25,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-            amount: 0.2,
-          }}
-          transition={{
-            duration: 0.6,
-          }}
-          className="mx-auto mt-28 max-w-3xl text-center"
+          {...fadeUp}
+          className="mx-auto mt-[60px] max-w-4xl pt-[10px] text-center"
         >
-          <div className="mb-5 flex items-center justify-center gap-3">
-            <span className="h-px w-9 bg-slate-900" />
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <span className="h-px w-8 bg-teal-700" />
 
-            <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-500">
+            <p className="!m-0 text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
               Job Support
             </p>
 
-            <span className="h-px w-9 bg-slate-900" />
+            <span className="h-px w-8 bg-teal-700" />
           </div>
 
-          <h2 className="text-3xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-4xl lg:text-5xl">
+          <h2 className="text-[38px] font-black leading-[1.1] tracking-[-0.025em] text-slate-950 sm:text-[46px] lg:text-[52px]">
             Everything around the job search.
-            <span className="block text-slate-400">
+            <span className="block text-teal-700">
               One focused approach.
             </span>
           </h2>
 
-          <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-slate-500 sm:text-base">
+          <p className="mx-auto mt-5 max-w-2xl text-[15px] font-medium leading-7 text-slate-500 sm:text-[16px]">
             Build the right profile, find relevant opportunities, and create a
             consistent process for your job search.
           </p>
@@ -469,10 +434,9 @@ export default function JobPreparation() {
             SUPPORT GRID
         ====================================================== */}
 
-        <div className="mx-auto mt-14 grid max-w-7xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto mt-[35px] grid max-w-7xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {preparationAreas.map((area, index) => {
             const Icon = area.icon;
-
             const styles =
               accentStyles[area.accent] ?? accentStyles.sky;
 
@@ -489,80 +453,68 @@ export default function JobPreparation() {
                 }}
                 viewport={{
                   once: true,
-                  amount: 0.15,
+                  amount: 0.1,
                 }}
                 transition={{
                   duration: 0.5,
-                  delay: index * 0.06,
+                  delay: index * 0.05,
                 }}
                 whileHover={{
-                  y: -6,
+                  y: -5,
                 }}
                 className="h-full"
               >
                 <div
-                  className={`group relative flex h-full min-h-[290px] flex-col overflow-hidden rounded-[1.35rem] border border-slate-200 bg-white p-5 shadow-[0_8px_28px_rgba(15,23,42,0.035)] transition-all duration-500 hover:shadow-[0_18px_45px_rgba(15,23,42,0.085)] ${styles.hover}`}
+                  className={`group relative flex h-full min-h-[310px] flex-col rounded-[20px] border border-slate-200 bg-white p-6 shadow-[0_8px_28px_rgba(15,23,42,0.035)] transition-all duration-300 hover:shadow-[0_18px_45px_rgba(15,23,42,0.07)] ${styles.hover}`}
                 >
-                  <div
-                    className={`pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full ${styles.glow} opacity-0 blur-3xl transition-all duration-500 group-hover:opacity-100`}
-                  />
-
                   {/* TOP */}
 
-                  <div className="relative flex items-center justify-between">
-                    <motion.div
-                      whileHover={{
-                        scale: 1.08,
-                        rotate: 3,
-                      }}
-                      className={`relative flex h-11 w-11 items-center justify-center rounded-xl ${styles.icon}`}
+                  <div className="flex items-center justify-between">
+                    <div
+                      className={`flex h-12 w-12 items-center justify-center rounded-xl ${styles.icon}`}
                     >
-                      <div
-                        className={`absolute inset-0 scale-125 rounded-xl ${styles.glow} opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-100`}
-                      />
+                      <Icon className="h-5 w-5" />
+                    </div>
 
-                      <Icon className="relative h-[19px] w-[19px]" />
-                    </motion.div>
-
-                    <span className="text-[10px] font-bold tracking-[0.15em] text-slate-300">
+                    <span className="text-[11px] font-black tracking-[0.15em] text-slate-300">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                   </div>
 
                   {/* CONTENT */}
 
-                  <div className="relative mt-5">
+                  <div className="mt-6">
                     <div className="flex items-center gap-2">
                       <span
                         className={`h-1.5 w-1.5 rounded-full ${styles.dot}`}
                       />
 
                       <span
-                        className={`text-[9px] font-bold uppercase tracking-[0.18em] ${styles.text}`}
+                        className={`text-[11px] font-black uppercase tracking-[0.16em] ${styles.text}`}
                       >
                         Job Preparation
                       </span>
                     </div>
 
-                    <h3 className="mt-2 text-[18px] font-semibold leading-tight tracking-tight text-slate-950">
+                    <h3 className="mt-3 text-[19px] font-black leading-[1.2] tracking-[-0.015em] text-slate-950">
                       {area.title}
                     </h3>
 
-                    <p className="mt-2 line-clamp-3 text-[11px] leading-5 text-slate-500">
+                    <p className="mt-3 text-[14px] font-medium leading-6 text-slate-500">
                       {area.description}
                     </p>
                   </div>
 
                   {/* TAGS */}
 
-                  <div className="relative mt-4 flex flex-wrap gap-1.5">
+                  <div className="mt-5 flex flex-wrap gap-2">
                     {area.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="inline-flex items-center gap-1 rounded-full border border-slate-100 bg-slate-50 px-2 py-1 text-[9px] font-medium text-slate-500"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] font-bold text-slate-500"
                       >
                         <Check
-                          className={`h-2.5 w-2.5 ${styles.text}`}
+                          className={`h-3 w-3 ${styles.text}`}
                           strokeWidth={2.5}
                         />
 
@@ -573,20 +525,20 @@ export default function JobPreparation() {
 
                   {/* FOOTER */}
 
-                  <div className="relative mt-auto pt-5">
-                    <div className="flex items-center justify-between border-t border-slate-100 pt-3.5">
-                      <span className="text-[9px] font-medium text-slate-400">
+                  <div className="mt-auto pt-6">
+                    <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+                      <span className="text-[11px] font-semibold text-slate-400">
                         Career-focused
                       </span>
 
                       <Link
                         to="/contact"
-                        className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-slate-950"
+                        className="group/link inline-flex items-center gap-1.5 text-[12px] font-black text-slate-950"
                       >
                         Get Started
 
-                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 transition-all duration-300 group-hover:bg-slate-950 group-hover:text-white">
-                          <ArrowUpRight className="h-3 w-3 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 transition-all duration-300 group-hover:bg-slate-950 group-hover:text-white">
+                          <ArrowUpRight className="h-3 w-3 transition-transform duration-300 group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5" />
                         </span>
                       </Link>
                     </div>
@@ -608,47 +560,37 @@ export default function JobPreparation() {
         ====================================================== */}
 
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 25,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-            amount: 0.2,
-          }}
-          transition={{
-            duration: 0.6,
-          }}
-          className="mx-auto mt-28 max-w-3xl text-center"
+          {...fadeUp}
+          className="mx-auto mt-[60px] max-w-4xl text-center"
         >
-          <div className="mb-5 flex items-center justify-center gap-3">
-            <span className="h-px w-9 bg-slate-900" />
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <span className="h-px w-8 bg-teal-700" />
 
-            <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-500">
+            <p className="!m-0 text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
               Job Journey
             </p>
 
-            <span className="h-px w-9 bg-slate-900" />
+            <span className="h-px w-8 bg-teal-700" />
           </div>
 
-          <h2 className="text-3xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-4xl">
+          <h2 className="text-[38px] font-black leading-[1.1] tracking-[-0.025em] text-slate-950 sm:text-[46px] lg:text-[52px]">
             From profile.
-            <span className="block text-slate-400">
+            <span className="block text-teal-700">
               To opportunity.
             </span>
           </h2>
 
-          <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-slate-500">
+          <p className="mx-auto mt-5 max-w-2xl text-[15px] font-medium leading-7 text-slate-500">
             A simple and repeatable process to make your job search more
             focused and organized.
           </p>
         </motion.div>
 
-        <div className="mx-auto mt-14 grid max-w-6xl grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {/* =====================================================
+            JOB JOURNEY CARDS
+        ====================================================== */}
+
+        <div className="mx-auto mt-[35px] grid max-w-6xl grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
           {jobJourney.map((step, index) => (
             <motion.div
               key={step.number}
@@ -662,23 +604,23 @@ export default function JobPreparation() {
               }}
               viewport={{
                 once: true,
-                amount: 0.2,
+                amount: 0.15,
               }}
               transition={{
                 duration: 0.5,
-                delay: index * 0.08,
+                delay: index * 0.07,
               }}
-              className="group rounded-[1.35rem] border border-slate-200 bg-white p-6 shadow-[0_8px_28px_rgba(15,23,42,0.035)] transition-all duration-300 hover:-translate-y-1 hover:border-sky-200 hover:shadow-[0_15px_35px_rgba(15,23,42,0.07)]"
+              className="group rounded-[20px] border border-slate-200 bg-white p-6 shadow-[0_8px_28px_rgba(15,23,42,0.035)] transition-all duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-[0_15px_35px_rgba(15,23,42,0.07)]"
             >
-              <span className="text-4xl font-semibold tracking-tight text-slate-100 transition-colors group-hover:text-sky-100">
+              <span className="text-4xl font-black tracking-tight text-slate-100 transition-colors duration-300 group-hover:text-teal-100">
                 {step.number}
               </span>
 
-              <h3 className="mt-5 text-lg font-semibold text-slate-950">
+              <h3 className="mt-5 text-[20px] font-black tracking-tight text-slate-950">
                 {step.title}
               </h3>
 
-              <p className="mt-2 text-[11px] leading-5 text-slate-500">
+              <p className="mt-3 text-[14px] font-medium leading-6 text-slate-500">
                 {step.description}
               </p>
             </motion.div>
@@ -689,7 +631,10 @@ export default function JobPreparation() {
             PROFILE SECTION
         ====================================================== */}
 
-        <div className="mt-28 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="mt-[60px] grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+
+          {/* PROFILE INTRO */}
+
           <motion.div
             initial={{
               opacity: 0,
@@ -702,34 +647,39 @@ export default function JobPreparation() {
             viewport={{
               once: true,
             }}
-            className="rounded-[1.5rem] bg-slate-950 p-7 sm:p-9"
+            transition={{
+              duration: 0.6,
+            }}
+            className="rounded-[24px] border border-slate-200 bg-white p-7 shadow-[0_10px_35px_rgba(15,23,42,0.045)] sm:p-9"
           >
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-sky-400">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
               <UserRound className="h-5 w-5" />
             </div>
 
-            <p className="mt-7 text-[10px] font-bold uppercase tracking-[0.25em] text-sky-400">
+            <p className="!m-0 mt-7 text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
               Professional Profile
             </p>
 
-            <h3 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+            <h3 className="mt-4 text-[28px] font-black leading-[1.15] tracking-[-0.025em] text-slate-950 sm:text-[32px]">
               Make every part of your profile work together.
             </h3>
 
-            <p className="mt-4 text-sm leading-7 text-slate-400">
+            <p className="mt-4 text-[15px] font-medium leading-7 text-slate-500">
               Your resume, LinkedIn, GitHub, portfolio, projects, and
               applications should communicate a consistent professional story.
             </p>
 
             <Link
               to="/contact"
-              className="group mt-7 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-xs font-semibold text-slate-950 transition hover:bg-sky-50"
+              className="group mt-7 inline-flex items-center gap-2 rounded-xl bg-yellow-400 px-5 py-3 text-[13px] font-black text-slate-950 transition-all duration-300 hover:bg-yellow-300"
             >
               Improve Your Profile
 
-              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Link>
           </motion.div>
+
+          {/* PROFILE CHECKLIST */}
 
           <motion.div
             initial={{
@@ -743,21 +693,30 @@ export default function JobPreparation() {
             viewport={{
               once: true,
             }}
-            className="rounded-[1.5rem] border border-slate-200 bg-white p-7 shadow-[0_8px_28px_rgba(15,23,42,0.035)] sm:p-9"
+            transition={{
+              duration: 0.6,
+            }}
+            className="rounded-[24px] border border-slate-200 bg-white p-7 shadow-[0_10px_35px_rgba(15,23,42,0.045)] sm:p-9"
           >
-            <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-400">
+            <p className="!m-0 text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
               Profile Checklist
             </p>
 
-            <div className="mt-7 grid gap-3 sm:grid-cols-2">
-              {profileChecklist.map((item) => (
+            <h3 className="mt-3 text-[24px] font-black tracking-tight text-slate-950">
+              Is your profile ready?
+            </h3>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              {profileChecklist.map((item, index) => (
                 <div
                   key={item}
-                  className="flex items-start gap-3 rounded-xl bg-slate-50 p-3.5"
+                  className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3.5 transition-all duration-300 hover:border-teal-100 hover:bg-white"
                 >
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-sky-500" />
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-teal-50">
+                    <CheckCircle2 className="h-4 w-4 text-teal-600" />
+                  </div>
 
-                  <span className="text-[11px] font-medium leading-5 text-slate-600">
+                  <span className="text-[13px] font-semibold leading-5 text-slate-600">
                     {item}
                   </span>
                 </div>
@@ -767,46 +726,42 @@ export default function JobPreparation() {
         </div>
 
         {/* =====================================================
-            PLATFORMS
+            PLATFORMS HEADER
         ====================================================== */}
 
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 25,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-          }}
-          className="mx-auto mt-28 max-w-3xl text-center"
+          {...fadeUp}
+          className="mx-auto mt-[60px] max-w-4xl text-center"
         >
-          <div className="mb-5 flex items-center justify-center gap-3">
-            <span className="h-px w-9 bg-slate-900" />
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <span className="h-px w-8 bg-teal-700" />
 
-            <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-500">
+            <p className="!m-0 text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
               Build Your Presence
             </p>
 
-            <span className="h-px w-9 bg-slate-900" />
+            <span className="h-px w-8 bg-teal-700" />
           </div>
 
-          <h2 className="text-3xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-4xl">
+          <h2 className="text-[38px] font-black leading-[1.1] tracking-[-0.025em] text-slate-950 sm:text-[46px] lg:text-[52px]">
             Be visible in the right places.
           </h2>
 
-          <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-slate-500">
+          <p className="mx-auto mt-5 max-w-2xl text-[15px] font-medium leading-7 text-slate-500 sm:text-[16px]">
             A professional online presence can help you communicate your
             skills, experience, projects, and career interests more effectively.
           </p>
         </motion.div>
 
-        <div className="mx-auto mt-12 grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* =====================================================
+            PLATFORMS
+        ====================================================== */}
+
+        <div className="mx-auto mt-[35px] grid max-w-5xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {jobPlatforms.map((platform, index) => {
             const Icon = platform.icon;
+            const styles =
+              accentStyles[platform.accent] ?? accentStyles.sky;
 
             return (
               <motion.div
@@ -821,22 +776,25 @@ export default function JobPreparation() {
                 }}
                 viewport={{
                   once: true,
+                  amount: 0.15,
                 }}
                 transition={{
                   duration: 0.5,
                   delay: index * 0.07,
                 }}
-                className="group rounded-[1.35rem] border border-slate-200 bg-white p-5 text-center shadow-[0_8px_28px_rgba(15,23,42,0.035)] transition-all duration-300 hover:-translate-y-1 hover:border-sky-200 hover:shadow-[0_15px_35px_rgba(15,23,42,0.07)]"
+                className={`group rounded-[20px] border border-slate-200 bg-white p-6 text-center shadow-[0_8px_28px_rgba(15,23,42,0.035)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_35px_rgba(15,23,42,0.07)] ${styles.hover}`}
               >
-                <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-sky-50 text-sky-600 transition-colors group-hover:bg-slate-950 group-hover:text-white">
+                <div
+                  className={`mx-auto flex h-12 w-12 items-center justify-center rounded-xl ${styles.icon}`}
+                >
                   <Icon className="h-5 w-5" />
                 </div>
 
-                <h3 className="mt-5 text-sm font-semibold text-slate-950">
+                <h3 className="mt-5 text-[17px] font-black tracking-tight text-slate-950">
                   {platform.title}
                 </h3>
 
-                <p className="mt-2 text-[10px] leading-5 text-slate-500">
+                <p className="mt-2 text-[13px] font-medium leading-6 text-slate-500">
                   {platform.description}
                 </p>
               </motion.div>
@@ -849,43 +807,34 @@ export default function JobPreparation() {
         ====================================================== */}
 
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 25,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-          }}
-          className="mx-auto mt-20 max-w-4xl rounded-[1.5rem] border border-slate-200 bg-white p-8 text-center shadow-[0_12px_40px_rgba(15,23,42,0.05)] sm:p-12"
+          {...fadeUp}
+          className="mx-auto mt-[60px] max-w-4xl rounded-[24px] border border-slate-200 bg-white p-8 text-center shadow-[0_12px_40px_rgba(15,23,42,0.05)] sm:p-12"
         >
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
-            <BriefcaseBusiness className="h-5 w-5" />
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-yellow-50 text-yellow-600">
+            <BriefcaseBusiness className="h-6 w-6" />
           </div>
 
-          <h2 className="mt-6 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
+          <h2 className="mt-6 text-[30px] font-black leading-[1.15] tracking-[-0.025em] text-slate-950 sm:text-[38px]">
             Ready to take the next step in your career?
           </h2>
 
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-500">
+          <p className="mx-auto mt-4 max-w-xl text-[15px] font-medium leading-7 text-slate-500">
             Build a stronger profile, create a focused job search strategy, and
             prepare yourself for the opportunities ahead.
           </p>
 
           <Link
             to="/contact"
-            className="group mt-7 inline-flex items-center gap-3 rounded-full bg-slate-950 px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-slate-800"
+            className="group mt-7 inline-flex items-center gap-3 rounded-xl bg-yellow-400 px-6 py-3.5 text-[14px] font-black text-slate-950 transition-all duration-300 hover:bg-yellow-300"
           >
             Start Job Preparation
 
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-black/10">
               <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </span>
           </Link>
         </motion.div>
+
       </div>
     </section>
   );

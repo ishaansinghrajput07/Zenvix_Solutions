@@ -11,7 +11,40 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../services/authService.js";
+
+/* =========================================================
+   LOCAL AUTH CONFIG
+========================================================= */
+
+const ADMIN_CREDENTIALS = {
+  email: "admin@zenvix.com",
+  password: "Zenvix@123",
+  name: "Zenvix Admin",
+  role: "admin",
+};
+
+/* =========================================================
+   STORAGE KEYS
+========================================================= */
+
+const AUTH_KEYS = {
+  user: "zenvix_user",
+  token: "zenvix_token",
+};
+
+/* =========================================================
+   CREATE LOCAL SESSION TOKEN
+========================================================= */
+
+const createLocalToken = () => {
+  return `zenvix_local_${Date.now()}_${Math.random()
+    .toString(36)
+    .substring(2, 10)}`;
+};
+
+/* =========================================================
+   LOGIN COMPONENT
+========================================================= */
 
 export default function Login() {
   const navigate = useNavigate();
@@ -28,9 +61,9 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
 
-  // =====================================================
-  // HANDLE INPUT
-  // =====================================================
+  /* =======================================================
+     HANDLE INPUT
+  ======================================================= */
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -48,13 +81,15 @@ export default function Login() {
     setServerError("");
   };
 
-  // =====================================================
-  // VALIDATION
-  // =====================================================
+  /* =======================================================
+     VALIDATION
+  ======================================================= */
 
   const validateForm = () => {
     const newErrors = {};
+
     const email = formData.email.trim();
+    const password = formData.password;
 
     if (!email) {
       newErrors.email = "Email address is required.";
@@ -62,10 +97,11 @@ export default function Login() {
       newErrors.email = "Please enter a valid email address.";
     }
 
-    if (!formData.password) {
+    if (!password) {
       newErrors.password = "Password is required.";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters.";
+    } else if (password.length < 6) {
+      newErrors.password =
+        "Password must be at least 6 characters.";
     }
 
     setErrors(newErrors);
@@ -73,166 +109,317 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // =====================================================
-  // LOGIN
-  // =====================================================
+  /* =======================================================
+     CLEAR OLD AUTH
+  ======================================================= */
+
+  const clearOldAuth = () => {
+    try {
+      localStorage.removeItem(AUTH_KEYS.user);
+      localStorage.removeItem(AUTH_KEYS.token);
+
+      sessionStorage.removeItem(AUTH_KEYS.user);
+      sessionStorage.removeItem(AUTH_KEYS.token);
+    } catch (error) {
+      console.error("Unable to clear old authentication:", error);
+    }
+  };
+
+  /* =======================================================
+     SAVE LOCAL AUTH
+  ======================================================= */
+
+  const saveLocalAuth = (userData) => {
+    const token = createLocalToken();
+
+    const authUser = {
+      id: userData.id || "admin-local-001",
+      name: userData.name || "Zenvix User",
+      email: userData.email,
+      role: userData.role || "student",
+      userRole: userData.userRole || userData.role || "student",
+      accountType:
+        userData.accountType ||
+        userData.role ||
+        "student",
+      isAuthenticated: true,
+      loginType: "local",
+      loggedInAt: new Date().toISOString(),
+    };
+
+    const storage = formData.remember
+      ? localStorage
+      : sessionStorage;
+
+    storage.setItem(
+      AUTH_KEYS.user,
+      JSON.stringify(authUser)
+    );
+
+    storage.setItem(AUTH_KEYS.token, token);
+
+    return {
+      user: authUser,
+      token,
+    };
+  };
+
+  /* =======================================================
+     GET REDIRECT PATH
+  ======================================================= */
+
+  const getRedirectPath = () => {
+    const params = new URLSearchParams(
+      window.location.search
+    );
+
+    const redirectParam = params.get("redirect");
+
+    if (!redirectParam) {
+      return "";
+    }
+
+    try {
+      return decodeURIComponent(redirectParam);
+    } catch {
+      return redirectParam;
+    }
+  };
+
+  /* =======================================================
+     LOGIN
+  ======================================================= */
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    console.log("LOGIN BUTTON CLICKED");
 
     setServerError("");
 
     const isValid = validateForm();
 
     if (!isValid) {
-      console.log("LOGIN VALIDATION FAILED");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      console.log("LOGIN REQUEST STARTED");
+      /*
+       * Small delay only for better UX.
+       * There is NO API / backend call.
+       */
 
-      const response = await loginUser({
-        email: formData.email.trim(),
-        password: formData.password,
-      });
+      await new Promise((resolve) =>
+        setTimeout(resolve, 500)
+      );
 
-      console.log("LOGIN RESPONSE:", response);
-
-      // =================================================
-      // CHECK LOGIN RESPONSE
-      // =================================================
-
-      if (!response?.success) {
-        throw new Error(
-          response?.message || "Unable to login. Please try again.",
-        );
-      }
-
-      if (!response?.token) {
-        throw new Error(
-          "Login successful, but authentication token is missing.",
-        );
-      }
-
-      // =================================================
-      // CLEAR OLD AUTH DATA
-      // =================================================
-
-      localStorage.removeItem("zenvix_token");
-      localStorage.removeItem("zenvix_user");
-
-      sessionStorage.removeItem("zenvix_token");
-      sessionStorage.removeItem("zenvix_user");
-
-      // =================================================
-      // SAVE AUTH DATA
-      // =================================================
-
-      const storage = formData.remember ? localStorage : sessionStorage;
-
-      storage.setItem("zenvix_token", response.token);
-
-      if (response.user) {
-        storage.setItem("zenvix_user", JSON.stringify(response.user));
-      }
-
-      console.log("LOGIN SUCCESSFUL");
-      console.log("TOKEN SAVED");
-      console.log("LOGIN USER:", response.user);
-
-      // =================================================
-      // GET USER ROLE
-      // =================================================
-
-      const userRole = String(
-        response?.user?.role ||
-          response?.user?.userRole ||
-          response?.user?.accountType ||
-          "",
-      )
+      const email = formData.email
         .trim()
         .toLowerCase();
 
-      console.log("USER ROLE:", userRole);
+      const password = formData.password;
 
-     // =================================================
-// GET REDIRECT INTENT
-// =================================================
+      /* =================================================
+         ADMIN LOGIN
+      ================================================= */
 
-const params = new URLSearchParams(window.location.search);
-const redirectParam = params.get("redirect");
+      if (
+        email === ADMIN_CREDENTIALS.email &&
+        password === ADMIN_CREDENTIALS.password
+      ) {
+        clearOldAuth();
 
-let redirectPath = "";
+        const auth = saveLocalAuth(
+          ADMIN_CREDENTIALS
+        );
 
-try {
-  redirectPath = redirectParam
-    ? decodeURIComponent(redirectParam)
-    : "";
-} catch {
-  redirectPath = redirectParam || "";
-}
+        console.log("LOCAL ADMIN LOGIN SUCCESS");
+        console.log("USER:", auth.user);
 
-console.log("LOGIN REDIRECT:", redirectPath);
+        /*
+         * Admin always opens Admin Dashboard.
+         */
 
-// =================================================
-// ADMIN LOGIN
-// =================================================
+        navigate("/admin/dashboard", {
+          replace: true,
+        });
 
-if (userRole === "admin") {
-  console.log("GOING TO ADMIN DASHBOARD");
+        return;
+      }
 
-  navigate("/admin/dashboard", {
-    replace: true,
-  });
+      /* =================================================
+         OPTIONAL LOCAL USER LOGIN
+         
+         Users can be stored in:
+         zenvix_users
+      ================================================= */
 
-  return;
-}
+      let localUsers = [];
 
-// =================================================
-// STUDENT - ENROLLMENT FLOW
-// =================================================
+      try {
+        const storedUsers = localStorage.getItem(
+          "zenvix_users"
+        );
 
-if (redirectPath.startsWith("/enrollment")) {
-  console.log("GOING TO ENROLLMENT FORM");
+        if (storedUsers) {
+          const parsedUsers = JSON.parse(
+            storedUsers
+          );
 
-  navigate(redirectPath, {
-    replace: true,
-  });
+          if (Array.isArray(parsedUsers)) {
+            localUsers = parsedUsers;
+          }
+        }
+      } catch (error) {
+        console.error(
+          "Unable to read local users:",
+          error
+        );
+      }
 
-  return;
-}
+      /* =================================================
+         FIND LOCAL USER
+      ================================================= */
 
-// =================================================
-// NORMAL STUDENT LOGIN
-// =================================================
+      const localUser = localUsers.find((user) => {
+        const storedEmail = String(
+          user?.email || ""
+        )
+          .trim()
+          .toLowerCase();
 
-console.log("GOING TO STUDENT DASHBOARD");
+        const storedPassword = String(
+          user?.password || ""
+        );
 
-navigate("/dashboard", {
-  replace: true,
-});
+        return (
+          storedEmail === email &&
+          storedPassword === password
+        );
+      });
+
+      /* =================================================
+         LOCAL USER LOGIN SUCCESS
+      ================================================= */
+
+      if (localUser) {
+        clearOldAuth();
+
+        const user = {
+          id:
+            localUser.id ||
+            localUser._id ||
+            `user_${Date.now()}`,
+
+          name:
+            localUser.name ||
+            localUser.fullName ||
+            "Zenvix User",
+
+          email: localUser.email,
+
+          role:
+            localUser.role ||
+            localUser.userRole ||
+            "student",
+
+          userRole:
+            localUser.userRole ||
+            localUser.role ||
+            "student",
+
+          accountType:
+            localUser.accountType ||
+            localUser.role ||
+            localUser.userRole ||
+            "student",
+
+          isAuthenticated: true,
+          loginType: "local",
+          loggedInAt: new Date().toISOString(),
+        };
+
+        const token = createLocalToken();
+
+        const storage = formData.remember
+          ? localStorage
+          : sessionStorage;
+
+        storage.setItem(
+          AUTH_KEYS.user,
+          JSON.stringify(user)
+        );
+
+        storage.setItem(
+          AUTH_KEYS.token,
+          token
+        );
+
+        const redirectPath = getRedirectPath();
+
+        /* =============================================
+           ADMIN USER
+        ============================================= */
+
+        if (
+          String(user.role)
+            .trim()
+            .toLowerCase() === "admin"
+        ) {
+          navigate("/admin/dashboard", {
+            replace: true,
+          });
+
+          return;
+        }
+
+        /* =============================================
+           ENROLLMENT REDIRECT
+        ============================================= */
+
+        if (
+          redirectPath.startsWith("/enrollment")
+        ) {
+          navigate(redirectPath, {
+            replace: true,
+          });
+
+          return;
+        }
+
+        /* =============================================
+           NORMAL USER
+        ============================================= */
+
+        navigate("/dashboard", {
+          replace: true,
+        });
+
+        return;
+      }
+
+      /* =================================================
+         INVALID LOGIN
+      ================================================= */
+
+      throw new Error(
+        "Invalid email or password. Please check your credentials."
+      );
     } catch (error) {
-      console.error("LOGIN ERROR:", error);
+      console.error("LOCAL LOGIN ERROR:", error);
 
-      const message =
-        error?.response?.data?.message ||
+      setServerError(
         error?.message ||
-        "Unable to login. Please check your credentials and try again.";
-
-      setServerError(message);
+          "Unable to login. Please check your credentials and try again."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
-  // =====================================================
-  // UI
-  // =====================================================
+  /* =======================================================
+     UI
+  ======================================================= */
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-white">
@@ -288,6 +475,7 @@ navigate("/dashboard", {
             className="group inline-flex items-center gap-2 text-[11px] font-semibold text-slate-600 transition-colors hover:text-slate-950"
           >
             <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1" />
+
             Back to Zenvix
           </Link>
 
@@ -322,7 +510,9 @@ navigate("/dashboard", {
                   <Sparkles className="h-4 w-4" />
                 </div>
 
-                <span className="text-sm font-bold tracking-tight">Zenvix</span>
+                <span className="text-sm font-bold tracking-tight">
+                  Zenvix
+                </span>
               </div>
 
               <div className="max-w-sm">
@@ -330,18 +520,20 @@ navigate("/dashboard", {
                   Your career journey
                 </p>
 
-                <h1 className="mt-4 text-4xl font-semibold leading-[1.05] tracking-[-0.04em] xl:text-5xl">
-                  Learn.
-                  <br />
-                  Build.
-                  <br />
-                  <span className="text-slate-500">Get hired.</span>
-                </h1>
+               <h1 className="mt-4 text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-white xl:text-5xl">
+  Learn.
+  <br />
+  Build.
+  <br />
+  <span className="text-yellow-400">
+    Get hired.
+  </span>
+</h1>
 
                 <p className="mt-6 text-sm leading-7 text-slate-400">
-                  Access your learning experience, track your progress, explore
-                  career resources and continue building your professional
-                  future.
+                  Access your learning experience, track
+                  your progress, explore career resources and
+                  continue building your professional future.
                 </p>
               </div>
             </div>
@@ -378,7 +570,9 @@ navigate("/dashboard", {
                   <Sparkles className="h-4 w-4" />
                 </div>
 
-                <span className="text-sm font-bold text-slate-950">Zenvix</span>
+                <span className="text-sm font-bold text-slate-950">
+                  Zenvix
+                </span>
               </div>
 
               {/* Header */}
@@ -387,7 +581,7 @@ navigate("/dashboard", {
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">
                   <LockKeyhole className="h-3 w-3 text-slate-500" />
 
-                  <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-teal-700">
                     Account Login
                   </span>
                 </div>
@@ -401,7 +595,9 @@ navigate("/dashboard", {
                 </p>
               </div>
 
-              {/* Server Error */}
+              {/* =================================================
+                  ERROR
+              ================================================= */}
 
               {serverError && (
                 <motion.div
@@ -421,10 +617,18 @@ navigate("/dashboard", {
                 </motion.div>
               )}
 
-              {/* Form */}
+              {/* =================================================
+                  FORM
+              ================================================= */}
 
-              <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-                {/* Email */}
+              <form
+                onSubmit={handleSubmit}
+                className="mt-8 space-y-5"
+                noValidate
+              >
+                {/* =================================================
+                    EMAIL
+                ================================================= */}
 
                 <div>
                   <label
@@ -463,7 +667,9 @@ navigate("/dashboard", {
                   )}
                 </div>
 
-                {/* Password */}
+                {/* =================================================
+                    PASSWORD
+                ================================================= */}
 
                 <div>
                   <div className="mb-2 flex items-center justify-between">
@@ -494,7 +700,11 @@ navigate("/dashboard", {
                     <input
                       id="password"
                       name="password"
-                      type={showPassword ? "text" : "password"}
+                      type={
+                        showPassword
+                          ? "text"
+                          : "password"
+                      }
                       autoComplete="current-password"
                       value={formData.password}
                       onChange={handleChange}
@@ -505,10 +715,16 @@ navigate("/dashboard", {
 
                     <button
                       type="button"
-                      onClick={() => setShowPassword((previous) => !previous)}
+                      onClick={() =>
+                        setShowPassword(
+                          (previous) => !previous
+                        )
+                      }
                       disabled={isLoading}
                       aria-label={
-                        showPassword ? "Hide password" : "Show password"
+                        showPassword
+                          ? "Hide password"
+                          : "Show password"
                       }
                       className="ml-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-700 disabled:cursor-not-allowed"
                     >
@@ -527,7 +743,9 @@ navigate("/dashboard", {
                   )}
                 </div>
 
-                {/* Remember */}
+                {/* =================================================
+                    REMEMBER
+                ================================================= */}
 
                 <label className="flex cursor-pointer items-center gap-2">
                   <input
@@ -544,7 +762,9 @@ navigate("/dashboard", {
                   </span>
                 </label>
 
-                {/* Submit */}
+                {/* =================================================
+                    SUBMIT
+                ================================================= */}
 
                 <button
                   type="submit"
@@ -554,22 +774,27 @@ navigate("/dashboard", {
                   {isLoading ? (
                     <>
                       <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+
                       Signing in...
                     </>
                   ) : (
                     <>
                       Sign In
+
                       <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                     </>
                   )}
                 </button>
               </form>
 
-              {/* Register */}
+              {/* =================================================
+                  REGISTER
+              ================================================= */}
 
               <div className="mt-8 text-center">
                 <p className="text-xs text-slate-400">
                   Don't have an account?{" "}
+
                   <Link
                     to="/register"
                     className="font-semibold text-slate-900 transition-colors hover:text-violet-600"
@@ -579,13 +804,25 @@ navigate("/dashboard", {
                 </p>
               </div>
 
-              {/* Security */}
+              {/* =================================================
+                  SECURITY
+              ================================================= */}
 
               <div className="mt-8 flex items-center justify-center gap-2 border-t border-slate-100 pt-6">
                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
 
                 <p className="text-[9px] text-slate-400">
                   Secure and protected account access
+                </p>
+              </div>
+
+              {/* =================================================
+                  LOCAL MODE
+              ================================================= */}
+
+              <div className="mt-4 text-center">
+                <p className="text-[9px] font-medium uppercase tracking-[0.14em] text-black-500">
+                  Frontend Local Authentication
                 </p>
               </div>
             </div>

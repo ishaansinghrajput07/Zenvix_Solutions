@@ -1,35 +1,43 @@
 
-import { motion } from 'framer-motion'
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   PlayCircle,
   Globe2,
   Layers,
   Users,
-} from 'lucide-react'
-
-const headline = ['Learn the skills.', 'Build the future.', 'Get hired.']
+} from "lucide-react";
 
 const trustIndicators = [
   {
     icon: Layers,
-    label: 'Structured, project-based curriculum',
+    label: "Structured, project-based curriculum",
+    iconColor: "text-violet-400",
+    iconBg: "bg-violet-400/15",
+    iconBorder: "border-violet-300/30",
   },
   {
     icon: Users,
-    label: '1:1 mentorship & career guidance',
+    label: "1:1 mentorship & career guidance",
+    iconColor: "text-cyan-400",
+    iconBg: "bg-cyan-400/15",
+    iconBorder: "border-cyan-300/30",
   },
   {
     icon: Globe2,
-    label: 'Built for learners, everywhere',
+    label: "Built for learners, everywhere",
+    iconColor: "text-emerald-400",
+    iconBg: "bg-emerald-400/15",
+    iconBorder: "border-emerald-300/30",
   },
-]
+];
 
 export default function Hero() {
   return (
     <section
       className="
-        relative isolate
+        relative
+        isolate
         h-[680px]
         overflow-hidden
         pt-[115px]
@@ -42,11 +50,7 @@ export default function Hero() {
         lg:pb-10
       "
     >
-
-      {/* =========================================================
-          FULL WIDTH BACKGROUND IMAGE
-          Very slow + subtle zoom
-      ========================================================= */}
+      {/* BACKGROUND IMAGE */}
       <motion.div
         aria-hidden="true"
         className="
@@ -62,337 +66,302 @@ export default function Hero() {
         transition={{
           duration: 40,
           repeat: Infinity,
-          repeatType: 'loop',
-          ease: 'easeInOut',
+          repeatType: "loop",
+          ease: "easeInOut",
         }}
       >
         <img
           src="/images/zenvix-hero.webp"
-          alt=""
+          alt="Zenvix Hero Background"
           className="
             h-full
             w-full
-            object-fill
+            object-cover
+            object-center
           "
         />
       </motion.div>
 
-      {/* =========================================================
-          VERY SOFT OVERLAY
-      ========================================================= */}
+      {/* FULL EXTENDED GRADIENT OVERLAY */}
       <div
         aria-hidden="true"
         className="
           pointer-events-none
           absolute
           inset-0
-          -z-20
-          bg-white/[0.04]
+          -z-10
         "
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(15, 23, 42, 0.82) 0%, rgba(15, 23, 42, 0.65) 35%, rgba(15, 23, 42, 0.25) 70%, rgba(15, 23, 42, 0.08) 100%)",
+        }}
       />
 
-      {/* =========================================================
-          LEFT SIDE READABILITY GLOW
-      ========================================================= */}
-      <div
-        aria-hidden="true"
-        className="
-          pointer-events-none
-          absolute
-          inset-y-0
-          left-0
-          -z-10
-          w-full
-          lg:w-[66%]
-        "
-      >
-        {/* Main white glow */}
-        <div
-          className="
-            absolute
-            inset-0
-            bg-gradient-to-r
-            from-white/[0.97]
-            via-white/[0.88]
-            via-[58%]
-            to-transparent
-          "
-        />
-
-        {/* Very soft blur behind text */}
-        <div
-          className="
-            absolute
-            inset-y-0
-            left-0
-            w-[68%]
-            backdrop-blur-[3px]
-          "
-        />
-
-        {/* Soft transition */}
-        <div
-          className="
-            absolute
-            inset-y-0
-            right-0
-            w-36
-            bg-gradient-to-r
-            from-white/20
-            to-transparent
-            blur-2xl
-          "
-        />
-      </div>
-
-      {/* =========================================================
-          BOTTOM FADE
-      ========================================================= */}
-      <div
-        aria-hidden="true"
-        className="
-          pointer-events-none
-          absolute
-          inset-x-0
-          bottom-0
-          -z-10
-          h-20
-          bg-gradient-to-t
-          from-slate-950/10
-          to-transparent
-        "
-      />
-
-      {/* =========================================================
-          CONTENT
-      ========================================================= */}
+      {/* CONTENT CONTAINER */}
       <div
         className="
-          shell
           relative
           z-10
+          mx-auto
           flex
           h-full
-          items-center
+          w-full
+          max-w-full
+          px-[30px]
+          sm:px-[40px]
+          lg:px-[50px]
         "
       >
-        <div className="w-full max-w-[650px]">
+        <div className="flex w-full items-center">
+          <div className="w-full max-w-[580px]">
 
-          {/* =====================================================
-              BADGE
-          ===================================================== */}
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 10,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.5,
-              ease: 'easeOut',
-            }}
-            className="
-              mb-5
-              inline-flex
-              items-center
-              gap-2
-              rounded-full
-              border
-              border-slate-200/80
-              bg-white/75
-              px-3.5
-              py-1.5
-              shadow-soft
-              backdrop-blur-md
-            "
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-
-            <span className="eyebrow">
-              Career-learning platform · Global
-            </span>
-          </motion.div>
-
-          {/* =====================================================
-              HEADLINE
-          ===================================================== */}
-          <h1
-            className="
-              text-[38px]
-              leading-[1.06]
-              font-semibold
-              tracking-[-0.025em]
-              text-navy
-              sm:text-[44px]
-              lg:text-[56px]
-            "
-          >
-            {headline.map((line, i) => (
-              <motion.span
-                key={line}
-                initial={{
-                  opacity: 0,
-                  y: 18,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                transition={{
-                  duration: 0.55,
-                  delay: 0.08 * i,
-                  ease: 'easeOut',
-                }}
-                className="block"
-              >
-                {line}
-              </motion.span>
-            ))}
-          </h1>
-
-          {/* =====================================================
-              DESCRIPTION
-          ===================================================== */}
-          <motion.p
-            initial={{
-              opacity: 0,
-              y: 12,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.5,
-              delay: 0.32,
-            }}
-            className="
-              mt-5
-              max-w-lg
-              font-body
-              text-[16px]
-              leading-relaxed
-              text-slate-700
-            "
-          >
-            Zenvix connects structured learning, real-world projects,
-            and career preparation into one continuous journey — so
-            the skills you build translate directly into the job
-            you're working toward.
-          </motion.p>
-
-          {/* =====================================================
-              BUTTONS
-          ===================================================== */}
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 12,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.5,
-              delay: 0.42,
-            }}
-            className="
-              mt-7
-              flex
-              flex-col
-              gap-3
-              sm:flex-row
-              sm:items-center
-            "
-          >
-            <a
-              href="#programs"
-              className="btn-primary group"
-            >
-              Explore Programs
-
-              <ArrowRight
-                size={17}
-                className="
-                  transition-transform
-                  duration-200
-                  group-hover:translate-x-0.5
-                "
-              />
-            </a>
-
-            <a
-              href="#how-it-works"
+            {/* TOP BADGE / EYEBROW */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
               className="
-                btn-secondary
-                group
-                border-slate-300/80
-                bg-white/70
-                backdrop-blur-md
+                mb-4
+                inline-flex
+                items-center
+                gap-2
+                rounded-md
+                bg-white/10
+                px-3
+                py-1
+                backdrop-blur-sm
               "
             >
-              <PlayCircle
-                size={18}
-                className="text-slate-500"
-              />
+              <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
 
-              See How It Works
-            </a>
-          </motion.div>
+              <span className="text-[12px] font-bold tracking-widest text-white uppercase">
+                Career-learning platform · Global
+              </span>
+            </motion.div>
 
-          {/* =====================================================
-              TRUST INDICATORS
-          ===================================================== */}
-          <motion.ul
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            transition={{
-              duration: 0.5,
-              delay: 0.55,
-            }}
-            className="
-              mt-8
-              flex
-              flex-col
-              gap-3
-              border-t
-              border-slate-300/70
-              pt-5
-              sm:flex-row
-              sm:gap-6
-            "
-          >
-            {trustIndicators.map(
-              ({ icon: Icon, label }) => (
-                <li
-                  key={label}
-                  className="flex items-center gap-2.5"
+            {/* EXACT IMAGE-MATCHING BOLD HEADLINE */}
+            <motion.h1
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: "easeOut" }}
+              className="
+                text-[38px]
+                font-[900]
+                leading-[1.1]
+                tracking-tight
+                text-white
+                drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]
+                sm:text-[46px]
+                lg:text-[52px]
+              "
+            >
+              Learn the skills. Build the future. Get hired.
+            </motion.h1>
+
+            {/* DESCRIPTION */}
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="
+                mt-4
+                max-w-[480px]
+                text-[15px]
+                font-normal
+                leading-relaxed
+                text-slate-100/90
+                drop-shadow-sm
+              "
+            >
+              Zenvix connects structured learning, real-world projects,
+              and career preparation into one continuous journey — so
+              the skills you build translate directly into the job
+              you're working toward.
+            </motion.p>
+
+            {/* ACTION BUTTONS */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="
+                mt-7
+                flex
+                flex-col
+                gap-3.5
+                sm:flex-row
+                sm:items-center
+              "
+            >
+              {/* =====================================================
+                  EXPLORE PROGRAMS
+                  Soft blue/violet glow behind button
+              ===================================================== */}
+              <div className="relative">
+                {/* Glow */}
+                <div
+                  aria-hidden="true"
+                  className="
+                    pointer-events-none
+                    absolute
+                    -inset-3
+                    rounded-xl
+                    bg-blue-500/20
+                    blur-xl
+                  "
+                />
+
+                <a
+                  href="#programs"
+                  className="
+                    relative
+                    inline-flex
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-md
+                    bg-[#1e293b]
+                    px-6
+                    py-3.5
+                    text-[14px]
+                    font-semibold
+                    text-white
+                    shadow-[0_0_24px_rgba(59,130,246,0.18)]
+                    transition-all
+                    duration-200
+                    hover:bg-[#0f172a]
+                    hover:shadow-[0_0_30px_rgba(59,130,246,0.32)]
+                  "
                 >
-                  <Icon
-                    size={16}
-                    className="shrink-0 text-navy-400"
-                    strokeWidth={2}
+                  Explore Programs
+
+                  <ArrowRight size={16} />
+                </a>
+              </div>
+
+              {/* =====================================================
+                  SEE HOW IT WORKS
+                  Soft cyan glow behind button
+              ===================================================== */}
+              <div className="relative">
+                {/* Glow */}
+                <div
+                  aria-hidden="true"
+                  className="
+                    pointer-events-none
+                    absolute
+                    -inset-3
+                    rounded-xl
+                    bg-cyan-400/15
+                    blur-xl
+                  "
+                />
+
+                <a
+                  href="#how-it-works"
+                  className="
+                    relative
+                    inline-flex
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-md
+                    border
+                    border-white/40
+                    bg-white/10
+                    px-6
+                    py-3.5
+                    text-[14px]
+                    font-semibold
+                    text-white
+                    backdrop-blur-md
+                    shadow-[0_0_24px_rgba(34,211,238,0.12)]
+                    transition-all
+                    duration-200
+                    hover:bg-white/20
+                    hover:shadow-[0_0_30px_rgba(34,211,238,0.24)]
+                  "
+                >
+                  <PlayCircle
+                    size={18}
+                    className="text-white"
                   />
 
-                  <span className="font-body text-[13px] text-slate-700">
-                    {label}
-                  </span>
-                </li>
-              )
-            )}
-          </motion.ul>
+                  See How It Works
+                </a>
+              </div>
+            </motion.div>
 
+            {/* FEATURE BADGES */}
+            <motion.ul
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="
+                mt-8
+                flex
+                flex-wrap
+                items-center
+                gap-2.5
+                pt-2
+              "
+            >
+              {trustIndicators.map(
+                ({
+                  icon: Icon,
+                  label,
+                  iconColor,
+                  iconBg,
+                  iconBorder,
+                }) => (
+                  <li
+                    key={label}
+                    className="
+                      flex
+                      items-center
+                      gap-2
+                      rounded-md
+                      border
+                      border-white/30
+                      bg-white/15
+                      px-3.5
+                      py-1.5
+                      backdrop-blur-md
+                    "
+                  >
+                    {/* COLORFUL ICON */}
+                    <span
+                      className={`
+                        flex
+                        h-6
+                        w-6
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-md
+                        border
+                        ${iconBg}
+                        ${iconBorder}
+                      `}
+                    >
+                      <Icon
+                        size={14}
+                        className={iconColor}
+                        strokeWidth={2.5}
+                      />
+                    </span>
+
+                    <span className="text-[12px] font-medium text-white">
+                      {label}
+                    </span>
+                  </li>
+                )
+              )}
+            </motion.ul>
+
+          </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
-

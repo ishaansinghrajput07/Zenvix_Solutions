@@ -1,8 +1,8 @@
+
 import { motion } from "framer-motion";
 import {
   ArrowRight,
   BriefcaseBusiness,
-  Check,
   GraduationCap,
   Rocket,
   Sparkles,
@@ -55,6 +55,7 @@ const colorStyles = {
     glow: "bg-sky-400/20",
     badge: "bg-sky-50 text-sky-600",
     line: "from-sky-400",
+    hover: "group-hover:border-sky-200",
   },
 
   violet: {
@@ -63,6 +64,7 @@ const colorStyles = {
     glow: "bg-violet-400/20",
     badge: "bg-violet-50 text-violet-600",
     line: "via-violet-400",
+    hover: "group-hover:border-violet-200",
   },
 
   amber: {
@@ -71,6 +73,7 @@ const colorStyles = {
     glow: "bg-amber-400/20",
     badge: "bg-amber-50 text-amber-600",
     line: "via-amber-400",
+    hover: "group-hover:border-amber-200",
   },
 
   emerald: {
@@ -79,6 +82,7 @@ const colorStyles = {
     glow: "bg-emerald-400/20",
     badge: "bg-emerald-50 text-emerald-600",
     line: "to-emerald-400",
+    hover: "group-hover:border-emerald-200",
   },
 };
 
@@ -86,50 +90,9 @@ export default function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="relative overflow-hidden bg-white py-24 sm:py-28 lg:py-32"
+      className="relative overflow-hidden bg-white py-[30px]"
     >
-      {/* =====================================================
-          BACKGROUND
-      ====================================================== */}
-
-      <div className="pointer-events-none absolute inset-0">
-        <motion.div
-          animate={{
-            x: [0, 35, 0],
-            y: [0, -25, 0],
-          }}
-          transition={{
-            duration: 13,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute left-1/4 top-0 h-80 w-80 rounded-full bg-sky-100/50 blur-3xl"
-        />
-
-        <motion.div
-          animate={{
-            x: [0, -35, 0],
-            y: [0, 25, 0],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute right-1/4 bottom-0 h-80 w-80 rounded-full bg-violet-100/50 blur-3xl"
-        />
-
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage:
-              "linear-gradient(#0f172a 1px, transparent 1px), linear-gradient(90deg, #0f172a 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-      </div>
-
-      <div className="shell relative">
+      <div className="relative w-full px-[30px] sm:px-[30px] lg:px-[30px]">
         {/* =====================================================
             HEADER
         ====================================================== */}
@@ -150,26 +113,26 @@ export default function HowItWorks() {
           transition={{
             duration: 0.7,
           }}
-          className="mx-auto max-w-3xl text-center"
+          className="w-full pt-[50px] text-center"
         >
           <div className="mb-5 flex items-center justify-center gap-3">
             <span className="h-px w-10 bg-slate-900" />
 
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+            <p className="text-[14px] font-[900] uppercase tracking-[0.18em] text-teal-700">
               How It Works
             </p>
 
             <span className="h-px w-10 bg-slate-900" />
           </div>
 
-          <h2 className="text-4xl font-semibold leading-[1.05] tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-6xl">
+          <h2 className="text-[38px] font-[900] leading-[1.1] tracking-[-0.025em] text-slate-950 sm:text-[46px] lg:text-[52px]">
             Four steps.
-            <span className="block text-slate-400">
+            <span className="block font-[900] text-teal-700">
               One career direction.
             </span>
           </h2>
 
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+          <p className="mx-auto mt-5 max-w-3xl text-[15px] font-semibold leading-7 text-slate-500 sm:text-[16px]">
             Zenvix turns learning into a clear journey — from choosing the
             right path to building the skills and confidence needed for the
             next stage of your career.
@@ -180,11 +143,15 @@ export default function HowItWorks() {
             DESKTOP JOURNEY
         ====================================================== */}
 
-        <div className="relative mt-20 hidden lg:block">
-          {/* Main connecting line */}
-          <div className="absolute left-[12.5%] right-[12.5%] top-[72px] h-px bg-slate-200" />
+        <div className="relative mx-auto mt-10 hidden w-full lg:block">
+          {/* =================================================
+              CONNECTING LINE
+              Exact center of 72px icons = 36px
+          ================================================== */}
 
-          {/* Animated progress line */}
+          <div className="pointer-events-none absolute left-[12.5%] right-[12.5%] top-[36px] z-0 h-[2px] rounded-full bg-slate-200" />
+
+          {/* Animated colored progress line */}
           <motion.div
             initial={{
               width: "0%",
@@ -201,7 +168,7 @@ export default function HowItWorks() {
               delay: 0.4,
               ease: "easeInOut",
             }}
-            className="absolute left-[12.5%] top-[72px] h-px bg-gradient-to-r from-sky-400 via-violet-400 via-amber-400 to-emerald-400"
+            className="pointer-events-none absolute left-[12.5%] top-[36px] z-0 h-[2px] rounded-full bg-gradient-to-r from-sky-400 via-violet-400 via-amber-400 to-emerald-400"
           />
 
           <div className="grid grid-cols-4 gap-6">
@@ -230,7 +197,10 @@ export default function HowItWorks() {
                   }}
                   className="group relative"
                 >
-                  {/* Icon Node */}
+                  {/* =================================================
+                      ICON NODE
+                  ================================================== */}
+
                   <div className="relative z-10 mx-auto flex w-fit">
                     <motion.div
                       animate={{
@@ -245,23 +215,28 @@ export default function HowItWorks() {
                     >
                       {/* Glow */}
                       <div
-                        className={`absolute inset-0 scale-150 rounded-full ${styles.glow} opacity-30 blur-xl transition-all duration-500 group-hover:scale-[1.8] group-hover:opacity-70`}
+                        className={`pointer-events-none absolute inset-0 scale-150 rounded-full ${styles.glow} opacity-30 blur-xl transition-all duration-500 group-hover:scale-[1.8] group-hover:opacity-70`}
                       />
 
-                      {/* Outer Ring */}
-                      <div
-                        className={`relative flex h-[72px] w-[72px] items-center justify-center rounded-full border-8 border-white bg-white shadow-[0_10px_30px_rgba(15,23,42,0.1)]`}
-                      >
+                      {/* White outer ring */}
+                      <div className="relative flex h-[72px] w-[72px] items-center justify-center rounded-full border-8 border-white bg-white shadow-[0_10px_30px_rgba(15,23,42,0.1)]">
+                        {/* Colored icon */}
                         <div
                           className={`flex h-12 w-12 items-center justify-center rounded-full ${styles.icon} transition-transform duration-500 group-hover:scale-110`}
                         >
-                          <Icon className="h-5 w-5" />
+                          <Icon
+                            className="h-5 w-5"
+                            strokeWidth={2.5}
+                          />
                         </div>
                       </div>
                     </motion.div>
                   </div>
 
-                  {/* Card */}
+                  {/* =================================================
+                      STEP CARD
+                  ================================================== */}
+
                   <motion.div
                     whileHover={{
                       y: -7,
@@ -271,34 +246,56 @@ export default function HowItWorks() {
                       stiffness: 300,
                       damping: 22,
                     }}
-                    className="mt-8 rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-[0_10px_35px_rgba(15,23,42,0.04)] transition-shadow duration-500 group-hover:border-slate-300 group-hover:shadow-[0_20px_50px_rgba(15,23,42,0.09)]"
+                    className={`mt-8 min-h-[245px] rounded-[1.35rem] border border-slate-200 bg-white p-5 shadow-[0_8px_28px_rgba(15,23,42,0.035)] transition-all duration-500 ${styles.hover} group-hover:shadow-[0_18px_45px_rgba(15,23,42,0.08)]`}
                   >
+                    {/* Top */}
                     <div className="flex items-center justify-between">
                       <span
-                        className={`rounded-full px-3 py-1 text-[9px] font-bold tracking-[0.18em] ${styles.badge}`}
+                        className={`rounded-full px-3 py-1 text-[9px] font-[900] tracking-[0.18em] ${styles.badge}`}
                       >
                         {step.label}
                       </span>
 
-                      <span className="text-xs font-bold tracking-wider text-slate-300">
+                      <span className="text-[10px] font-[900] tracking-[0.15em] text-yellow-500">
                         {step.number}
                       </span>
                     </div>
 
-                    <h3 className="mt-5 text-lg font-semibold tracking-tight text-slate-950">
+                    {/* Title */}
+                    <h3 className="mt-5 text-[16px] font-[900] leading-tight tracking-[-0.015em] text-slate-950">
                       {step.title}
                     </h3>
 
-                    <p className="mt-3 text-sm leading-6 text-slate-500">
+                    {/* Description */}
+                    <p className="mt-2.5 text-[11px] font-semibold leading-5 text-slate-500">
                       {step.description}
                     </p>
 
-                    <div className="mt-6 flex items-center gap-2 text-xs font-semibold text-slate-400 transition-colors duration-300 group-hover:text-slate-900">
+                    {/* Bottom */}
+                    <div
+                      className={`mt-5 flex items-center gap-2 text-[9px] font-[900] uppercase tracking-[0.18em] text-slate-400 transition-colors duration-300 group-hover:${styles.icon}`}
+                    >
                       Step {step.number}
 
                       <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                     </div>
                   </motion.div>
+
+                  {/* Bottom accent */}
+                  <span
+                    aria-hidden
+                    className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 rounded-full transition-transform duration-500 group-hover:scale-x-100"
+                    style={{
+                      background:
+                        index === 0
+                          ? "#38BDF8"
+                          : index === 1
+                            ? "#8B5CF6"
+                            : index === 2
+                              ? "#F59E0B"
+                              : "#10B981",
+                    }}
+                  />
                 </motion.div>
               );
             })}
@@ -309,10 +306,11 @@ export default function HowItWorks() {
             MOBILE / TABLET JOURNEY
         ====================================================== */}
 
-        <div className="relative mt-14 lg:hidden">
-          {/* Vertical line */}
-          <div className="absolute bottom-8 left-[23px] top-8 w-px bg-slate-200" />
+        <div className="relative mt-10 lg:hidden">
+          {/* Vertical connecting line */}
+          <div className="pointer-events-none absolute bottom-8 left-[24px] top-8 z-0 w-[2px] rounded-full bg-slate-200" />
 
+          {/* Animated vertical progress */}
           <motion.div
             initial={{
               height: "0%",
@@ -328,7 +326,7 @@ export default function HowItWorks() {
               duration: 1.8,
               ease: "easeInOut",
             }}
-            className="absolute left-[23px] top-8 w-px bg-gradient-to-b from-sky-400 via-violet-400 via-amber-400 to-emerald-400"
+            className="pointer-events-none absolute left-[24px] top-8 z-0 w-[2px] rounded-full bg-gradient-to-b from-sky-400 via-violet-400 via-amber-400 to-emerald-400"
           />
 
           <div className="space-y-7">
@@ -373,7 +371,10 @@ export default function HowItWorks() {
                       <div
                         className={`flex h-9 w-9 items-center justify-center rounded-full ${styles.icon}`}
                       >
-                        <Icon className="h-4 w-4" />
+                        <Icon
+                          className="h-4 w-4"
+                          strokeWidth={2.5}
+                        />
                       </div>
                     </motion.div>
                   </div>
@@ -383,27 +384,33 @@ export default function HowItWorks() {
                     whileHover={{
                       x: 4,
                     }}
-                    className="flex-1 rounded-[1.4rem] border border-slate-200 bg-white p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]"
+                    className={`min-h-[190px] flex-1 rounded-[1.35rem] border border-slate-200 bg-white p-5 shadow-[0_8px_28px_rgba(15,23,42,0.035)] transition-all duration-300 ${styles.hover}`}
                   >
                     <div className="flex items-center justify-between gap-4">
                       <span
-                        className={`rounded-full px-3 py-1 text-[9px] font-bold tracking-[0.18em] ${styles.badge}`}
+                        className={`rounded-full px-3 py-1 text-[9px] font-[900] tracking-[0.18em] ${styles.badge}`}
                       >
                         {step.label}
                       </span>
 
-                      <span className="text-xs font-bold text-slate-300">
+                      <span className="text-[10px] font-[900] tracking-[0.15em] text-yellow-500">
                         {step.number}
                       </span>
                     </div>
 
-                    <h3 className="mt-4 font-semibold tracking-tight text-slate-950">
+                    <h3 className="mt-4 text-[16px] font-[900] leading-tight tracking-[-0.015em] text-slate-950">
                       {step.title}
                     </h3>
 
-                    <p className="mt-2 text-sm leading-6 text-slate-500">
+                    <p className="mt-2.5 text-[11px] font-semibold leading-5 text-slate-500">
                       {step.description}
                     </p>
+
+                    <div className="mt-4 flex items-center gap-2 text-[9px] font-[900] uppercase tracking-[0.18em] text-slate-400">
+                      Step {step.number}
+
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </div>
                   </motion.div>
                 </motion.div>
               );
@@ -418,7 +425,7 @@ export default function HowItWorks() {
         <motion.div
           initial={{
             opacity: 0,
-            y: 25,
+            y: 20,
           }}
           whileInView={{
             opacity: 1,
@@ -430,28 +437,28 @@ export default function HowItWorks() {
           }}
           transition={{
             duration: 0.7,
-            delay: 0.2,
+            delay: 0.15,
           }}
-          className="mt-20 overflow-hidden rounded-[2rem] border border-slate-800 bg-slate-950 p-7 shadow-[0_25px_70px_rgba(15,23,42,0.14)] sm:p-9 lg:p-10"
+          className="mt-10 overflow-hidden rounded-[1.5rem] border border-slate-800 bg-slate-950 p-6 shadow-[0_20px_55px_rgba(15,23,42,0.12)] sm:p-8 lg:p-9"
         >
-          <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-            {/* Glow */}
+          <div className="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+            {/* Internal glow */}
             <div className="pointer-events-none absolute -left-20 top-1/2 h-48 w-48 -translate-y-1/2 rounded-full bg-sky-500/15 blur-3xl" />
 
             <div className="relative">
               <div className="mb-3 flex items-center gap-2">
                 <Rocket className="h-4 w-4 text-sky-300" />
 
-                <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-sky-300">
+                <p className="text-[10px] font-[900] uppercase tracking-[0.2em] text-sky-300">
                   The Zenvix Way
                 </p>
               </div>
 
-              <h3 className="max-w-2xl text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+              <h3 className="max-w-2xl text-[22px] font-[900] leading-tight tracking-[-0.02em] text-white sm:text-[28px]">
                 From where you are now to where you want to be.
               </h3>
 
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/45">
+              <p className="mt-3 max-w-2xl text-[12px] font-semibold leading-6 text-white/45">
                 Every step is designed to help you keep moving — from
                 learning a new skill to becoming confident enough to use it
                 in the professional world.
@@ -467,16 +474,16 @@ export default function HowItWorks() {
               whileTap={{
                 scale: 0.98,
               }}
-              className="relative inline-flex shrink-0 items-center justify-center gap-3 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-slate-100"
+              className="relative inline-flex shrink-0 items-center justify-center gap-2.5 rounded-xl bg-yellow-400 px-5 py-3 text-[12px] font-[900] text-black shadow-[0_8px_20px_rgba(250,204,21,0.25)] transition-all duration-300 hover:bg-yellow-300 hover:shadow-[0_12px_25px_rgba(250,204,21,0.35)]"
             >
               Start Your Journey
 
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-[15px] w-[15px]" strokeWidth={2.8} />
             </motion.a>
           </div>
 
           {/* Mini Progress */}
-          <div className="relative mt-9 grid grid-cols-4 gap-2">
+          <div className="relative mt-8 grid grid-cols-4 gap-2">
             {steps.map((step, index) => (
               <div key={step.number} className="flex items-center gap-2">
                 <div
@@ -494,7 +501,43 @@ export default function HowItWorks() {
             ))}
           </div>
         </motion.div>
+
+        {/* =====================================================
+            BOTTOM NOTE
+        ====================================================== */}
+
+        <motion.div
+          initial={{
+            opacity: 0,
+          }}
+          whileInView={{
+            opacity: 1,
+          }}
+          viewport={{
+            once: true,
+          }}
+          transition={{
+            duration: 0.6,
+            delay: 0.2,
+          }}
+          className="mx-auto mt-7 flex max-w-5xl items-center justify-center gap-2 text-center"
+        >
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-yellow-50">
+            <Sparkles
+              className="h-3.5 w-3.5 text-yellow-500"
+              strokeWidth={2.5}
+            />
+          </div>
+
+          <p className="text-[12px] font-semibold leading-6 text-slate-500">
+            A structured journey designed to turn learning into
+            <span className="ml-1 font-[900] text-slate-700">
+              practical career progress.
+            </span>
+          </p>
+        </motion.div>
       </div>
     </section>
   );
 }
+

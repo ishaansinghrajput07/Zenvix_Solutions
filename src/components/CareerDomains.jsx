@@ -27,7 +27,6 @@ const careerDomains = [
     featured: true,
     link: "/programs/software-engineering",
   },
-
   {
     number: "02",
     title: "Data & Analytics",
@@ -38,7 +37,6 @@ const careerDomains = [
     soft: "rgba(20, 184, 201, 0.10)",
     link: "/programs/data-analytics",
   },
-
   {
     number: "03",
     title: "AI & Machine Learning",
@@ -49,7 +47,6 @@ const careerDomains = [
     soft: "rgba(139, 92, 246, 0.10)",
     link: "/programs/ai-ml",
   },
-
   {
     number: "04",
     title: "Cloud & DevOps",
@@ -60,7 +57,6 @@ const careerDomains = [
     soft: "rgba(14, 165, 233, 0.10)",
     link: "/programs/cloud-computing",
   },
-
   {
     number: "05",
     title: "Business & Operations",
@@ -71,7 +67,6 @@ const careerDomains = [
     soft: "rgba(18, 167, 107, 0.10)",
     link: "/programs/business-analytics",
   },
-
   {
     number: "06",
     title: "Finance & Banking",
@@ -82,7 +77,6 @@ const careerDomains = [
     soft: "rgba(245, 158, 11, 0.10)",
     link: "/programs",
   },
-
   {
     number: "07",
     title: "Healthcare",
@@ -93,7 +87,6 @@ const careerDomains = [
     soft: "rgba(244, 63, 94, 0.10)",
     link: "/programs",
   },
-
   {
     number: "08",
     title: "Consulting & Services",
@@ -110,35 +103,9 @@ export default function CareerDomains() {
   return (
     <section
       id="career-domains"
-      className="relative overflow-hidden bg-[#F8FAFC] py-24 sm:py-28 lg:py-32"
+      className="relative overflow-hidden bg-white py-[30px]"
     >
-      {/* =====================================================
-          BACKGROUND
-      ====================================================== */}
-
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-      >
-        <div className="absolute left-[-180px] top-20 h-[420px] w-[420px] rounded-full bg-violet-500/[0.045] blur-3xl" />
-
-        <div className="absolute right-[-180px] bottom-20 h-[420px] w-[420px] rounded-full bg-blue-500/[0.045] blur-3xl" />
-
-        <div
-          className="absolute inset-0 opacity-[0.3]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #E8ECF2 1px, transparent 1px), linear-gradient(to bottom, #E8ECF2 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
-            maskImage:
-              "radial-gradient(ellipse 75% 60% at 50% 50%, black 25%, transparent 100%)",
-            WebkitMaskImage:
-              "radial-gradient(ellipse 75% 60% at 50% 50%, black 25%, transparent 100%)",
-          }}
-        />
-      </div>
-
-      <div className="shell relative">
+      <div className="relative w-full px-[30px] sm:px-[30px] lg:px-[30px]">
 
         {/* =====================================================
             HEADER
@@ -147,7 +114,7 @@ export default function CareerDomains() {
         <motion.div
           initial={{
             opacity: 0,
-            y: 22,
+            y: 30,
           }}
           whileInView={{
             opacity: 1,
@@ -158,54 +125,60 @@ export default function CareerDomains() {
             amount: 0.3,
           }}
           transition={{
-            duration: 0.6,
-            ease: "easeOut",
+            duration: 0.7,
           }}
-          className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"
+          className="w-full pt-[50px] text-center"
         >
-          <div className="max-w-2xl">
+          {/* LABEL */}
 
-            <div className="mb-5 flex items-center gap-3">
-              <span className="h-px w-8 bg-slate-900" />
+          <div className="mb-5 flex items-center justify-center gap-3">
+            <span className="h-px w-10 bg-slate-900" />
 
-              <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">
-                Career Domains
-              </span>
-            </div>
-
-            <h2 className="text-3xl font-semibold leading-[1.08] tracking-[-0.045em] text-slate-950 sm:text-4xl lg:text-[3.25rem]">
-              Where can your
-              <span className="block text-slate-400">
-                career take you?
-              </span>
-            </h2>
-
-            <p className="mt-5 max-w-xl text-sm leading-7 text-slate-500 sm:text-[15px]">
-              Build practical skills that can help you pursue opportunities
-              across modern technology, business and professional career paths.
+            <p className="!m-0 text-[14px] font-[900] uppercase tracking-[0.18em] !text-teal-700">
+              Career Domains
             </p>
+
+            <span className="h-px w-10 bg-slate-900" />
           </div>
 
-          {/* Explore career paths */}
+          {/* HEADING */}
+
+          <h2 className="text-[38px] font-[900] leading-[1.1] tracking-[-0.025em] text-slate-950 sm:text-[46px] lg:text-[52px]">
+            Where can your
+            <span className="block font-[900] text-teal-700">
+              career take you?
+            </span>
+          </h2>
+
+          {/* DESCRIPTION */}
+
+          <p className="mx-auto mt-5 max-w-3xl text-[15px] font-medium leading-7 text-slate-500 sm:text-[16px]">
+            Build practical skills that can help you pursue opportunities
+            across modern technology, business and professional career paths.
+          </p>
+
+          {/* DESKTOP CAREER PATH INDICATOR */}
 
           <motion.div
             whileHover={{
               y: -2,
             }}
-            className="hidden shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2.5 shadow-sm lg:flex lg:items-center lg:gap-2"
+            className="mx-auto mt-6 hidden w-fit items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 shadow-[0_6px_20px_rgba(15,23,42,0.04)] lg:flex"
           >
             <Sparkles
               size={14}
               className="text-violet-500"
+              strokeWidth={2.5}
             />
 
-            <span className="text-[10px] font-semibold text-slate-600">
+            <span className="text-[10px] font-[900] text-slate-600">
               Explore career paths
             </span>
 
             <ArrowUpRight
               size={13}
               className="text-slate-400"
+              strokeWidth={2.5}
             />
           </motion.div>
         </motion.div>
@@ -214,8 +187,7 @@ export default function CareerDomains() {
             CAREER GRID
         ====================================================== */}
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-
+        <div className="mx-auto mt-10 grid w-full gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {careerDomains.map((domain, index) => {
             const Icon = domain.icon;
 
@@ -224,7 +196,7 @@ export default function CareerDomains() {
                 key={domain.number}
                 initial={{
                   opacity: 0,
-                  y: 25,
+                  y: 20,
                 }}
                 whileInView={{
                   opacity: 1,
@@ -236,34 +208,31 @@ export default function CareerDomains() {
                 }}
                 transition={{
                   duration: 0.5,
-                  delay: index * 0.055,
-                  ease: "easeOut",
+                  delay: index * 0.07,
                 }}
                 className="h-full"
               >
-
                 <MotionLink
                   to={domain.link}
                   whileHover={{
-                    y: -6,
+                    y: -5,
                   }}
                   transition={{
                     duration: 0.25,
                   }}
-                  className={`group relative flex h-full min-h-[235px] flex-col overflow-hidden rounded-[1.25rem] border bg-white p-5 transition-all duration-500 ${
+                  className={`group relative flex h-full min-h-[245px] flex-col overflow-hidden rounded-[1.35rem] border bg-white p-5 transition-all duration-500 ${
                     domain.featured
                       ? "border-slate-300 shadow-[0_12px_40px_rgba(15,23,42,0.07)]"
-                      : "border-slate-200 shadow-[0_6px_25px_rgba(15,23,42,0.025)]"
-                  } hover:border-slate-300 hover:shadow-[0_18px_45px_rgba(15,23,42,0.08)]`}
+                      : "border-slate-200 shadow-[0_8px_28px_rgba(15,23,42,0.035)]"
+                  } hover:border-slate-300 hover:shadow-[0_18px_45px_rgba(15,23,42,0.08)] focus:outline-none focus:ring-2 focus:ring-slate-950/10`}
                 >
-
                   {/* =================================================
                       HOVER GLOW
                   ================================================== */}
 
                   <div
                     aria-hidden
-                    className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                    className="pointer-events-none absolute -right-14 -top-14 h-36 w-36 rounded-full opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100"
                     style={{
                       backgroundColor: domain.color,
                     }}
@@ -273,24 +242,30 @@ export default function CareerDomains() {
                       TOP
                   ================================================== */}
 
-                  <div className="relative flex items-start justify-between">
-
-                    <div
-                      className="flex h-10 w-10 items-center justify-center rounded-xl"
+                  <div className="relative flex items-center justify-between">
+                    <motion.div
+                      whileHover={{
+                        scale: 1.08,
+                        rotate: 3,
+                      }}
+                      transition={{
+                        duration: 0.25,
+                      }}
+                      className="flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-300"
                       style={{
                         backgroundColor: domain.soft,
                       }}
                     >
                       <Icon
-                        size={17}
-                        strokeWidth={2.1}
+                        className="h-[19px] w-[19px]"
+                        strokeWidth={2.5}
                         style={{
                           color: domain.color,
                         }}
                       />
-                    </div>
+                    </motion.div>
 
-                    <span className="font-mono text-[9px] tracking-[0.16em] text-slate-300">
+                    <span className="text-[10px] font-[900] tracking-[0.15em] text-yellow-500">
                       {domain.number}
                     </span>
                   </div>
@@ -299,10 +274,8 @@ export default function CareerDomains() {
                       CONTENT
                   ================================================== */}
 
-                  <div className="relative mt-6">
-
+                  <div className="relative mt-5">
                     <div className="flex items-center gap-2">
-
                       <span
                         className="h-1.5 w-1.5 rounded-full"
                         style={{
@@ -311,21 +284,20 @@ export default function CareerDomains() {
                       />
 
                       <span
-                        className="text-[9px] font-bold uppercase tracking-[0.17em]"
+                        className="text-[9px] font-[900] uppercase tracking-[0.18em]"
                         style={{
                           color: domain.color,
                         }}
                       >
                         Career Path
                       </span>
-
                     </div>
 
-                    <h3 className="mt-2 text-[15px] font-semibold tracking-[-0.015em] text-slate-950">
+                    <h3 className="mt-2 text-[16px] font-[900] leading-tight tracking-[-0.015em] text-slate-950">
                       {domain.title}
                     </h3>
 
-                    <p className="mt-2.5 min-h-[48px] text-[11.5px] leading-5 text-slate-500">
+                    <p className="!mt-2.5 min-h-[48px] text-[11px] font-medium leading-5 !text-slate-500">
                       {domain.description}
                     </p>
                   </div>
@@ -334,20 +306,24 @@ export default function CareerDomains() {
                       FOOTER
                   ================================================== */}
 
-                  <div className="relative mt-auto flex items-center justify-between border-t border-slate-100 pt-4">
+                  <div className="relative mt-auto pt-5">
+                    <div className="flex items-center justify-between border-t border-slate-100 pt-3.5">
+                      <span
+                        className="text-[9px] font-[900] uppercase tracking-[0.18em]"
+                        style={{
+                          color: domain.color,
+                        }}
+                      >
+                        Explore Opportunities
+                      </span>
 
-                    <span className="text-[9px] font-medium text-slate-400">
-                      Explore opportunities
-                    </span>
-
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-all duration-300 group-hover:bg-slate-950 group-hover:text-white">
-
-                      <ArrowUpRight
-                        size={13}
-                        className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                      />
-
-                    </span>
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-all duration-300 group-hover:bg-slate-950 group-hover:text-white">
+                        <ArrowUpRight
+                          className="h-[13px] w-[13px] transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                          strokeWidth={2.5}
+                        />
+                      </span>
+                    </div>
                   </div>
 
                   {/* =================================================
@@ -355,18 +331,16 @@ export default function CareerDomains() {
                   ================================================== */}
 
                   <span
+                    aria-hidden
                     className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100"
                     style={{
                       backgroundColor: domain.color,
                     }}
                   />
-
                 </MotionLink>
-
               </motion.div>
             );
           })}
-
         </div>
 
         {/* =====================================================
@@ -376,7 +350,7 @@ export default function CareerDomains() {
         <motion.div
           initial={{
             opacity: 0,
-            y: 15,
+            y: 12,
           }}
           whileInView={{
             opacity: 1,
@@ -386,28 +360,25 @@ export default function CareerDomains() {
             once: true,
           }}
           transition={{
-            duration: 0.55,
-            delay: 0.2,
+            duration: 0.6,
+            delay: 0.15,
           }}
-          className="mt-9 flex justify-center"
+          className="mx-auto mt-7 flex max-w-6xl items-center justify-center gap-2 text-center"
         >
-
-          <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 shadow-sm">
-
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-
-            <p className="text-[10px] text-slate-500">
-              Your skills can open the door.
-
-              <span className="ml-1 font-semibold text-slate-800">
-                Zenvix helps you prepare for what comes next.
-              </span>
-            </p>
-
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-yellow-50">
+            <Sparkles
+              className="h-3.5 w-3.5 text-yellow-500"
+              strokeWidth={2.5}
+            />
           </div>
 
+          <p className="!m-0 text-[12px] font-medium leading-6 !text-slate-500">
+            Your skills can open the door.
+            <span className="ml-1 font-[900] text-slate-700">
+              Zenvix helps you prepare for what comes next.
+            </span>
+          </p>
         </motion.div>
-
       </div>
     </section>
   );

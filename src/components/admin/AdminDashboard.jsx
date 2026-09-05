@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   Users,
@@ -16,66 +17,131 @@ import {
   TrendingUp,
   Activity,
   GraduationCap,
-  UserRoundCheck,
   UserRoundX,
   ShieldCheck,
   XCircle,
-  Eye,
   CalendarDays,
   Mail,
   Phone,
   ChevronRight,
   ClipboardList,
-  CircleDollarSign,
 } from "lucide-react";
 
-import axios from "axios";
-
-import {
-  getAdminEnrollments,
-  approveEnrollment,
-  rejectEnrollment,
-} from "../../services/enrollmentService";
-
 // =====================================================
-// API
+// LOCAL STORAGE KEYS
 // =====================================================
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  "http://localhost:5000/api";
-
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+const STORAGE_KEYS = {
+  students: "zenvixStudents",
+  courses: "zenvixCourses",
+  enrollments: "zenvixEnrollments",
+  contactLeads: "zenvixContactLeads",
+  user: "zenvix_user",
+  token: "zenvix_token",
+};
 
 // =====================================================
-// TOKEN
+// SAFE LOCAL STORAGE HELPERS
 // =====================================================
 
-const getStoredToken = () => {
+const readLocalArray = (key) => {
+  try {
+    const raw = localStorage.getItem(key);
+
+    if (!raw) {
+      return [];
+    }
+
+    const parsed = JSON.parse(raw);
+
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.error(`Unable to read localStorage key "${key}":`, error);
+
+    return [];
+  }
+};
+
+const writeLocalArray = (key, value) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+
+    return true;
+  } catch (error) {
+    console.error(`Unable to write localStorage key "${key}":`, error);
+
+    return false;
+  }
+};
+
+// =====================================================
+// GET STORED USER
+// =====================================================
+
+const getStoredUser = () => {
+  try {
+    const raw =
+      localStorage.getItem(STORAGE_KEYS.user) ||
+      sessionStorage.getItem(STORAGE_KEYS.user);
+
+    if (!raw) {
+      return null;
+    }
+
+    return JSON.parse(raw);
+  } catch (error) {
+    console.error("Unable to read stored user:", error);
+
+    return null;
+  }
+};
+
+// =====================================================
+// GET ITEM ID
+// =====================================================
+
+const getItemId = (item) => {
+  return item?._id || item?.id || item?.enrollmentId || item?.leadId || null;
+};
+
+// =====================================================
+// DATE VALUE
+// =====================================================
+
+const getDateValue = (item) => {
   return (
-    localStorage.getItem("zenvix_token") ||
-    sessionStorage.getItem("zenvix_token") ||
+    item?.createdAt ||
+    item?.created_at ||
+    item?.date ||
+    item?.enrolledAt ||
+    item?.requestedAt ||
+    item?.updatedAt ||
     null
   );
 };
 
 // =====================================================
-// AUTH HEADERS
+// SORT NEWEST
 // =====================================================
 
-const getAuthHeaders = () => {
-  const token = getStoredToken();
+const sortNewest = (items) => {
+  return [...items].sort((a, b) => {
+    const dateA = new Date(getDateValue(a) || 0).getTime();
 
-  return token
-    ? {
-        Authorization: `Bearer ${token}`,
-      }
-    : {};
+    const dateB = new Date(getDateValue(b) || 0).getTime();
+
+    return dateB - dateA;
+  });
+};
+
+// =====================================================
+// NORMALIZE STATUS
+// =====================================================
+
+const normalizeStatus = (status) => {
+  return String(status || "")
+    .trim()
+    .toLowerCase();
 };
 
 // =====================================================
@@ -83,37 +149,47 @@ const getAuthHeaders = () => {
 // =====================================================
 
 const formatDate = (date) => {
-  if (!date) return "—";
+  if (!date) {
+    return "—";
+  }
 
   try {
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return "—";
+    }
+
     return new Intl.DateTimeFormat("en-IN", {
       day: "2-digit",
       month: "short",
       year: "numeric",
-    }).format(new Date(date));
+    }).format(parsedDate);
   } catch {
     return "—";
   }
 };
 
 // =====================================================
-// STATUS COLORS
+// ENROLLMENT STATUS CLASSES
 // =====================================================
 
 const getEnrollmentStatusClasses = (status, accessGranted) => {
-  if (status === "Pending") {
+  const normalized = normalizeStatus(status);
+
+  if (normalized === "pending") {
     return "bg-amber-50 text-amber-700 border-amber-100";
   }
 
-  if (status === "Approved" && accessGranted) {
+  if (normalized === "approved" && accessGranted) {
     return "bg-emerald-50 text-emerald-700 border-emerald-100";
   }
 
-  if (status === "Approved" && !accessGranted) {
+  if (normalized === "approved" && !accessGranted) {
     return "bg-orange-50 text-orange-700 border-orange-100";
   }
 
-  if (status === "Rejected") {
+  if (normalized === "rejected" || normalized === "revoked") {
     return "bg-red-50 text-red-700 border-red-100";
   }
 
@@ -125,6 +201,14 @@ const getEnrollmentStatusClasses = (status, accessGranted) => {
 // =====================================================
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
+
+  // ===================================================
+  // AUTH
+  // ===================================================
+
+  const [authChecking, setAuthChecking] = useState(true);
+
   // ===================================================
   // DASHBOARD STATE
   // ===================================================
@@ -143,112 +227,239 @@ export default function AdminDashboard() {
 
   const [enrollments, setEnrollments] = useState([]);
 
-  const [enrollmentsLoading, setEnrollmentsLoading] =
-    useState(true);
+  const [enrollmentsLoading, setEnrollmentsLoading] = useState(true);
 
-  const [enrollmentError, setEnrollmentError] =
-    useState("");
+  const [enrollmentError, setEnrollmentError] = useState("");
 
-  const [processingEnrollmentId, setProcessingEnrollmentId] =
-    useState(null);
+  const [processingEnrollmentId, setProcessingEnrollmentId] = useState(null);
 
   // ===================================================
-  // FETCH DASHBOARD
-  // ===================================================
-
-  const fetchDashboard = useCallback(async () => {
-    const token = getStoredToken();
-
-    if (!token) {
-      setError("Authentication token not found.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      setError("");
-
-      const response = await api.get("/admin/dashboard", {
-        headers: getAuthHeaders(),
-      });
-
-      if (!response.data?.success) {
-        throw new Error(
-          response.data?.message ||
-            "Unable to load dashboard.",
-        );
-      }
-
-      setData(response.data);
-    } catch (err) {
-      console.error("Admin Dashboard Error:", err);
-
-      setError(
-        err?.response?.data?.message ||
-          err?.message ||
-          "Unable to load admin dashboard.",
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // ===================================================
-  // FETCH ENROLLMENTS
-  // ===================================================
-
-  const fetchEnrollments = useCallback(async () => {
-    const token = getStoredToken();
-
-    if (!token) {
-      setEnrollmentError("Authentication token not found.");
-      setEnrollmentsLoading(false);
-      return;
-    }
-
-    try {
-      setEnrollmentError("");
-
-      const response = await getAdminEnrollments({
-        status: "Pending",
-      });
-
-      if (!response?.success) {
-        throw new Error(
-          response?.message ||
-            "Unable to load enrollment requests.",
-        );
-      }
-
-      setEnrollments(
-        Array.isArray(response?.enrollments)
-          ? response.enrollments
-          : [],
-      );
-    } catch (err) {
-      console.error(
-        "Admin Enrollment Error:",
-        err,
-      );
-
-      setEnrollmentError(
-        err?.response?.data?.message ||
-          err?.message ||
-          "Unable to load enrollment requests.",
-      );
-    } finally {
-      setEnrollmentsLoading(false);
-    }
-  }, []);
-
-  // ===================================================
-  // INITIAL FETCH
+  // AUTH CHECK
   // ===================================================
 
   useEffect(() => {
-    fetchDashboard();
-    fetchEnrollments();
-  }, [fetchDashboard, fetchEnrollments]);
+    const user = getStoredUser();
+
+    const role = String(user?.role || user?.userRole || user?.accountType || "")
+      .trim()
+      .toLowerCase();
+
+    if (!user || user?.isAuthenticated !== true || role !== "admin") {
+      navigate("/login?redirect=/admin/dashboard", {
+        replace: true,
+      });
+
+      return;
+    }
+
+    setAuthChecking(false);
+  }, [navigate]);
+
+  // ===================================================
+  // LOAD LOCAL DATA
+  // ===================================================
+
+  const loadLocalData = useCallback(() => {
+    try {
+      setError("");
+
+      const students = readLocalArray(STORAGE_KEYS.students);
+
+      const courses = readLocalArray(STORAGE_KEYS.courses);
+
+      const allEnrollments = readLocalArray(STORAGE_KEYS.enrollments);
+
+      const leads = readLocalArray(STORAGE_KEYS.contactLeads);
+
+      // -----------------------------------------------
+      // ENROLLMENT COUNTS
+      // -----------------------------------------------
+
+      const totalEnrollments = allEnrollments.length;
+
+      const pendingEnrollments = allEnrollments.filter(
+        (item) => normalizeStatus(item?.status) === "pending",
+      ).length;
+
+      const approvedEnrollments = allEnrollments.filter(
+        (item) =>
+          normalizeStatus(item?.status) === "approved" ||
+          item?.accessGranted === true,
+      ).length;
+
+      // -----------------------------------------------
+      // STUDENT COUNTS
+      // -----------------------------------------------
+
+      const totalStudents = students.length;
+
+      const activeStudents = students.filter((student) => {
+        if (student?.isActive === false) {
+          return false;
+        }
+
+        const status = normalizeStatus(student?.status);
+
+        if (
+          status === "inactive" ||
+          status === "blocked" ||
+          status === "rejected"
+        ) {
+          return false;
+        }
+
+        return true;
+      }).length;
+
+      const pendingStudents = students.filter((student) => {
+        const status = normalizeStatus(student?.status);
+
+        return (
+          status === "pending" ||
+          status === "waiting" ||
+          status === "pending approval"
+        );
+      }).length;
+
+      const completedStudents = students.filter((student) => {
+        const status = normalizeStatus(student?.status);
+
+        const progress = Number(
+          student?.progress ?? student?.completionProgress ?? 0,
+        );
+
+        return (
+          status === "completed" ||
+          status === "complete" ||
+          student?.completed === true ||
+          progress >= 100
+        );
+      }).length;
+
+      // -----------------------------------------------
+      // LEAD COUNTS
+      // -----------------------------------------------
+
+      const totalLeads = leads.length;
+
+      const newLeads = leads.filter((lead) => {
+        const status = normalizeStatus(lead?.status);
+
+        return !status || status === "new";
+      }).length;
+
+      // -----------------------------------------------
+      // RECENT DATA
+      // -----------------------------------------------
+
+      const recentStudents = sortNewest(students).slice(0, 5);
+
+      const recentCourses = sortNewest(courses).slice(0, 5);
+
+      const recentLeads = sortNewest(leads).slice(0, 5);
+
+      const pendingEnrollmentList = sortNewest(
+        allEnrollments.filter(
+          (item) => normalizeStatus(item?.status) === "pending",
+        ),
+      );
+
+      // -----------------------------------------------
+      // DASHBOARD OBJECT
+      // -----------------------------------------------
+
+      setData({
+        success: true,
+
+        stats: {
+          totalStudents,
+          activeStudents,
+          pendingStudents,
+          completedStudents,
+
+          totalCourses: courses.length,
+
+          totalLeads,
+          newLeads,
+
+          totalEnrollments,
+          pendingEnrollments,
+          approvedEnrollments,
+        },
+
+        recentStudents,
+        recentCourses,
+        recentLeads,
+      });
+
+      setEnrollments(pendingEnrollmentList);
+
+      setEnrollmentError("");
+
+      setLoading(false);
+
+      setEnrollmentsLoading(false);
+    } catch (err) {
+      console.error("Local Admin Dashboard Error:", err);
+
+      setError("Unable to load dashboard data from local storage.");
+
+      setLoading(false);
+      setEnrollmentsLoading(false);
+    }
+  }, []);
+
+  // ===================================================
+  // INITIAL LOAD
+  // ===================================================
+
+  useEffect(() => {
+    if (authChecking) {
+      return;
+    }
+
+    loadLocalData();
+  }, [authChecking, loadLocalData]);
+
+  // ===================================================
+  // LISTEN FOR LOCAL STORAGE UPDATES
+  // ===================================================
+
+  useEffect(() => {
+    if (authChecking) {
+      return;
+    }
+
+    const handleDataUpdate = () => {
+      loadLocalData();
+    };
+
+    window.addEventListener("contactLeadAdded", handleDataUpdate);
+
+    window.addEventListener("contactLeadUpdated", handleDataUpdate);
+
+    window.addEventListener("enrollmentUpdated", handleDataUpdate);
+
+    window.addEventListener("studentUpdated", handleDataUpdate);
+
+    window.addEventListener("courseUpdated", handleDataUpdate);
+
+    window.addEventListener("storage", handleDataUpdate);
+
+    return () => {
+      window.removeEventListener("contactLeadAdded", handleDataUpdate);
+
+      window.removeEventListener("contactLeadUpdated", handleDataUpdate);
+
+      window.removeEventListener("enrollmentUpdated", handleDataUpdate);
+
+      window.removeEventListener("studentUpdated", handleDataUpdate);
+
+      window.removeEventListener("courseUpdated", handleDataUpdate);
+
+      window.removeEventListener("storage", handleDataUpdate);
+    };
+  }, [authChecking, loadLocalData]);
 
   // ===================================================
   // REFRESH
@@ -257,10 +468,12 @@ export default function AdminDashboard() {
   const handleRefresh = async () => {
     setRefreshing(true);
 
-    await Promise.all([
-      fetchDashboard(),
-      fetchEnrollments(),
-    ]);
+    setLoading(true);
+    setEnrollmentsLoading(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    loadLocalData();
 
     setRefreshing(false);
   };
@@ -269,52 +482,60 @@ export default function AdminDashboard() {
   // APPROVE ENROLLMENT
   // ===================================================
 
-  const handleApproveEnrollment = async (
-    enrollmentId,
-  ) => {
-    if (!enrollmentId) return;
+  const handleApproveEnrollment = (enrollmentId) => {
+    if (!enrollmentId) {
+      return;
+    }
 
     const confirmed = window.confirm(
       "Are you sure you want to approve this enrollment and grant course access?",
     );
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
 
     try {
       setProcessingEnrollmentId(enrollmentId);
 
-      const response = await approveEnrollment(
-        enrollmentId,
+      const allEnrollments = readLocalArray(STORAGE_KEYS.enrollments);
+
+      const updatedEnrollments = allEnrollments.map((enrollment) => {
+        const currentId = getItemId(enrollment);
+
+        if (String(currentId) !== String(enrollmentId)) {
+          return enrollment;
+        }
+
+        return {
+          ...enrollment,
+
+          status: "Approved",
+
+          accessGranted: true,
+
+          approvedAt: new Date().toISOString(),
+
+          updatedAt: new Date().toISOString(),
+        };
+      });
+
+      const saved = writeLocalArray(
+        STORAGE_KEYS.enrollments,
+        updatedEnrollments,
       );
 
-      if (!response?.success) {
-        throw new Error(
-          response?.message ||
-            "Unable to approve enrollment.",
-        );
+      if (!saved) {
+        throw new Error("Unable to save enrollment update.");
       }
 
-      // Remove from pending list immediately
-      setEnrollments((previous) =>
-        previous.filter(
-          (item) =>
-            item?._id !== enrollmentId,
-        ),
-      );
+      window.dispatchEvent(new Event("enrollmentUpdated"));
 
-      // Refresh dashboard stats
-      await fetchDashboard();
+      loadLocalData();
     } catch (err) {
-      console.error(
-        "Approve Enrollment Error:",
-        err,
-      );
+      console.error("Approve Enrollment Error:", err);
 
-      window.alert(
-        err?.response?.data?.message ||
-          err?.message ||
-          "Unable to approve enrollment.",
-      );
+      window.alert(err?.message || "Unable to approve enrollment.");
     } finally {
       setProcessingEnrollmentId(null);
     }
@@ -324,221 +545,72 @@ export default function AdminDashboard() {
   // REJECT ENROLLMENT
   // ===================================================
 
-  const handleRejectEnrollment = async (
-    enrollmentId,
-  ) => {
-    if (!enrollmentId) return;
+  const handleRejectEnrollment = (enrollmentId) => {
+    if (!enrollmentId) {
+      return;
+    }
 
     const confirmed = window.confirm(
       "Are you sure you want to reject this enrollment request?",
     );
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
 
     try {
       setProcessingEnrollmentId(enrollmentId);
 
-      const response = await rejectEnrollment(
-        enrollmentId,
+      const allEnrollments = readLocalArray(STORAGE_KEYS.enrollments);
+
+      const updatedEnrollments = allEnrollments.map((enrollment) => {
+        const currentId = getItemId(enrollment);
+
+        if (String(currentId) !== String(enrollmentId)) {
+          return enrollment;
+        }
+
+        return {
+          ...enrollment,
+
+          status: "Rejected",
+
+          accessGranted: false,
+
+          rejectedAt: new Date().toISOString(),
+
+          updatedAt: new Date().toISOString(),
+        };
+      });
+
+      const saved = writeLocalArray(
+        STORAGE_KEYS.enrollments,
+        updatedEnrollments,
       );
 
-      if (!response?.success) {
-        throw new Error(
-          response?.message ||
-            "Unable to reject enrollment.",
-        );
+      if (!saved) {
+        throw new Error("Unable to save enrollment update.");
       }
 
-      // Remove from pending list immediately
-      setEnrollments((previous) =>
-        previous.filter(
-          (item) =>
-            item?._id !== enrollmentId,
-        ),
-      );
+      window.dispatchEvent(new Event("enrollmentUpdated"));
 
-      // Refresh dashboard stats
-      await fetchDashboard();
+      loadLocalData();
     } catch (err) {
-      console.error(
-        "Reject Enrollment Error:",
-        err,
-      );
+      console.error("Reject Enrollment Error:", err);
 
-      window.alert(
-        err?.response?.data?.message ||
-          err?.message ||
-          "Unable to reject enrollment.",
-      );
+      window.alert(err?.message || "Unable to reject enrollment.");
     } finally {
       setProcessingEnrollmentId(null);
     }
   };
 
   // ===================================================
-  // SAFE DATA
+  // AUTH CHECKING UI
   // ===================================================
 
-  const stats = data?.stats || {};
-
-  const totalStudents =
-    stats.totalStudents ?? 0;
-
-  const activeStudents =
-    stats.activeStudents ?? 0;
-
-  const pendingStudents =
-    stats.pendingStudents ?? 0;
-
-  const completedStudents =
-    stats.completedStudents ?? 0;
-
-  const totalCourses =
-    stats.totalCourses ?? 0;
-
-  const totalLeads =
-    stats.totalLeads ?? 0;
-
-  const newLeads =
-    stats.newLeads ?? 0;
-
-  const totalEnrollments =
-    stats.totalEnrollments ?? 0;
-
-  const pendingEnrollments =
-    stats.pendingEnrollments ?? 0;
-
-  const approvedEnrollments =
-    stats.approvedEnrollments ?? 0;
-
-  // ===================================================
-  // RECENT DATA
-  // ===================================================
-
-  const recentStudents = Array.isArray(
-    data?.recentStudents,
-  )
-    ? data.recentStudents
-    : [];
-
-  const recentCourses = Array.isArray(
-    data?.recentCourses,
-  )
-    ? data.recentCourses
-    : [];
-
-  const recentLeads = Array.isArray(
-    data?.recentLeads,
-  )
-    ? data.recentLeads
-    : [];
-
-  // ===================================================
-  // ENROLLMENT SUMMARY
-  // ===================================================
-
-  const enrollmentSummary = useMemo(() => {
-    const total = totalEnrollments;
-
-    const approvedPercentage =
-      total > 0
-        ? Math.round(
-            (approvedEnrollments / total) *
-              100,
-          )
-        : 0;
-
-    const pendingPercentage =
-      total > 0
-        ? Math.round(
-            (pendingEnrollments / total) *
-              100,
-          )
-        : 0;
-
-    return {
-      approvedPercentage,
-      pendingPercentage,
-    };
-  }, [
-    totalEnrollments,
-    approvedEnrollments,
-    pendingEnrollments,
-  ]);
-
-  // ===================================================
-  // STAT CARDS
-  // ===================================================
-
-  const statCards = [
-    {
-      label: "Total Students",
-      value: totalStudents,
-      description: "Registered students",
-      icon: Users,
-      link: "/admin/students",
-      iconBg: "bg-blue-100",
-      iconColor: "text-blue-600",
-      hoverBg: "group-hover:bg-blue-600",
-      gradient:
-        "from-blue-500/10 via-blue-50 to-white",
-      border: "hover:border-blue-200",
-      valueColor: "text-blue-950",
-      accent:
-        "from-blue-500 to-cyan-400",
-    },
-
-    {
-      label: "Active Students",
-      value: activeStudents,
-      description: "Currently active",
-      icon: UserCheck,
-      link: "/admin/students",
-      iconBg: "bg-emerald-100",
-      iconColor: "text-emerald-600",
-      hoverBg: "group-hover:bg-emerald-600",
-      gradient:
-        "from-emerald-500/10 via-emerald-50 to-white",
-      border: "hover:border-emerald-200",
-      valueColor: "text-emerald-950",
-      accent:
-        "from-emerald-500 to-teal-400",
-    },
-
-    {
-      label: "Total Courses",
-      value: totalCourses,
-      description: "Active learning programs",
-      icon: BookOpen,
-      link: "/admin/courses",
-      iconBg: "bg-violet-100",
-      iconColor: "text-violet-600",
-      hoverBg: "group-hover:bg-violet-600",
-      gradient:
-        "from-violet-500/10 via-violet-50 to-white",
-      border: "hover:border-violet-200",
-      valueColor: "text-violet-950",
-      accent:
-        "from-violet-500 to-fuchsia-400",
-    },
-
-    {
-      label: "New Leads",
-      value: newLeads,
-      description: `${totalLeads} total enquiries`,
-      icon: MessageSquare,
-      link: "/admin/leads",
-      iconBg: "bg-orange-100",
-      iconColor: "text-orange-600",
-      hoverBg: "group-hover:bg-orange-600",
-      gradient:
-        "from-orange-500/10 via-orange-50 to-white",
-      border: "hover:border-orange-200",
-      valueColor: "text-orange-950",
-      accent:
-        "from-orange-500 to-amber-400",
-    },
-  ];
+  if (authChecking) {
+    return <DashboardSkeleton />;
+  }
 
   // ===================================================
   // LOADING
@@ -565,9 +637,7 @@ export default function AdminDashboard() {
               Dashboard unavailable
             </h2>
 
-            <p className="mt-2 text-sm leading-6 text-slate-500">
-              {error}
-            </p>
+            <p className="mt-2 text-sm leading-6 text-slate-500">{error}</p>
 
             <button
               type="button"
@@ -576,13 +646,8 @@ export default function AdminDashboard() {
               className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-slate-900 to-slate-700 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-200 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
             >
               <RefreshCw
-                className={`h-4 w-4 ${
-                  refreshing
-                    ? "animate-spin"
-                    : ""
-                }`}
+                className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
               />
-
               Try Again
             </button>
           </div>
@@ -592,13 +657,133 @@ export default function AdminDashboard() {
   }
 
   // ===================================================
+  // SAFE DATA
+  // ===================================================
+
+  const stats = data?.stats || {};
+
+  const totalStudents = stats.totalStudents ?? 0;
+
+  const activeStudents = stats.activeStudents ?? 0;
+
+  const pendingStudents = stats.pendingStudents ?? 0;
+
+  const completedStudents = stats.completedStudents ?? 0;
+
+  const totalCourses = stats.totalCourses ?? 0;
+
+  const totalLeads = stats.totalLeads ?? 0;
+
+  const newLeads = stats.newLeads ?? 0;
+
+  const totalEnrollments = stats.totalEnrollments ?? 0;
+
+  const pendingEnrollments = stats.pendingEnrollments ?? 0;
+
+  const approvedEnrollments = stats.approvedEnrollments ?? 0;
+
+  // ===================================================
+  // RECENT DATA
+  // ===================================================
+
+  const recentStudents = Array.isArray(data?.recentStudents)
+    ? data.recentStudents
+    : [];
+
+  const recentCourses = Array.isArray(data?.recentCourses)
+    ? data.recentCourses
+    : [];
+
+  const recentLeads = Array.isArray(data?.recentLeads) ? data.recentLeads : [];
+
+  // ===================================================
+  // ENROLLMENT SUMMARY
+  // ===================================================
+
+  const enrollmentSummary = {
+  approvedPercentage:
+    totalEnrollments > 0
+      ? Math.round((approvedEnrollments / totalEnrollments) * 100)
+      : 0,
+
+  pendingPercentage:
+    totalEnrollments > 0
+      ? Math.round((pendingEnrollments / totalEnrollments) * 100)
+      : 0,
+};
+  // ===================================================
+  // STAT CARDS
+  // ===================================================
+
+  const statCards = [
+    {
+      label: "Total Students",
+      value: totalStudents,
+      description: "Registered students",
+      icon: Users,
+      link: "/admin/students",
+      iconBg: "bg-blue-100",
+      iconColor: "text-blue-600",
+      hoverBg: "group-hover:bg-blue-600",
+      gradient: "from-blue-500/10 via-blue-50 to-white",
+      border: "hover:border-blue-200",
+      valueColor: "text-blue-950",
+      accent: "from-blue-500 to-cyan-400",
+    },
+
+    {
+      label: "Active Students",
+      value: activeStudents,
+      description: "Currently active",
+      icon: UserCheck,
+      link: "/admin/students",
+      iconBg: "bg-emerald-100",
+      iconColor: "text-emerald-600",
+      hoverBg: "group-hover:bg-emerald-600",
+      gradient: "from-emerald-500/10 via-emerald-50 to-white",
+      border: "hover:border-emerald-200",
+      valueColor: "text-emerald-950",
+      accent: "from-emerald-500 to-teal-400",
+    },
+
+    {
+      label: "Total Courses",
+      value: totalCourses,
+      description: "Active learning programs",
+      icon: BookOpen,
+      link: "/admin/courses",
+      iconBg: "bg-violet-100",
+      iconColor: "text-violet-600",
+      hoverBg: "group-hover:bg-violet-600",
+      gradient: "from-violet-500/10 via-violet-50 to-white",
+      border: "hover:border-violet-200",
+      valueColor: "text-violet-950",
+      accent: "from-violet-500 to-fuchsia-400",
+    },
+
+    {
+      label: "New Leads",
+      value: newLeads,
+      description: `${totalLeads} total enquiries`,
+      icon: MessageSquare,
+      link: "/admin/leads",
+      iconBg: "bg-orange-100",
+      iconColor: "text-orange-600",
+      hoverBg: "group-hover:bg-orange-600",
+      gradient: "from-orange-500/10 via-orange-50 to-white",
+      border: "hover:border-orange-200",
+      valueColor: "text-orange-950",
+      accent: "from-orange-500 to-amber-400",
+    },
+  ];
+
+  // ===================================================
   // DASHBOARD
   // ===================================================
 
   return (
     <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-slate-50 via-white to-blue-50/40 px-5 py-7 sm:px-8 lg:px-10 lg:py-10">
       <div className="mx-auto max-w-[1400px]">
-
         {/* =================================================
             HEADER
         ================================================= */}
@@ -623,9 +808,8 @@ export default function AdminDashboard() {
               </h2>
 
               <p className="mt-2 max-w-xl text-sm leading-6 text-slate-500">
-                Monitor students, courses, enrollments,
-                learning progress and enquiries from one
-                place.
+                Monitor students, courses, enrollments, learning progress and
+                enquiries from one place.
               </p>
             </div>
 
@@ -636,16 +820,10 @@ export default function AdminDashboard() {
               className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 text-xs font-bold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
             >
               <RefreshCw
-                className={`h-4 w-4 ${
-                  refreshing
-                    ? "animate-spin"
-                    : ""
-                }`}
+                className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
               />
 
-              {refreshing
-                ? "Refreshing..."
-                : "Refresh"}
+              {refreshing ? "Refreshing..." : "Refresh"}
             </button>
           </div>
         </section>
@@ -693,9 +871,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="relative mt-6 flex items-center justify-between">
-                  <span
-                    className={`text-[10px] font-bold ${card.iconColor}`}
-                  >
+                  <span className={`text-[10px] font-bold ${card.iconColor}`}>
                     View details
                   </span>
 
@@ -781,9 +957,7 @@ export default function AdminDashboard() {
               icon={UserRoundX}
               label="Revoked Access"
               value={Math.max(
-                totalEnrollments -
-                  approvedEnrollments -
-                  pendingEnrollments,
+                totalEnrollments - approvedEnrollments - pendingEnrollments,
                 0,
               )}
               description="Rejected or revoked requests"
@@ -918,7 +1092,7 @@ export default function AdminDashboard() {
 
                 <button
                   type="button"
-                  onClick={fetchEnrollments}
+                  onClick={loadLocalData}
                   className="mt-4 inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-[10px] font-bold text-white transition hover:bg-slate-700"
                 >
                   <RefreshCw className="h-3.5 w-3.5" />
@@ -941,24 +1115,19 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <div className="divide-y divide-slate-100">
-                {enrollments.slice(0, 5).map(
-                  (enrollment) => (
+                {enrollments.slice(0, 5).map((enrollment) => {
+                  const enrollmentId = getItemId(enrollment);
+
+                  return (
                     <PendingEnrollmentRow
-                      key={enrollment?._id}
+                      key={enrollmentId || Math.random()}
                       enrollment={enrollment}
-                      processing={
-                        processingEnrollmentId ===
-                        enrollment?._id
-                      }
-                      onApprove={
-                        handleApproveEnrollment
-                      }
-                      onReject={
-                        handleRejectEnrollment
-                      }
+                      processing={processingEnrollmentId === enrollmentId}
+                      onApprove={handleApproveEnrollment}
+                      onReject={handleRejectEnrollment}
                     />
-                  ),
-                )}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -991,7 +1160,6 @@ export default function AdminDashboard() {
         ================================================= */}
 
         <section className="mt-5 grid gap-6 xl:grid-cols-2">
-
           {/* RECENT STUDENTS */}
 
           <div className="overflow-hidden rounded-[24px] border border-blue-100 bg-white shadow-lg shadow-blue-100/30">
@@ -1022,71 +1190,54 @@ export default function AdminDashboard() {
 
             {recentStudents.length > 0 ? (
               <div className="divide-y divide-slate-100">
-                {recentStudents.map(
-                  (student, index) => {
-                    const avatarColors = [
-                      "bg-blue-100 text-blue-700",
-                      "bg-violet-100 text-violet-700",
-                      "bg-emerald-100 text-emerald-700",
-                      "bg-orange-100 text-orange-700",
-                      "bg-pink-100 text-pink-700",
-                    ];
+                {recentStudents.map((student, index) => {
+                  const avatarColors = [
+                    "bg-blue-100 text-blue-700",
+                    "bg-violet-100 text-violet-700",
+                    "bg-emerald-100 text-emerald-700",
+                    "bg-orange-100 text-orange-700",
+                    "bg-pink-100 text-pink-700",
+                  ];
 
-                    const avatarColor =
-                      avatarColors[
-                        index %
-                          avatarColors.length
-                      ];
+                  const avatarColor = avatarColors[index % avatarColors.length];
 
-                    return (
+                  return (
+                    <div
+                      key={getItemId(student) || index}
+                      className="flex items-center gap-3 px-5 py-4 transition hover:bg-blue-50/40"
+                    >
                       <div
-                        key={
-                          student?._id ||
-                          student?.id ||
-                          index
-                        }
-                        className="flex items-center gap-3 px-5 py-4 transition hover:bg-blue-50/40"
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-black ${avatarColor}`}
                       >
-                        <div
-                          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-black ${avatarColor}`}
-                        >
-                          {(
-                            student?.name ||
-                            "S"
-                          )
-                            .charAt(0)
-                            .toUpperCase()}
-                        </div>
-
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-bold text-slate-800">
-                            {student?.name ||
-                              "Unnamed Student"}
-                          </p>
-
-                          <p className="mt-0.5 truncate text-[10px] text-slate-400">
-                            {student?.email ||
-                              "No email available"}
-                          </p>
-                        </div>
-
-                        <span
-                          className={`rounded-full px-2.5 py-1 text-[9px] font-extrabold ${
-                            student?.isActive ===
-                            false
-                              ? "bg-slate-100 text-slate-500"
-                              : "bg-emerald-100 text-emerald-700"
-                          }`}
-                        >
-                          {student?.isActive ===
-                          false
-                            ? "Inactive"
-                            : "Active"}
-                        </span>
+                        {(student?.name || student?.fullName || "S")
+                          .charAt(0)
+                          .toUpperCase()}
                       </div>
-                    );
-                  },
-                )}
+
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-bold text-slate-800">
+                          {student?.name ||
+                            student?.fullName ||
+                            "Unnamed Student"}
+                        </p>
+
+                        <p className="mt-0.5 truncate text-[10px] text-slate-400">
+                          {student?.email || "No email available"}
+                        </p>
+                      </div>
+
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-[9px] font-extrabold ${
+                          student?.isActive === false
+                            ? "bg-slate-100 text-slate-500"
+                            : "bg-emerald-100 text-emerald-700"
+                        }`}
+                      >
+                        {student?.isActive === false ? "Inactive" : "Active"}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <EmptyState text="No recent students available." />
@@ -1123,56 +1274,44 @@ export default function AdminDashboard() {
 
             {recentCourses.length > 0 ? (
               <div className="divide-y divide-slate-100">
-                {recentCourses.map(
-                  (course, index) => {
-                    const courseColors = [
-                      "bg-violet-100 text-violet-600",
-                      "bg-indigo-100 text-indigo-600",
-                      "bg-fuchsia-100 text-fuchsia-600",
-                      "bg-blue-100 text-blue-600",
-                      "bg-cyan-100 text-cyan-600",
-                    ];
+                {recentCourses.map((course, index) => {
+                  const courseColors = [
+                    "bg-violet-100 text-violet-600",
+                    "bg-indigo-100 text-indigo-600",
+                    "bg-fuchsia-100 text-fuchsia-600",
+                    "bg-blue-100 text-blue-600",
+                    "bg-cyan-100 text-cyan-600",
+                  ];
 
-                    const courseColor =
-                      courseColors[
-                        index %
-                          courseColors.length
-                      ];
+                  const courseColor = courseColors[index % courseColors.length];
 
-                    return (
+                  return (
+                    <div
+                      key={getItemId(course) || index}
+                      className="flex items-center gap-3 px-5 py-4 transition hover:bg-violet-50/40"
+                    >
                       <div
-                        key={
-                          course?._id ||
-                          course?.id ||
-                          index
-                        }
-                        className="flex items-center gap-3 px-5 py-4 transition hover:bg-violet-50/40"
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${courseColor}`}
                       >
-                        <div
-                          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${courseColor}`}
-                        >
-                          <BookOpen className="h-4 w-4" />
-                        </div>
-
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-bold text-slate-800">
-                            {course?.title ||
-                              "Untitled Course"}
-                          </p>
-
-                          <p className="mt-0.5 truncate text-[10px] text-slate-400">
-                            {course?.category ||
-                              "Course"}
-                          </p>
-                        </div>
-
-                        <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[9px] font-extrabold text-emerald-700">
-                          Active
-                        </span>
+                        <BookOpen className="h-4 w-4" />
                       </div>
-                    );
-                  },
-                )}
+
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-bold text-slate-800">
+                          {course?.title || course?.name || "Untitled Course"}
+                        </p>
+
+                        <p className="mt-0.5 truncate text-[10px] text-slate-400">
+                          {course?.category || "Course"}
+                        </p>
+                      </div>
+
+                      <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[9px] font-extrabold text-emerald-700">
+                        Active
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <EmptyState text="No recent courses available." />
@@ -1211,80 +1350,74 @@ export default function AdminDashboard() {
           <div className="overflow-hidden rounded-[24px] border border-orange-100 bg-white shadow-lg shadow-orange-100/30">
             {recentLeads.length > 0 ? (
               <div className="divide-y divide-slate-100">
-                {recentLeads.map(
-                  (lead, index) => {
-                    const leadColors = [
-                      "bg-orange-100 text-orange-700",
-                      "bg-pink-100 text-pink-700",
-                      "bg-amber-100 text-amber-700",
-                      "bg-rose-100 text-rose-700",
-                      "bg-yellow-100 text-yellow-700",
-                    ];
+                {recentLeads.map((lead, index) => {
+                  const leadColors = [
+                    "bg-orange-100 text-orange-700",
+                    "bg-pink-100 text-pink-700",
+                    "bg-amber-100 text-amber-700",
+                    "bg-rose-100 text-rose-700",
+                    "bg-yellow-100 text-yellow-700",
+                  ];
 
-                    const leadColor =
-                      leadColors[
-                        index %
-                          leadColors.length
-                      ];
+                  const leadColor = leadColors[index % leadColors.length];
 
-                    return (
+                  const leadStatus = lead?.status || "New";
+
+                  const normalizedLeadStatus = normalizeStatus(leadStatus);
+
+                  return (
+                    <div
+                      key={getItemId(lead) || index}
+                      className="flex items-center gap-4 px-5 py-4 transition hover:bg-orange-50/40"
+                    >
                       <div
-                        key={
-                          lead?._id ||
-                          lead?.id ||
-                          index
-                        }
-                        className="flex items-center gap-4 px-5 py-4 transition hover:bg-orange-50/40"
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-black ${leadColor}`}
                       >
-                        <div
-                          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-black ${leadColor}`}
-                        >
-                          {(
-                            lead?.name || "L"
-                          )
-                            .charAt(0)
-                            .toUpperCase()}
-                        </div>
-
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-bold text-slate-800">
-                            {lead?.name ||
-                              "Unknown Lead"}
-                          </p>
-
-                          <p className="mt-0.5 truncate text-[10px] text-slate-400">
-                            {lead?.interestedCourse ||
-                              "Course enquiry"}
-                          </p>
-                        </div>
-
-                        <span
-                          className={`rounded-full px-3 py-1 text-[9px] font-extrabold ${
-                            lead?.status ===
-                            "New"
-                              ? "bg-blue-100 text-blue-700"
-                              : lead?.status ===
-                                "Contacted"
-                              ? "bg-violet-100 text-violet-700"
-                              : lead?.status ===
-                                "Approved"
-                              ? "bg-emerald-100 text-emerald-700"
-                              : lead?.status ===
-                                "Rejected"
-                              ? "bg-red-100 text-red-700"
-                              : lead?.status ===
-                                "Closed"
-                              ? "bg-slate-200 text-slate-700"
-                              : "bg-amber-100 text-amber-700"
-                          }`}
-                        >
-                          {lead?.status ||
-                            "New"}
-                        </span>
+                        {(lead?.name || "L").charAt(0).toUpperCase()}
                       </div>
-                    );
-                  },
-                )}
+
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-bold text-slate-800">
+                          {lead?.name || "Unknown Lead"}
+                        </p>
+
+                        <p className="mt-0.5 truncate text-[10px] text-slate-400">
+                          {lead?.interestedCourse ||
+                            lead?.service ||
+                            "Course enquiry"}
+                        </p>
+                      </div>
+
+                      <div className="hidden text-right sm:block">
+                        <p className="text-[9px] font-medium text-slate-400">
+                          Submitted
+                        </p>
+
+                        <p className="mt-0.5 text-[10px] font-semibold text-slate-600">
+                          {formatDate(getDateValue(lead))}
+                        </p>
+                      </div>
+
+                      <span
+                        className={`rounded-full px-3 py-1 text-[9px] font-extrabold ${
+                          normalizedLeadStatus === "new"
+                            ? "bg-blue-100 text-blue-700"
+                            : normalizedLeadStatus === "contacted"
+                              ? "bg-violet-100 text-violet-700"
+                              : normalizedLeadStatus === "approved"
+                                ? "bg-emerald-100 text-emerald-700"
+                                : normalizedLeadStatus === "rejected"
+                                  ? "bg-red-100 text-red-700"
+                                  : normalizedLeadStatus === "closed"
+                                    ? "bg-slate-200 text-slate-700"
+                                    : "bg-amber-100 text-amber-700"
+                        }`}
+                      >
+                        {leadStatus}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <EmptyState text="No recent leads available." />
@@ -1375,9 +1508,7 @@ function EnrollmentMetric({
   return (
     <div
       className={`group relative overflow-hidden rounded-[24px] border bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg ${
-        highlight
-          ? "border-amber-200 shadow-amber-100/40"
-          : "border-slate-200"
+        highlight ? "border-amber-200 shadow-amber-100/40" : "border-slate-200"
       }`}
     >
       <div
@@ -1390,11 +1521,7 @@ function EnrollmentMetric({
             {label}
           </p>
 
-          <p
-            className={`mt-2 text-2xl font-black ${valueColor}`}
-          >
-            {value}
-          </p>
+          <p className={`mt-2 text-2xl font-black ${valueColor}`}>{value}</p>
 
           <p className="mt-1 text-[10px] font-medium text-slate-400">
             {description}
@@ -1415,36 +1542,34 @@ function EnrollmentMetric({
 // PENDING ENROLLMENT ROW
 // =====================================================
 
-function PendingEnrollmentRow({
-  enrollment,
-  processing,
-  onApprove,
-  onReject,
-}) {
-  const student =
-    enrollment?.student || {};
+function PendingEnrollmentRow({ enrollment, processing, onApprove, onReject }) {
+  const student = enrollment?.student || {};
 
-  const course =
-    enrollment?.course || {};
+  const course = enrollment?.course || {};
 
   const studentName =
     enrollment?.studentName ||
+    enrollment?.student?.name ||
+    enrollment?.student?.fullName ||
     student?.name ||
+    student?.fullName ||
+    enrollment?.name ||
     "Unknown Student";
 
   const studentEmail =
-    enrollment?.studentEmail ||
-    student?.email ||
-    "";
+    enrollment?.studentEmail || student?.email || enrollment?.email || "";
 
   const studentPhone =
-    enrollment?.studentPhone ||
-    student?.phone ||
-    "";
+    enrollment?.studentPhone || student?.phone || enrollment?.phone || "";
 
   const courseTitle =
     course?.title ||
+    course?.name ||
+    enrollment?.courseTitle ||
+    enrollment?.courseName ||
     "Unknown Course";
+
+  const enrollmentId = getItemId(enrollment);
 
   return (
     <div className="group px-5 py-5 transition hover:bg-amber-50/30">
@@ -1453,9 +1578,7 @@ function PendingEnrollmentRow({
 
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 text-sm font-black text-amber-700">
-            {studentName
-              .charAt(0)
-              .toUpperCase()}
+            {studentName.charAt(0).toUpperCase()}
           </div>
 
           <div className="min-w-0">
@@ -1467,6 +1590,7 @@ function PendingEnrollmentRow({
               {studentEmail && (
                 <span className="inline-flex items-center gap-1">
                   <Mail className="h-3 w-3" />
+
                   {studentEmail}
                 </span>
               )}
@@ -1474,6 +1598,7 @@ function PendingEnrollmentRow({
               {studentPhone && (
                 <span className="inline-flex items-center gap-1">
                   <Phone className="h-3 w-3" />
+
                   {studentPhone}
                 </span>
               )}
@@ -1489,7 +1614,7 @@ function PendingEnrollmentRow({
           </div>
 
           <div className="min-w-0">
-            <p className="truncate text-[9px] font-extrabold uppercase tracking-[0.15em] text-violet-500">
+            <p className="text-[9px] font-extrabold uppercase tracking-[0.15em] text-violet-500">
               Course
             </p>
 
@@ -1512,7 +1637,9 @@ function PendingEnrollmentRow({
 
               <p className="mt-0.5 text-xs font-semibold text-slate-600">
                 {formatDate(
-                  enrollment?.createdAt,
+                  enrollment?.createdAt ||
+                    enrollment?.requestedAt ||
+                    enrollment?.date,
                 )}
               </p>
             </div>
@@ -1523,7 +1650,7 @@ function PendingEnrollmentRow({
 
         <span
           className={`inline-flex w-fit shrink-0 items-center rounded-full border px-3 py-1.5 text-[9px] font-extrabold ${getEnrollmentStatusClasses(
-            enrollment?.status,
+            enrollment?.status || "Pending",
             enrollment?.accessGranted,
           )}`}
         >
@@ -1535,10 +1662,8 @@ function PendingEnrollmentRow({
         <div className="flex shrink-0 items-center gap-2">
           <button
             type="button"
-            onClick={() =>
-              onApprove(enrollment?._id)
-            }
-            disabled={processing}
+            onClick={() => onApprove(enrollmentId)}
+            disabled={processing || !enrollmentId}
             className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-emerald-600 px-3 text-[10px] font-bold text-white shadow-sm transition hover:bg-emerald-700 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
           >
             {processing ? (
@@ -1546,16 +1671,13 @@ function PendingEnrollmentRow({
             ) : (
               <CheckCircle2 className="h-3.5 w-3.5" />
             )}
-
             Approve
           </button>
 
           <button
             type="button"
-            onClick={() =>
-              onReject(enrollment?._id)
-            }
-            disabled={processing}
+            onClick={() => onReject(enrollmentId)}
+            disabled={processing || !enrollmentId}
             className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-red-100 bg-red-50 px-3 text-[10px] font-bold text-red-600 transition hover:bg-red-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
             <XCircle className="h-3.5 w-3.5" />
@@ -1599,11 +1721,7 @@ function StatusCard({
             {label}
           </p>
 
-          <p
-            className={`mt-1 text-2xl font-black ${valueColor}`}
-          >
-            {value}
-          </p>
+          <p className={`mt-1 text-2xl font-black ${valueColor}`}>{value}</p>
         </div>
       </div>
 
@@ -1649,9 +1767,7 @@ function QuickAction({
           <Icon className="h-5 w-5" />
         </div>
 
-        <h4 className="mt-5 text-sm font-bold text-slate-950">
-          {title}
-        </h4>
+        <h4 className="mt-5 text-sm font-bold text-slate-950">{title}</h4>
 
         <p className="mt-1 text-[10px] leading-5 text-slate-400">
           {description}
@@ -1661,7 +1777,6 @@ function QuickAction({
           className={`mt-5 flex items-center gap-1 text-[10px] font-bold ${iconColor}`}
         >
           Open
-
           <ArrowUpRight className="h-3 w-3 transition duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
         </div>
       </div>
@@ -1680,9 +1795,7 @@ function EmptyState({ text }) {
         <BookOpen className="h-5 w-5" />
       </div>
 
-      <p className="mt-3 text-xs font-medium text-slate-400">
-        {text}
-      </p>
+      <p className="mt-3 text-xs font-medium text-slate-400">{text}</p>
     </div>
   );
 }
@@ -1695,10 +1808,7 @@ function EnrollmentListSkeleton() {
   return (
     <div className="divide-y divide-slate-100">
       {[1, 2, 3].map((item) => (
-        <div
-          key={item}
-          className="animate-pulse px-5 py-5"
-        >
+        <div key={item} className="animate-pulse px-5 py-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
             <div className="flex flex-1 items-center gap-3">
               <div className="h-11 w-11 rounded-xl bg-slate-200" />
@@ -1727,14 +1837,13 @@ function EnrollmentListSkeleton() {
 }
 
 // =====================================================
-// LOADING SKELETON
+// DASHBOARD SKELETON
 // =====================================================
 
 function DashboardSkeleton() {
   return (
     <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-slate-50 via-white to-blue-50/40 px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
       <div className="mx-auto max-w-[1400px] animate-pulse">
-
         {/* Header */}
 
         <div className="rounded-[28px] border border-slate-200 bg-white p-8">

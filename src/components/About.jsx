@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import {
   ArrowUpRight,
@@ -7,6 +8,7 @@ import {
   Sparkles,
   Target,
   Users,
+  Award,
 } from "lucide-react";
 
 const journey = [
@@ -37,37 +39,61 @@ const journey = [
 ];
 
 const highlights = [
-  "Career-focused courses",
-  "Practical hands-on training",
-  "Industry-ready skills",
-  "Career & interview preparation",
-  "Job opportunity support",
-  "Student-focused guidance",
+  {
+    text: "Career-focused courses",
+    icon: GraduationCap,
+    color: "text-sky-600",
+    bg: "bg-sky-50",
+  },
+  {
+    text: "Practical hands-on training",
+    icon: Target,
+    color: "text-violet-600",
+    bg: "bg-violet-50",
+  },
+  {
+    text: "Industry-ready skills",
+    icon: Award,
+    color: "text-emerald-600",
+    bg: "bg-emerald-50",
+  },
+  {
+    text: "Career & interview preparation",
+    icon: CheckCircle2,
+    color: "text-amber-600",
+    bg: "bg-amber-50",
+  },
+  {
+    text: "Job opportunity support",
+    icon: BriefcaseBusiness,
+    color: "text-rose-600",
+    bg: "bg-rose-50",
+  },
+  {
+    text: "Student-focused guidance",
+    icon: Users,
+    color: "text-teal-700",
+    bg: "bg-teal-50",
+  },
 ];
 
 const colorStyles = {
   sky: {
-    icon:
-      "bg-sky-50 text-sky-600 ring-sky-100 group-hover:bg-sky-500 group-hover:text-white",
+    icon: "bg-sky-50 text-sky-500 ring-sky-100 group-hover:bg-sky-500 group-hover:text-white",
     glow: "bg-sky-400/20",
-    line: "from-sky-400",
-    number: "text-sky-500",
+    number: "text-sky-400",
   },
 
   violet: {
-    icon:
-      "bg-violet-50 text-violet-600 ring-violet-100 group-hover:bg-violet-500 group-hover:text-white",
+    icon: "bg-violet-50 text-violet-500 ring-violet-100 group-hover:bg-violet-500 group-hover:text-white",
     glow: "bg-violet-400/20",
-    line: "via-violet-400",
-    number: "text-violet-500",
+    number: "text-violet-400",
   },
 
   emerald: {
-    icon:
-      "bg-emerald-50 text-emerald-600 ring-emerald-100 group-hover:bg-emerald-500 group-hover:text-white",
+    icon: "bg-emerald-50 text-emerald-500 ring-emerald-100 group-hover:bg-emerald-500 group-hover:text-white",
     glow: "bg-emerald-400/20",
-    line: "to-emerald-400",
-    number: "text-emerald-500",
+    number: "text-emerald-400",
   },
 };
 
@@ -75,50 +101,27 @@ export default function About() {
   return (
     <section
       id="about"
-      className="relative overflow-hidden bg-white py-24 sm:py-28 lg:py-32"
+      className="
+        relative
+        overflow-hidden
+        bg-white
+        py-[30px]
+      "
     >
       {/* =====================================================
-          BACKGROUND
+          MAIN CONTAINER
+          SAME WHITE BACKGROUND AS TOP COMPANIES
       ====================================================== */}
 
-      <div className="pointer-events-none absolute inset-0">
-        <motion.div
-          animate={{
-            x: [0, 35, 0],
-            y: [0, -20, 0],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute -left-40 top-10 h-96 w-96 rounded-full bg-sky-100/70 blur-3xl"
-        />
-
-        <motion.div
-          animate={{
-            x: [0, -30, 0],
-            y: [0, 25, 0],
-          }}
-          transition={{
-            duration: 14,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute -right-40 bottom-0 h-[30rem] w-[30rem] rounded-full bg-violet-100/50 blur-3xl"
-        />
-
-        <div
-          className="absolute inset-0 opacity-[0.025]"
-          style={{
-            backgroundImage:
-              "linear-gradient(#0f172a 1px, transparent 1px), linear-gradient(90deg, #0f172a 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-      </div>
-
-      <div className="shell relative">
+      <div
+        className="
+          relative
+          w-full
+          px-[30px]
+          sm:px-[30px]
+          lg:px-[30px]
+        "
+      >
         {/* =====================================================
             SECTION HEADER
         ====================================================== */}
@@ -128,26 +131,62 @@ export default function About() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7 }}
-          className="mx-auto max-w-3xl text-center"
+          className="w-full text-center"
         >
           <div className="mb-5 flex items-center justify-center gap-3">
             <span className="h-px w-10 bg-slate-900" />
 
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
-              About Zenvix
-            </p>
+            <p
+  className="
+    text-[14px]
+    font-[900]
+    uppercase
+    tracking-[0.18em]
+    text-teal-700
+  "
+>
+  About Zenvix
+</p>
 
             <span className="h-px w-10 bg-slate-900" />
           </div>
 
-          <h2 className="text-4xl font-semibold leading-[1.05] tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-6xl">
+          <h2
+            className="
+              text-[38px]
+              font-[900]
+              leading-[1.1]
+              tracking-[-0.025em]
+              text-slate-950
+              sm:text-[46px]
+              lg:text-[52px]
+            "
+          >
             Learn today.
-            <span className="block bg-gradient-to-r from-slate-500 via-slate-400 to-slate-300 bg-clip-text text-transparent">
+
+            <span
+              className="
+                block
+                font-[900]
+                text-teal-700
+              "
+            >
               Build your career tomorrow.
             </span>
           </h2>
 
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+          <p
+            className="
+              mx-auto
+              mt-5
+              max-w-3xl
+              text-[15px]
+              font-semibold
+              leading-7
+              text-slate-500
+              sm:text-[16px]
+            "
+          >
             Zenvix helps students go beyond simply completing a course.
             We combine focused learning, practical training and career
             support to help students build skills that can move them toward
@@ -159,22 +198,44 @@ export default function About() {
             MAIN CONTENT
         ====================================================== */}
 
-        <div className="mt-16 grid items-center gap-16 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
-          {/* =================================================
+        <div
+          className="
+            mt-10
+            grid
+            w-full
+            items-center
+            gap-10
+            lg:grid-cols-[0.95fr_1.05fr]
+            lg:gap-14
+          "
+        >
+          {/* ===================================================
               LEFT — CAREER JOURNEY VISUAL
-          ================================================== */}
+          =================================================== */}
 
           <motion.div
             initial={{ opacity: 0, x: -45 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8 }}
-            className="relative"
+            className="relative w-full"
           >
-            <div className="relative mx-auto max-w-xl">
-              {/* Main dark visual */}
-              <div className="relative min-h-[580px] overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-950 shadow-[0_35px_90px_rgba(15,23,42,0.16)]">
-                {/* Animated glow */}
+            <div className="relative w-full">
+              <div
+                className="
+                  relative
+                  min-h-[560px]
+                  w-full
+                  overflow-hidden
+                  rounded-[2rem]
+                  border
+                  border-slate-200
+                  bg-slate-950
+                  shadow-[0_35px_90px_rgba(15,23,42,0.16)]
+                "
+              >
+                {/* CENTER GLOW */}
+
                 <motion.div
                   animate={{
                     scale: [1, 1.15, 1],
@@ -185,7 +246,18 @@ export default function About() {
                     repeat: Infinity,
                     ease: "easeInOut",
                   }}
-                  className="absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/20 blur-[100px]"
+                  className="
+                    absolute
+                    left-1/2
+                    top-1/2
+                    h-80
+                    w-80
+                    -translate-x-1/2
+                    -translate-y-1/2
+                    rounded-full
+                    bg-teal-400/20
+                    blur-[100px]
+                  "
                 />
 
                 <motion.div
@@ -198,10 +270,22 @@ export default function About() {
                     repeat: Infinity,
                     ease: "easeInOut",
                   }}
-                  className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/20 blur-[90px]"
+                  className="
+                    absolute
+                    left-1/2
+                    top-1/2
+                    h-72
+                    w-72
+                    -translate-x-1/2
+                    -translate-y-1/2
+                    rounded-full
+                    bg-violet-500/20
+                    blur-[90px]
+                  "
                 />
 
-                {/* Grid */}
+                {/* DARK CARD GRID — PART OF VISUAL CARD, NOT SECTION BACKGROUND */}
+
                 <div
                   className="absolute inset-0 opacity-[0.075]"
                   style={{
@@ -211,7 +295,6 @@ export default function About() {
                   }}
                 />
 
-                {/* Decorative circles */}
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{
@@ -219,7 +302,18 @@ export default function About() {
                     repeat: Infinity,
                     ease: "linear",
                   }}
-                  className="absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.06]"
+                  className="
+                    absolute
+                    left-1/2
+                    top-1/2
+                    h-[360px]
+                    w-[360px]
+                    -translate-x-1/2
+                    -translate-y-1/2
+                    rounded-full
+                    border
+                    border-white/[0.06]
+                  "
                 />
 
                 <motion.div
@@ -229,16 +323,43 @@ export default function About() {
                     repeat: Infinity,
                     ease: "linear",
                   }}
-                  className="absolute left-1/2 top-1/2 h-[250px] w-[250px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.06]"
+                  className="
+                    absolute
+                    left-1/2
+                    top-1/2
+                    h-[250px]
+                    w-[250px]
+                    -translate-x-1/2
+                    -translate-y-1/2
+                    rounded-full
+                    border
+                    border-white/[0.06]
+                  "
                 />
 
-                {/* =================================================
-                    JOURNEY
-                ================================================== */}
+                {/* JOURNEY CONTENT */}
 
-                <div className="absolute left-1/2 top-1/2 w-[78%] -translate-x-1/2 -translate-y-1/2">
-                  {/* Connecting line */}
-                  <div className="absolute left-[23px] top-8 h-[calc(100%-64px)] w-px overflow-hidden bg-white/10">
+                <div
+                  className="
+                    absolute
+                    left-1/2
+                    top-1/2
+                    w-[82%]
+                    -translate-x-1/2
+                    -translate-y-1/2
+                  "
+                >
+                  <div
+                    className="
+                      absolute
+                      left-[23px]
+                      top-8
+                      h-[calc(100%-64px)]
+                      w-px
+                      overflow-hidden
+                      bg-white/10
+                    "
+                  >
                     <motion.div
                       animate={{ y: ["-100%", "100%"] }}
                       transition={{
@@ -246,7 +367,14 @@ export default function About() {
                         repeat: Infinity,
                         ease: "linear",
                       }}
-                      className="h-1/2 w-full bg-gradient-to-b from-transparent via-sky-300 to-transparent"
+                      className="
+                        h-1/2
+                        w-full
+                        bg-gradient-to-b
+                        from-transparent
+                        via-teal-300
+                        to-transparent
+                      "
                     />
                   </div>
 
@@ -265,13 +393,16 @@ export default function About() {
                             duration: 0.5,
                             delay: 0.2 + index * 0.15,
                           }}
-                          className="group relative flex items-center gap-4"
+                          className="
+                            group
+                            relative
+                            flex
+                            items-center
+                            gap-4
+                          "
                         >
-                          {/* Icon */}
                           <motion.div
-                            animate={{
-                              y: [0, -4, 0],
-                            }}
+                            animate={{ y: [0, -4, 0] }}
                             transition={{
                               duration: 4 + index,
                               repeat: Infinity,
@@ -279,41 +410,131 @@ export default function About() {
                             }}
                             className="relative z-20 shrink-0"
                           >
-                            {/* Glow */}
                             <div
-                              className={`absolute inset-0 scale-150 rounded-full ${styles.glow} opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100`}
+                              className={`
+                                absolute
+                                inset-0
+                                scale-150
+                                rounded-full
+                                ${styles.glow}
+                                opacity-0
+                                blur-xl
+                                transition-opacity
+                                duration-500
+                                group-hover:opacity-100
+                              `}
                             />
 
                             <div
-                              className={`relative flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.08] text-white shadow-xl backdrop-blur-xl transition-all duration-500 group-hover:scale-110 ${styles.icon}`}
+                              className={`
+                                relative
+                                flex
+                                h-12
+                                w-12
+                                items-center
+                                justify-center
+                                rounded-2xl
+                                border
+                                border-white/10
+                                bg-white/[0.08]
+                                text-white
+                                shadow-xl
+                                backdrop-blur-xl
+                                transition-all
+                                duration-500
+                                group-hover:scale-110
+                                ${styles.icon}
+                              `}
                             >
-                              <Icon className="h-5 w-5 transition-transform duration-500 group-hover:scale-110" />
+                              <Icon
+                                className="
+                                  h-5
+                                  w-5
+                                  transition-transform
+                                  duration-500
+                                  group-hover:scale-110
+                                "
+                              />
                             </div>
                           </motion.div>
 
-                          {/* Card */}
                           <motion.div
                             whileHover={{ x: 5 }}
-                            className="flex-1 rounded-2xl border border-white/10 bg-white/[0.07] p-4 backdrop-blur-xl transition-all duration-500 group-hover:border-white/20 group-hover:bg-white/[0.1]"
+                            className="
+                              flex-1
+                              rounded-2xl
+                              border
+                              border-white/10
+                              bg-white/[0.07]
+                              p-4
+                              backdrop-blur-xl
+                              transition-all
+                              duration-500
+                              group-hover:border-white/20
+                              group-hover:bg-white/[0.1]
+                            "
                           >
-                            <div className="flex items-start justify-between gap-4">
+                            <div
+                              className="
+                                flex
+                                items-start
+                                justify-between
+                                gap-4
+                              "
+                            >
                               <div>
                                 <p
-                                  className={`text-[10px] font-bold uppercase tracking-[0.22em] ${styles.number}`}
+                                  className={`
+                                    text-[10px]
+                                    font-[900]
+                                    uppercase
+                                    tracking-[0.22em]
+                                    ${styles.number}
+                                  `}
                                 >
                                   Step {item.number}
                                 </p>
 
-                                <h4 className="mt-1 font-semibold text-white">
+                                <h4
+                                  className="
+                                    mt-1
+                                    text-[16px]
+                                    font-[900]
+                                    leading-tight
+                                    text-white
+                                  "
+                                >
                                   {item.title}
                                 </h4>
 
-                                <p className="mt-1.5 max-w-[260px] text-xs leading-5 text-white/45">
+                                <p
+                                  className="
+                                    mt-1.5
+                                    max-w-[300px]
+                                    text-[11px]
+                                    font-medium
+                                    leading-5
+                                    text-white/65
+                                  "
+                                >
                                   {item.description}
                                 </p>
                               </div>
 
-                              <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-white/20 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white/70" />
+                              <ArrowUpRight
+                                className="
+                                  mt-1
+                                  h-4
+                                  w-4
+                                  shrink-0
+                                  text-white/20
+                                  transition-all
+                                  duration-300
+                                  group-hover:-translate-y-0.5
+                                  group-hover:translate-x-0.5
+                                  group-hover:text-white/70
+                                "
+                              />
                             </div>
                           </motion.div>
                         </motion.div>
@@ -322,71 +543,133 @@ export default function About() {
                   </div>
                 </div>
 
-                {/* Bottom gradient */}
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/70 to-transparent" />
+                <div
+                  className="
+                    pointer-events-none
+                    absolute
+                    inset-x-0
+                    bottom-0
+                    h-40
+                    bg-gradient-to-t
+                    from-black/70
+                    to-transparent
+                  "
+                />
 
-                {/* Brand label */}
                 <div className="absolute bottom-6 left-7">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-3.5 w-3.5 text-white/50" />
+                    <Sparkles className="h-3.5 w-3.5 text-teal-300/70" />
 
-                    <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-white/40">
+                    <p
+                      className="
+                        text-[10px]
+                        font-bold
+                        uppercase
+                        tracking-[0.25em]
+                        text-yellow-400
+                      "
+                    >
                       Zenvix Career Journey
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* =================================================
-                  FLOATING CARD
-              ================================================== */}
+              {/* CAREER READY BADGE */}
 
               <motion.div
-                initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                initial={{
+                  opacity: 0,
+                  scale: 0.8,
+                  y: 20,
+                }}
+                whileInView={{
+                  opacity: 1,
+                  scale: 1,
+                  y: 0,
+                }}
                 viewport={{ once: true }}
                 transition={{
                   delay: 0.5,
                   duration: 0.6,
                 }}
-                animate={{
-                  y: [0, -7, 0],
-                }}
-                className="absolute -bottom-6 -right-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_20px_50px_rgba(15,23,42,0.14)] sm:-right-6"
+                animate={{ y: [0, -7, 0] }}
+                className="
+                  absolute
+                  -bottom-6
+                  -right-3
+                  rounded-2xl
+                  border
+                  border-slate-200
+                  bg-white
+                  p-4
+                  shadow-[0_20px_50px_rgba(15,23,42,0.14)]
+                  sm:-right-6
+                "
               >
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                  <div
+                    className="
+                      flex
+                      h-10
+                      w-10
+                      items-center
+                      justify-center
+                      rounded-full
+                      bg-teal-50
+                    "
+                  >
+                    <CheckCircle2 className="h-5 w-5 text-teal-700" />
                   </div>
 
                   <div>
-                    <p className="text-sm font-semibold text-slate-950">
+                    <p className="text-[13px] font-[900] text-slate-950">
                       Career Ready
                     </p>
 
-                    <p className="mt-0.5 text-xs text-slate-400">
+                    <p className="mt-0.5 text-[10px] font-semibold text-slate-500">
                       Skills that move you forward
                     </p>
                   </div>
                 </div>
               </motion.div>
 
-              {/* Top floating badge */}
+              {/* TOP BADGE */}
+
               <motion.div
-                animate={{
-                  y: [0, 6, 0],
-                }}
+                animate={{ y: [0, 6, 0] }}
                 transition={{
                   duration: 4.5,
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
-                className="absolute -right-2 -top-5 hidden rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-[0_20px_50px_rgba(15,23,42,0.1)] sm:block"
+                className="
+                  absolute
+                  -right-2
+                  -top-5
+                  hidden
+                  rounded-2xl
+                  border
+                  border-slate-200
+                  bg-white
+                  px-4
+                  py-3
+                  shadow-[0_20px_50px_rgba(15,23,42,0.1)]
+                  sm:block
+                "
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="h-2 w-2 rounded-full bg-sky-500 shadow-[0_0_12px_rgba(14,165,233,0.8)]" />
+                  <div
+                    className="
+                      h-2
+                      w-2
+                      rounded-full
+                      bg-teal-600
+                      shadow-[0_0_12px_rgba(13,148,136,0.8)]
+                    "
+                  />
 
-                  <span className="text-xs font-semibold text-slate-700">
+                  <span className="text-[11px] font-[800] text-slate-700">
                     Built for your future
                   </span>
                 </div>
@@ -394,9 +677,9 @@ export default function About() {
             </div>
           </motion.div>
 
-          {/* =================================================
+          {/* ===================================================
               RIGHT — CONTENT
-          ================================================== */}
+          =================================================== */}
 
           <motion.div
             initial={{ opacity: 0, x: 45 }}
@@ -406,34 +689,79 @@ export default function About() {
               duration: 0.8,
               delay: 0.1,
             }}
+            className="w-full min-w-0"
           >
-            {/* Eyebrow */}
             <div className="mb-5 flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-50">
-                <Users className="h-4 w-4 text-sky-600" />
+              <div
+                className="
+                  flex
+                  h-8
+                  w-8
+                  items-center
+                  justify-center
+                  rounded-xl
+                  bg-slate-50
+                "
+              >
+                <Users className="h-4 w-4 text-slate-500" />
               </div>
 
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600">
+              <p
+                className="
+                  text-[10px]
+                  font-[900]
+                  uppercase
+                  tracking-[0.2em]
+                  text-teal-700
+                "
+              >
                 More Than A Course
               </p>
             </div>
 
-            {/* Heading */}
-            <h3 className="max-w-xl text-3xl font-semibold leading-[1.12] tracking-[-0.035em] text-slate-950 sm:text-4xl lg:text-[2.8rem]">
+            <h3
+              className="
+                w-full
+                text-[32px]
+                font-[900]
+                leading-[1.1]
+                tracking-[-0.025em]
+                text-slate-950
+                sm:text-[40px]
+                lg:text-[45px]
+              "
+            >
               Education should take you{" "}
-              <span className="text-slate-400">
+              <span className="font-[900] text-teal-700">
                 closer to your career.
               </span>
             </h3>
 
-            {/* Description */}
-            <p className="mt-6 max-w-xl text-base leading-8 text-slate-600">
+            <p
+              className="
+                mt-5
+                w-full
+                text-[15px]
+                font-semibold
+                leading-7
+                text-slate-500
+              "
+            >
               At Zenvix, we believe completing a course is only the beginning.
               Students need practical skills, confidence and the right
               preparation to take the next step into the professional world.
             </p>
 
-            <p className="mt-5 max-w-xl text-base leading-8 text-slate-600">
+            <p
+              className="
+                mt-4
+                w-full
+                text-[15px]
+                font-semibold
+                leading-7
+                text-slate-500
+              "
+            >
               That's why we connect learning with hands-on training and
               career support — helping students transform what they learn
               into skills they can take into real opportunities.
@@ -443,93 +771,231 @@ export default function About() {
                 HIGHLIGHTS
             ================================================== */}
 
-            <div className="mt-8 grid gap-x-5 gap-y-4 sm:grid-cols-2">
-              {highlights.map((item, index) => (
-                <motion.div
-                  key={item}
-                  initial={{
-                    opacity: 0,
-                    y: 12,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 0.45,
-                    delay: 0.2 + index * 0.07,
-                  }}
-                  className="group flex items-center gap-3"
-                >
-                  <div className="relative">
-                    <div className="absolute inset-0 rounded-full bg-sky-400/20 blur-md opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <div
+              className="
+                mt-7
+                grid
+                gap-x-6
+                gap-y-4
+                sm:grid-cols-2
+              "
+            >
+              {highlights.map((item, index) => {
+                const Icon = item.icon;
 
-                    <div className="relative flex h-7 w-7 items-center justify-center rounded-full bg-sky-50">
-                      <CheckCircle2 className="h-4 w-4 text-sky-600" />
+                return (
+                  <motion.div
+                    key={item.text}
+                    initial={{
+                      opacity: 0,
+                      y: 12,
+                    }}
+                    whileInView={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    viewport={{ once: true }}
+                    transition={{
+                      duration: 0.45,
+                      delay: 0.2 + index * 0.07,
+                    }}
+                    className="
+                      group
+                      flex
+                      items-center
+                      gap-3
+                    "
+                  >
+                    <div className="relative shrink-0">
+                      <div
+                        className={`
+                          absolute
+                          inset-0
+                          rounded-xl
+                          ${item.bg}
+                          opacity-0
+                          blur-md
+                          transition-opacity
+                          duration-300
+                          group-hover:opacity-100
+                        `}
+                      />
+
+                      <div
+                        className={`
+                          relative
+                          flex
+                          h-9
+                          w-9
+                          items-center
+                          justify-center
+                          rounded-xl
+                          ${item.bg}
+                          transition-all
+                          duration-300
+                          group-hover:scale-110
+                        `}
+                      >
+                        <Icon
+                          className={`
+                            h-[18px]
+                            w-[18px]
+                            ${item.color}
+                            transition-transform
+                            duration-300
+                            group-hover:scale-110
+                          `}
+                          strokeWidth={2.5}
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <span className="text-sm font-medium text-slate-700">
-                    {item}
-                  </span>
-                </motion.div>
-              ))}
+                    <span
+                      className="
+                        text-[13px]
+                        font-[800]
+                        leading-5
+                        text-slate-700
+                        transition-colors
+                        duration-300
+                        group-hover:text-slate-950
+                      "
+                    >
+                      {item.text}
+                    </span>
+                  </motion.div>
+                );
+              })}
             </div>
 
             {/* =================================================
                 BOTTOM MINI STATS
             ================================================== */}
 
-            <div className="mt-10 grid max-w-xl grid-cols-3 divide-x divide-slate-200 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_15px_40px_rgba(15,23,42,0.05)]">
+            <div
+              className="
+                mt-8
+                grid
+                w-full
+                grid-cols-3
+                divide-x
+                divide-slate-200
+                rounded-2xl
+                border
+                border-slate-200
+                bg-white
+                p-5
+                shadow-[0_15px_40px_rgba(15,23,42,0.05)]
+              "
+            >
               <div className="px-3 first:pl-0">
-                <p className="text-2xl font-semibold tracking-tight text-slate-950">
+                <p className="text-2xl font-[900] tracking-tight text-slate-950">
                   01
                 </p>
 
-                <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                <p
+                  className="
+                    mt-1
+                    text-[10px]
+                    font-[800]
+                    uppercase
+                    tracking-[0.14em]
+                    text-slate-500
+                  "
+                >
                   Learn
                 </p>
               </div>
 
               <div className="px-4">
-                <p className="text-2xl font-semibold tracking-tight text-slate-950">
+                <p className="text-2xl font-[900] tracking-tight text-slate-950">
                   02
                 </p>
 
-                <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                <p
+                  className="
+                    mt-1
+                    text-[10px]
+                    font-[800]
+                    uppercase
+                    tracking-[0.14em]
+                    text-slate-500
+                  "
+                >
                   Train
                 </p>
               </div>
 
               <div className="px-4 last:pr-0">
-                <p className="text-2xl font-semibold tracking-tight text-slate-950">
+                <p className="text-2xl font-[900] tracking-tight text-slate-950">
                   03
                 </p>
 
-                <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                <p
+                  className="
+                    mt-1
+                    text-[10px]
+                    font-[800]
+                    uppercase
+                    tracking-[0.14em]
+                    text-slate-500
+                  "
+                >
                   Get Hired
                 </p>
               </div>
             </div>
 
-            {/* CTA */}
+            {/* =================================================
+                CTA
+            ================================================== */}
+
             <motion.a
               href="/programs"
-              whileHover={{
-                x: 5,
-              }}
+              whileHover={{ x: 5 }}
               transition={{
                 type: "spring",
                 stiffness: 300,
                 damping: 20,
               }}
-              className="group mt-9 inline-flex items-center gap-3 text-sm font-semibold text-slate-950"
+              className="
+                group
+                mt-7
+                inline-flex
+                items-center
+                gap-3
+                rounded-xl
+                bg-yellow-400
+                px-5
+                py-3
+                text-[13px]
+                font-[900]
+                text-black
+                shadow-[0_10px_25px_rgba(250,204,21,0.25)]
+                transition-all
+                duration-300
+                hover:bg-yellow-300
+                hover:shadow-[0_14px_30px_rgba(250,204,21,0.35)]
+              "
             >
               Explore the Zenvix journey
 
-              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 transition-all duration-300 group-hover:border-slate-950 group-hover:bg-slate-950 group-hover:text-white">
-                <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:rotate-45" />
+              <span
+                className="
+                  flex
+                  h-8
+                  w-8
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-black
+                  text-white
+                  transition-all
+                  duration-300
+                  group-hover:rotate-45
+                "
+              >
+                <ArrowUpRight className="h-4 w-4" />
               </span>
             </motion.a>
           </motion.div>

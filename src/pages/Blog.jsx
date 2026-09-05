@@ -12,6 +12,10 @@ import { useMemo, useState } from "react";
 
 import blogs from "../data/blogs.js";
 
+/* =========================================================
+   CATEGORIES
+========================================================= */
+
 const categories = [
   "All",
   "Career Guidance",
@@ -21,22 +25,99 @@ const categories = [
   "Learning",
 ];
 
+/* =========================================================
+   ACCENT COLORS
+========================================================= */
+
 const accentMap = {
-  violet: "bg-violet-50 text-violet-600",
-  sky: "bg-sky-50 text-sky-600",
-  cyan: "bg-cyan-50 text-cyan-600",
-  emerald: "bg-emerald-50 text-emerald-600",
-  pink: "bg-pink-50 text-pink-600",
-  blue: "bg-blue-50 text-blue-600",
-  orange: "bg-orange-50 text-orange-600",
-  indigo: "bg-indigo-50 text-indigo-600",
+  violet: {
+    badge: "bg-violet-50 text-violet-600",
+    icon: "bg-violet-50 text-violet-600",
+    border: "hover:border-violet-200",
+  },
+
+  sky: {
+    badge: "bg-sky-50 text-sky-600",
+    icon: "bg-sky-50 text-sky-600",
+    border: "hover:border-sky-200",
+  },
+
+  cyan: {
+    badge: "bg-cyan-50 text-cyan-600",
+    icon: "bg-cyan-50 text-cyan-600",
+    border: "hover:border-cyan-200",
+  },
+
+  emerald: {
+    badge: "bg-emerald-50 text-emerald-600",
+    icon: "bg-emerald-50 text-emerald-600",
+    border: "hover:border-emerald-200",
+  },
+
+  pink: {
+    badge: "bg-pink-50 text-pink-600",
+    icon: "bg-pink-50 text-pink-600",
+    border: "hover:border-pink-200",
+  },
+
+  blue: {
+    badge: "bg-blue-50 text-blue-600",
+    icon: "bg-blue-50 text-blue-600",
+    border: "hover:border-blue-200",
+  },
+
+  orange: {
+    badge: "bg-orange-50 text-orange-600",
+    icon: "bg-orange-50 text-orange-600",
+    border: "hover:border-orange-200",
+  },
+
+  indigo: {
+    badge: "bg-indigo-50 text-indigo-600",
+    icon: "bg-indigo-50 text-indigo-600",
+    border: "hover:border-indigo-200",
+  },
 };
+
+/* =========================================================
+   MOTION
+========================================================= */
+
+const fadeUp = {
+  initial: {
+    opacity: 0,
+    y: 25,
+  },
+  whileInView: {
+    opacity: 1,
+    y: 0,
+  },
+  viewport: {
+    once: true,
+    amount: 0.15,
+  },
+  transition: {
+    duration: 0.6,
+  },
+};
+
+/* =========================================================
+   BLOG
+========================================================= */
 
 export default function Blog() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [search, setSearch] = useState("");
 
+  /* =======================================================
+     FEATURED BLOG
+  ======================================================= */
+
   const featuredPost = blogs.find((blog) => blog.featured);
+
+  /* =======================================================
+     FILTER BLOGS
+  ======================================================= */
 
   const filteredBlogs = useMemo(() => {
     return blogs.filter((blog) => {
@@ -59,36 +140,17 @@ export default function Blog() {
     });
   }, [activeCategory, search]);
 
+  /* =======================================================
+     NORMAL BLOGS
+  ======================================================= */
+
   const normalBlogs = filteredBlogs.filter(
     (blog) => blog.id !== featuredPost?.id
   );
 
   return (
-    <main className="relative overflow-hidden bg-white pt-[120px]">
-
-      {/* =====================================================
-          BACKGROUND
-      ====================================================== */}
-
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-      >
-        <div className="absolute -left-48 top-20 h-[420px] w-[420px] rounded-full bg-violet-100/50 blur-3xl" />
-
-        <div className="absolute -right-48 top-[550px] h-[420px] w-[420px] rounded-full bg-sky-100/40 blur-3xl" />
-
-        <div
-          className="absolute inset-0 opacity-[0.018]"
-          style={{
-            backgroundImage:
-              "linear-gradient(#0f172a 1px, transparent 1px), linear-gradient(90deg, #0f172a 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-      </div>
-
-      <div className="shell relative">
+    <main className="relative w-full bg-white py-[30px]">
+      <div className="relative w-full px-[30px] sm:px-[30px] lg:px-[30px]">
 
         {/* =====================================================
             HERO
@@ -106,37 +168,41 @@ export default function Blog() {
           transition={{
             duration: 0.7,
           }}
-          className="mx-auto max-w-4xl pt-10 text-center"
+          className="mx-auto max-w-4xl pt-[50px] text-center"
         >
+          {/* LABEL */}
 
-          <div className="mb-5 flex items-center justify-center gap-3">
-            <span className="h-px w-9 bg-slate-900" />
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <span className="h-px w-8 bg-teal-700" />
 
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-500">
+            <span className="text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
               Zenvix Insights
             </span>
 
-            <span className="h-px w-9 bg-slate-900" />
+            <span className="h-px w-8 bg-teal-700" />
           </div>
 
-          <h1 className="text-4xl font-semibold leading-[1.04] tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-[4rem]">
+          {/* HEADING */}
+
+          <h1 className="text-[38px] font-black leading-[1.1] tracking-[-0.025em] text-slate-950 sm:text-[46px] lg:text-[52px]">
             Learn something useful.
-            <span className="block text-slate-400">
+            <span className="block text-teal-700">
               Move your career forward.
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-sm leading-7 text-slate-500 sm:text-base">
+          {/* DESCRIPTION */}
+
+          <p className="mx-auto mt-5 max-w-2xl text-[15px] font-medium leading-7 text-slate-500 sm:text-[16px]">
             Practical insights on technology, career development, interview
             preparation, job readiness, and the skills that help you build
             your professional future.
           </p>
 
-          {/* Search */}
+          {/* SEARCH */}
 
-          <div className="mx-auto mt-8 max-w-xl">
-            <div className="flex items-center rounded-full border border-slate-200 bg-white p-1.5 shadow-[0_8px_30px_rgba(15,23,42,0.05)]">
-
+          <div className="mx-auto mt-7 max-w-xl">
+            <div className="flex items-center rounded-xl border border-slate-200 bg-white p-1.5 shadow-[0_8px_30px_rgba(15,23,42,0.05)] transition-all duration-300 focus-within:border-teal-300 focus-within:shadow-[0_10px_35px_rgba(15,23,42,0.08)]">
               <Search className="ml-3 h-4 w-4 shrink-0 text-slate-400" />
 
               <input
@@ -144,10 +210,10 @@ export default function Blog() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search career, technology, interviews..."
-                className="w-full bg-transparent px-3 py-2.5 text-sm text-slate-700 outline-none placeholder:text-slate-400"
+                className="w-full bg-transparent px-3 py-2.5 text-[13px] font-medium text-slate-700 outline-none placeholder:text-slate-400"
               />
 
-              <div className="hidden rounded-full bg-slate-950 px-4 py-2 text-[10px] font-semibold text-white sm:block">
+              <div className="hidden rounded-lg bg-yellow-400 px-4 py-2 text-[11px] font-black text-slate-950 sm:block">
                 Search
               </div>
             </div>
@@ -170,26 +236,32 @@ export default function Blog() {
             }}
             viewport={{
               once: true,
-              amount: 0.2,
+              amount: 0.15,
             }}
             transition={{
               duration: 0.7,
             }}
-            className="mt-20"
+            className="mx-auto mt-[60px] max-w-7xl"
           >
+            {/* SECTION LABEL */}
 
-            <div className="mb-6 flex items-center gap-3">
-              <Sparkles className="h-4 w-4 text-violet-500" />
+            <div className="mb-5 flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600">
+                <Sparkles className="h-4 w-4" />
+              </div>
 
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-500">
+              <span className="text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
                 Featured Article
               </span>
             </div>
 
+            {/* FEATURED CARD */}
+
             <Link
               to={`/blog/${featuredPost.slug}`}
-              className="group grid overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-[0_12px_45px_rgba(15,23,42,0.055)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_60px_rgba(15,23,42,0.10)] lg:grid-cols-2"
+              className="group grid overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_12px_45px_rgba(15,23,42,0.055)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_60px_rgba(15,23,42,0.10)] lg:grid-cols-2"
             >
+              {/* IMAGE */}
 
               <div className="relative min-h-[300px] overflow-hidden lg:min-h-[430px]">
                 <img
@@ -198,56 +270,56 @@ export default function Blog() {
                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
 
                 <div className="absolute bottom-5 left-5">
-                  <span className="rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-bold text-slate-900 backdrop-blur">
+                  <span className="rounded-full bg-yellow-400 px-3 py-1.5 text-[10px] font-black text-slate-950">
                     Featured
                   </span>
                 </div>
               </div>
 
-              <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-12">
+              {/* CONTENT */}
 
-                <div className="flex items-center gap-2">
+              <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-12">
+                <div className="flex flex-wrap items-center gap-2">
                   <span
-                    className={`rounded-full px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.12em] ${
-                      accentMap[featuredPost.accent]
+                    className={`rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] ${
+                      accentMap[featuredPost.accent]?.badge ??
+                      accentMap.sky.badge
                     }`}
                   >
                     {featuredPost.category}
                   </span>
 
-                  <span className="text-[10px] text-slate-400">
+                  <span className="text-[11px] font-semibold text-slate-400">
                     {featuredPost.readTime}
                   </span>
                 </div>
 
-                <h2 className="mt-6 text-2xl font-semibold leading-tight tracking-[-0.03em] text-slate-950 sm:text-3xl lg:text-[2.6rem]">
+                <h2 className="mt-5 text-[28px] font-black leading-[1.15] tracking-[-0.025em] text-slate-950 sm:text-[34px] lg:text-[40px]">
                   {featuredPost.title}
                 </h2>
 
-                <p className="mt-5 text-sm leading-7 text-slate-500">
+                <p className="mt-4 text-[15px] font-medium leading-7 text-slate-500">
                   {featuredPost.excerpt}
                 </p>
 
-                <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-5">
-
+                <div className="mt-7 flex items-center justify-between border-t border-slate-100 pt-5">
                   <div>
-                    <p className="text-[10px] font-semibold text-slate-700">
+                    <p className="!m-0 text-[12px] font-black text-slate-700">
                       {featuredPost.author}
                     </p>
 
-                    <p className="mt-1 text-[10px] text-slate-400">
+                    <p className="!m-0 mt-1 text-[11px] font-medium text-slate-400">
                       {featuredPost.date}
                     </p>
                   </div>
 
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-950 text-white transition-transform duration-300 group-hover:translate-x-1">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-400 text-slate-950 transition-transform duration-300 group-hover:translate-x-1">
                     <ArrowUpRight className="h-4 w-4" />
                   </span>
                 </div>
-
               </div>
             </Link>
           </motion.section>
@@ -257,40 +329,42 @@ export default function Blog() {
             CATEGORIES
         ====================================================== */}
 
-        <section className="mt-20">
+        <section className="mx-auto mt-[60px] max-w-7xl">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
 
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            {/* HEADER */}
 
             <div>
-              <div className="flex items-center gap-3">
-                <span className="h-px w-8 bg-slate-900" />
+              <div className="mb-4 flex items-center gap-3">
+                <span className="h-px w-8 bg-teal-700" />
 
-                <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">
+                <span className="text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
                   Explore Articles
                 </span>
               </div>
 
-              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-4xl">
+              <h2 className="text-[38px] font-black leading-[1.1] tracking-[-0.025em] text-slate-950 sm:text-[46px] lg:text-[52px]">
                 Ideas worth reading.
               </h2>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            {/* CATEGORY FILTER */}
+
+            <div className="flex flex-wrap gap-2 lg:max-w-3xl lg:justify-end">
               {categories.map((category) => (
                 <button
                   key={category}
                   onClick={() => setActiveCategory(category)}
-                  className={`rounded-full px-4 py-2.5 text-[10px] font-semibold transition-all duration-300 ${
+                  className={`rounded-xl px-4 py-2.5 text-[11px] font-black transition-all duration-300 ${
                     activeCategory === category
-                      ? "bg-slate-950 text-white shadow-sm"
-                      : "border border-slate-200 bg-white text-slate-500 hover:border-slate-950 hover:text-slate-950"
+                      ? "bg-yellow-400 text-slate-950 shadow-sm"
+                      : "border border-slate-200 bg-white text-slate-500 hover:border-teal-700 hover:text-teal-700"
                   }`}
                 >
                   {category}
                 </button>
               ))}
             </div>
-
           </div>
         </section>
 
@@ -298,122 +372,121 @@ export default function Blog() {
             BLOG GRID
         ====================================================== */}
 
-        <section className="mt-10 pb-24">
-
+        <section className="mx-auto mt-[35px] max-w-7xl pb-[30px]">
           {normalBlogs.length === 0 ? (
-            <div className="rounded-[1.5rem] border border-slate-200 bg-white p-14 text-center">
-              <BookOpen className="mx-auto h-8 w-8 text-slate-300" />
+            <div className="rounded-[24px] border border-slate-200 bg-white p-14 text-center shadow-[0_8px_28px_rgba(15,23,42,0.035)]">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-slate-50 text-slate-300">
+                <BookOpen className="h-6 w-6" />
+              </div>
 
-              <h3 className="mt-5 text-lg font-semibold text-slate-900">
+              <h3 className="mt-5 text-[20px] font-black text-slate-900">
                 No articles found
               </h3>
 
-              <p className="mt-2 text-sm text-slate-500">
+              <p className="mt-2 text-[14px] font-medium text-slate-500">
                 Try another search term or category.
               </p>
             </div>
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {normalBlogs.map((blog, index) => {
+                const styles =
+                  accentMap[blog.accent] ?? accentMap.sky;
 
-              {normalBlogs.map((blog, index) => (
-                <motion.article
-                  key={blog.id}
-                  initial={{
-                    opacity: 0,
-                    y: 25,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  viewport={{
-                    once: true,
-                    amount: 0.15,
-                  }}
-                  transition={{
-                    duration: 0.5,
-                    delay: index * 0.05,
-                  }}
-                  whileHover={{
-                    y: -6,
-                  }}
-                  className="group flex h-full flex-col overflow-hidden rounded-[1.4rem] border border-slate-200 bg-white shadow-[0_8px_28px_rgba(15,23,42,0.035)] transition-shadow duration-500 hover:shadow-[0_18px_45px_rgba(15,23,42,0.08)]"
-                >
-
-                  <Link
-                    to={`/blog/${blog.slug}`}
-                    className="flex h-full flex-col"
+                return (
+                  <motion.article
+                    key={blog.id}
+                    initial={{
+                      opacity: 0,
+                      y: 25,
+                    }}
+                    whileInView={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    viewport={{
+                      once: true,
+                      amount: 0.1,
+                    }}
+                    transition={{
+                      duration: 0.5,
+                      delay: index * 0.05,
+                    }}
+                    whileHover={{
+                      y: -5,
+                    }}
+                    className={`group flex h-full flex-col overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-[0_8px_28px_rgba(15,23,42,0.035)] transition-all duration-300 hover:shadow-[0_18px_45px_rgba(15,23,42,0.08)] ${styles.border}`}
                   >
+                    <Link
+                      to={`/blog/${blog.slug}`}
+                      className="flex h-full flex-col"
+                    >
+                      {/* IMAGE */}
 
-                    {/* Image */}
+                      <div className="relative h-[220px] overflow-hidden">
+                        <img
+                          src={blog.image}
+                          alt={blog.title}
+                          loading="lazy"
+                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
 
-                    <div className="relative h-[210px] overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/30 to-transparent" />
 
-                      <img
-                        src={blog.image}
-                        alt={blog.title}
-                        loading="lazy"
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/30 to-transparent" />
-
-                      <div className="absolute left-4 top-4">
-                        <span
-                          className={`rounded-full px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.12em] ${
-                            accentMap[blog.accent]
-                          }`}
-                        >
-                          {blog.category}
-                        </span>
+                        <div className="absolute left-4 top-4">
+                          <span
+                            className={`rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] ${styles.badge}`}
+                          >
+                            {blog.category}
+                          </span>
+                        </div>
                       </div>
 
-                    </div>
+                      {/* CONTENT */}
 
-                    {/* Content */}
+                      <div className="flex flex-1 flex-col p-6">
+                        {/* META */}
 
-                    <div className="flex flex-1 flex-col p-5">
+                        <div className="flex flex-wrap items-center gap-2 text-[11px] font-semibold text-slate-400">
+                          <Clock3 className="h-3.5 w-3.5" />
 
-                      <div className="flex items-center gap-2 text-[10px] text-slate-400">
-                        <Clock3 className="h-3 w-3" />
+                          <span>{blog.readTime}</span>
 
-                        {blog.readTime}
+                          <span className="h-1 w-1 rounded-full bg-slate-300" />
 
-                        <span className="h-1 w-1 rounded-full bg-slate-300" />
+                          <span>{blog.date}</span>
+                        </div>
 
-                        {blog.date}
+                        {/* TITLE */}
+
+                        <h3 className="mt-4 text-[19px] font-black leading-[1.2] tracking-[-0.015em] text-slate-950">
+                          {blog.title}
+                        </h3>
+
+                        {/* EXCERPT */}
+
+                        <p className="mt-3 line-clamp-3 text-[14px] font-medium leading-6 text-slate-500">
+                          {blog.excerpt}
+                        </p>
+
+                        {/* FOOTER */}
+
+                        <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-5">
+                          <span className="text-[11px] font-black text-slate-400">
+                            Read article
+                          </span>
+
+                          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 text-slate-500 transition-all duration-300 group-hover:bg-yellow-400 group-hover:text-slate-950">
+                            <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                          </span>
+                        </div>
                       </div>
-
-                      <h3 className="mt-4 text-lg font-semibold leading-tight tracking-[-0.02em] text-slate-950">
-                        {blog.title}
-                      </h3>
-
-                      <p className="mt-3 line-clamp-3 text-xs leading-6 text-slate-500">
-                        {blog.excerpt}
-                      </p>
-
-                      <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-5">
-
-                        <span className="text-[10px] font-semibold text-slate-400">
-                          Read article
-                        </span>
-
-                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-all duration-300 group-hover:bg-slate-950 group-hover:text-white">
-                          <ArrowUpRight
-                            className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                          />
-                        </span>
-
-                      </div>
-
-                    </div>
-                  </Link>
-                </motion.article>
-              ))}
-
+                    </Link>
+                  </motion.article>
+                );
+              })}
             </div>
           )}
-
         </section>
 
         {/* =====================================================
@@ -432,49 +505,53 @@ export default function Blog() {
           viewport={{
             once: true,
           }}
-          className="mb-24 overflow-hidden rounded-[1.75rem] bg-slate-950 p-8 sm:p-12 lg:p-14"
+          transition={{
+            duration: 0.6,
+          }}
+          className="mx-auto mt-[30px] mb-[30px] max-w-7xl rounded-[24px] border border-slate-200 bg-white p-8 shadow-[0_12px_40px_rgba(15,23,42,0.05)] sm:p-10 lg:p-14"
         >
-
           <div className="grid items-center gap-8 lg:grid-cols-[1fr_auto]">
 
+            {/* CTA CONTENT */}
+
             <div>
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600">
+                  <Sparkles className="h-4 w-4" />
+                </div>
 
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-sky-400" />
-
-                <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-500">
+                <span className="text-[14px] font-black uppercase tracking-[0.18em] text-teal-700">
                   Keep Growing
                 </span>
               </div>
 
-              <h2 className="mt-5 max-w-2xl text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+              <h2 className="mt-5 max-w-2xl text-[30px] font-black leading-[1.15] tracking-[-0.025em] text-slate-950 sm:text-[38px]">
                 Reading is the beginning.
-                <span className="block text-slate-500">
+                <span className="block text-teal-700">
                   Now put your skills into action.
                 </span>
               </h2>
 
-              <p className="mt-4 max-w-xl text-sm leading-7 text-slate-400">
+              <p className="mt-4 max-w-xl text-[15px] font-medium leading-7 text-slate-500">
                 Explore Zenvix programs and build practical skills that can
                 help you move toward your career goals.
               </p>
-
             </div>
+
+            {/* CTA BUTTON */}
 
             <Link
               to="/programs"
-              className="group inline-flex w-fit items-center gap-3 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:bg-sky-50"
+              className="group inline-flex w-fit items-center gap-3 rounded-xl bg-yellow-400 px-6 py-3.5 text-[14px] font-black text-slate-950 transition-all duration-300 hover:bg-yellow-300"
             >
               Explore Programs
 
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-black/10">
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
               </span>
             </Link>
-
           </div>
         </motion.section>
-
       </div>
     </main>
   );

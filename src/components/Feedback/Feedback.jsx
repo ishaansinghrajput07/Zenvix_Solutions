@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ArrowUpRight,
   ChevronLeft,
@@ -91,33 +91,37 @@ const feedbacks = [
   },
 ];
 
-const CARD_WIDTH = {
-  mobile: "w-full",
-  tablet: "w-[calc(50%-8px)]",
-  desktop: "w-[calc(25%-12px)]",
-};
-
 function FeedbackCard({ feedback }) {
   return (
     <motion.article
       whileHover={{
-        y: -6,
+        y: -5,
       }}
-      className="group relative flex h-full min-h-[315px] w-full flex-col overflow-hidden rounded-[1.35rem] border border-slate-200 bg-white p-5 shadow-[0_8px_28px_rgba(15,23,42,0.035)] transition-all duration-500 hover:border-slate-300 hover:shadow-[0_18px_45px_rgba(15,23,42,0.085)]"
+      className="
+        group relative flex h-full min-h-[245px] w-full flex-col
+        overflow-hidden rounded-[1.35rem]
+        border border-slate-200 bg-white p-5
+        shadow-[0_8px_28px_rgba(15,23,42,0.035)]
+        transition-all duration-500
+        hover:border-slate-300
+        hover:shadow-[0_18px_45px_rgba(15,23,42,0.08)]
+      "
     >
-      {/* Glow */}
-
-      <div className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-violet-400/10 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />
-
-      {/* Top */}
+      {/* =====================================================
+          TOP
+      ====================================================== */}
 
       <div className="relative flex items-center justify-between">
+        {/* Quote Icon */}
+
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
           <Quote
             className="h-[17px] w-[17px]"
-            strokeWidth={2.2}
+            strokeWidth={2.3}
           />
         </div>
+
+        {/* Rating */}
 
         <div className="flex items-center gap-0.5">
           {Array.from({
@@ -132,35 +136,45 @@ function FeedbackCard({ feedback }) {
         </div>
       </div>
 
-      {/* Feedback */}
+      {/* =====================================================
+          FEEDBACK
+      ====================================================== */}
 
       <div className="relative mt-5">
-        <p className="line-clamp-5 text-[13px] leading-6 text-slate-600">
+        <p className="line-clamp-5 text-[12px] font-medium leading-6 text-slate-600 sm:text-[13px]">
           “{feedback.feedback}”
         </p>
       </div>
 
-      {/* Bottom */}
+      {/* =====================================================
+          BOTTOM
+      ====================================================== */}
 
       <div className="relative mt-auto pt-5">
         <div className="border-t border-slate-100 pt-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-950 text-[9px] font-bold tracking-wide text-white">
+            {/* Initials */}
+
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-950 text-[9px] font-[900] tracking-wide text-white">
               {feedback.initials}
             </div>
 
+            {/* User Info */}
+
             <div className="min-w-0">
-              <p className="truncate text-[11px] font-semibold text-slate-900">
+              <p className="truncate text-[11px] font-[900] text-slate-900">
                 {feedback.name}
               </p>
 
-              <p className="mt-0.5 text-[9px] text-slate-400">
+              <p className="mt-0.5 text-[9px] font-medium text-slate-400">
                 {feedback.role}
               </p>
             </div>
           </div>
 
-          <div className="mt-3 inline-flex rounded-full border border-slate-100 bg-slate-50 px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.1em] text-slate-400">
+          {/* Program */}
+
+          <div className="mt-3 inline-flex rounded-full border border-slate-100 bg-slate-50 px-2.5 py-1 text-[8px] font-[800] uppercase tracking-[0.1em] text-slate-500">
             {feedback.program}
           </div>
         </div>
@@ -168,7 +182,15 @@ function FeedbackCard({ feedback }) {
 
       {/* Bottom Accent */}
 
-      <div className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-violet-400 transition-transform duration-500 group-hover:scale-x-100" />
+      <div
+        aria-hidden
+        className="
+          absolute bottom-0 left-0 h-[2px] w-full
+          origin-left scale-x-0 bg-violet-400
+          transition-transform duration-500
+          group-hover:scale-x-100
+        "
+      />
     </motion.article>
   );
 }
@@ -178,12 +200,9 @@ export default function Feedback() {
   const [visibleCards, setVisibleCards] = useState(4);
   const [isPaused, setIsPaused] = useState(false);
 
-  /*
-   * Responsive cards:
-   * Mobile  = 1
-   * Tablet  = 2
-   * Desktop = 4
-   */
+  /* =====================================================
+     RESPONSIVE CARD COUNT
+  ====================================================== */
 
   useEffect(() => {
     const updateVisibleCards = () => {
@@ -198,29 +217,23 @@ export default function Feedback() {
 
     updateVisibleCards();
 
-    window.addEventListener(
-      "resize",
-      updateVisibleCards
-    );
+    window.addEventListener("resize", updateVisibleCards);
 
-    return () =>
-      window.removeEventListener(
-        "resize",
-        updateVisibleCards
-      );
+    return () => {
+      window.removeEventListener("resize", updateVisibleCards);
+    };
   }, []);
 
-  /*
-   * Auto slide
-   */
+  /* =====================================================
+     AUTO SLIDE
+  ====================================================== */
 
   useEffect(() => {
     if (isPaused) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((previous) => {
-        const maxIndex =
-          feedbacks.length - visibleCards;
+        const maxIndex = feedbacks.length - visibleCards;
 
         if (previous >= maxIndex) {
           return 0;
@@ -233,8 +246,11 @@ export default function Feedback() {
     return () => clearInterval(interval);
   }, [visibleCards, isPaused]);
 
-  const maxIndex =
-    feedbacks.length - visibleCards;
+  const maxIndex = feedbacks.length - visibleCards;
+
+  /* =====================================================
+     NEXT SLIDE
+  ====================================================== */
 
   const nextSlide = () => {
     setCurrentIndex((previous) =>
@@ -242,15 +258,19 @@ export default function Feedback() {
     );
   };
 
+  /* =====================================================
+     PREVIOUS SLIDE
+  ====================================================== */
+
   const previousSlide = () => {
     setCurrentIndex((previous) =>
       previous <= 0 ? maxIndex : previous - 1
     );
   };
 
-  /*
-   * Calculate movement percentage.
-   */
+  /* =====================================================
+     SLIDE POSITION
+  ====================================================== */
 
   const slidePercentage =
     (currentIndex * 100) / visibleCards;
@@ -258,50 +278,9 @@ export default function Feedback() {
   return (
     <section
       id="feedback"
-      className="relative overflow-hidden bg-white py-24 sm:py-28 lg:py-32"
+      className="relative overflow-hidden bg-white py-[30px]"
     >
-      {/* =====================================================
-          BACKGROUND
-      ====================================================== */}
-
-      <div className="pointer-events-none absolute inset-0">
-        <motion.div
-          animate={{
-            x: [0, 30, 0],
-            y: [0, -20, 0],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute -left-48 top-10 h-[28rem] w-[28rem] rounded-full bg-violet-100/40 blur-3xl"
-        />
-
-        <motion.div
-          animate={{
-            x: [0, -25, 0],
-            y: [0, 20, 0],
-          }}
-          transition={{
-            duration: 17,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute -right-48 bottom-0 h-[30rem] w-[30rem] rounded-full bg-sky-100/40 blur-3xl"
-        />
-
-        <div
-          className="absolute inset-0 opacity-[0.018]"
-          style={{
-            backgroundImage:
-              "linear-gradient(#0f172a 1px, transparent 1px), linear-gradient(90deg, #0f172a 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-      </div>
-
-      <div className="shell relative">
+      <div className="relative w-full px-[30px] sm:px-[30px] lg:px-[30px]">
         {/* =====================================================
             HEADER
         ====================================================== */}
@@ -309,7 +288,7 @@ export default function Feedback() {
         <motion.div
           initial={{
             opacity: 0,
-            y: 25,
+            y: 30,
           }}
           whileInView={{
             opacity: 1,
@@ -322,26 +301,26 @@ export default function Feedback() {
           transition={{
             duration: 0.7,
           }}
-          className="mx-auto max-w-3xl text-center"
+          className="w-full pt-[50px] text-center"
         >
           <div className="mb-5 flex items-center justify-center gap-3">
-            <span className="h-px w-9 bg-slate-900" />
+            <span className="h-px w-10 bg-slate-900" />
 
-            <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-500">
+            <p className="text-[14px] font-[900] uppercase tracking-[0.18em] text-teal-700">
               Learner Feedback
             </p>
 
-            <span className="h-px w-9 bg-slate-900" />
+            <span className="h-px w-10 bg-slate-900" />
           </div>
 
-          <h2 className="text-4xl font-semibold leading-[1.04] tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-[3.6rem]">
+          <h2 className="text-[38px] font-[900] leading-[1.1] tracking-[-0.025em] text-slate-950 sm:text-[46px] lg:text-[52px]">
             Real learning.
-            <span className="block text-slate-400">
+            <span className="block font-[900] text-teal-700">
               Real experiences.
             </span>
           </h2>
 
-          <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-slate-500 sm:text-base">
+          <p className="mx-auto mt-5 max-w-3xl text-[15px] font-medium leading-7 text-slate-500 sm:text-[16px]">
             Hear what learners have to say about their experience with
             Zenvix, from practical learning to building confidence for
             their career journey.
@@ -352,34 +331,80 @@ export default function Feedback() {
             SLIDER
         ====================================================== */}
 
-        <div
-          className="relative mx-auto mt-14 max-w-7xl"
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          viewport={{
+            once: true,
+            amount: 0.15,
+          }}
+          transition={{
+            duration: 0.6,
+            delay: 0.1,
+          }}
+          className="relative mt-10 w-full"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          {/* Left Button */}
+          {/* =================================================
+              LEFT BUTTON
+          ================================================== */}
 
           <button
             type="button"
             onClick={previousSlide}
             aria-label="Previous feedback"
-            className="absolute -left-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-[0_8px_25px_rgba(15,23,42,0.08)] transition-all duration-300 hover:border-slate-950 hover:bg-slate-950 hover:text-white lg:flex"
+            className="
+              absolute -left-3 top-1/2 z-20
+              hidden h-10 w-10 -translate-y-1/2
+              items-center justify-center
+              rounded-full border border-slate-200
+              bg-white text-slate-700
+              shadow-[0_8px_25px_rgba(15,23,42,0.08)]
+              transition-all duration-300
+              hover:border-slate-950
+              hover:bg-slate-950
+              hover:text-white
+              lg:flex
+            "
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
 
-          {/* Right Button */}
+          {/* =================================================
+              RIGHT BUTTON
+          ================================================== */}
 
           <button
             type="button"
             onClick={nextSlide}
             aria-label="Next feedback"
-            className="absolute -right-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-[0_8px_25px_rgba(15,23,42,0.08)] transition-all duration-300 hover:border-slate-950 hover:bg-slate-950 hover:text-white lg:flex"
+            className="
+              absolute -right-3 top-1/2 z-20
+              hidden h-10 w-10 -translate-y-1/2
+              items-center justify-center
+              rounded-full border border-slate-200
+              bg-white text-slate-700
+              shadow-[0_8px_25px_rgba(15,23,42,0.08)]
+              transition-all duration-300
+              hover:border-slate-950
+              hover:bg-slate-950
+              hover:text-white
+              lg:flex
+            "
           >
             <ChevronRight className="h-4 w-4" />
           </button>
 
-          {/* Viewport */}
+          {/* =================================================
+              VIEWPORT
+          ================================================== */}
 
           <div className="overflow-hidden px-1 py-2">
             <motion.div
@@ -403,19 +428,18 @@ export default function Feedback() {
             </motion.div>
           </div>
 
-          {/* Dots */}
+          {/* =================================================
+              DOTS
+          ================================================== */}
 
-          <div className="mt-7 flex items-center justify-center gap-1.5">
+          <div className="mt-6 flex items-center justify-center gap-1.5">
             {feedbacks.map((feedback, index) => (
               <button
                 key={feedback.id}
                 type="button"
                 aria-label={`Go to feedback ${index + 1}`}
                 onClick={() => {
-                  const safeIndex = Math.min(
-                    index,
-                    maxIndex
-                  );
+                  const safeIndex = Math.min(index, maxIndex);
 
                   setCurrentIndex(safeIndex);
                 }}
@@ -427,7 +451,7 @@ export default function Feedback() {
               />
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* =====================================================
             BOTTOM STRIP
@@ -436,7 +460,7 @@ export default function Feedback() {
         <motion.div
           initial={{
             opacity: 0,
-            y: 20,
+            y: 12,
           }}
           whileInView={{
             opacity: 1,
@@ -444,47 +468,57 @@ export default function Feedback() {
           }}
           viewport={{
             once: true,
-            amount: 0.3,
           }}
           transition={{
             duration: 0.6,
             delay: 0.15,
           }}
-          className="mx-auto mt-10 max-w-6xl"
+          className="mx-auto mt-8 w-full"
         >
-          <div className="flex flex-col items-center justify-between gap-5 rounded-2xl border border-slate-200 bg-slate-50/80 px-5 py-5 sm:flex-row sm:px-7">
-            <div>
-              <p className="text-[11px] font-semibold text-slate-800">
+          <div className="flex flex-col items-center justify-between gap-5 rounded-[1.35rem] border border-slate-200 bg-slate-50/80 px-5 py-5 sm:flex-row sm:px-6">
+            <div className="text-center sm:text-left">
+              <p className="text-[12px] font-[900] text-slate-900">
                 Built around learner experience
               </p>
 
-              <p className="mt-1 text-[9.5px] text-slate-400">
+              <p className="mt-1 text-[10px] font-medium leading-5 text-slate-500">
                 Practical Learning • Projects • Career Readiness • Support
               </p>
             </div>
 
             <a
               href="#programs"
-              className="group inline-flex items-center gap-2 text-[10px] font-semibold text-slate-700 transition-colors hover:text-slate-950"
+              className="
+                group inline-flex items-center gap-2
+                rounded-xl bg-yellow-400
+                px-4 py-2.5
+                text-[11px] font-[900] text-black
+                shadow-[0_8px_20px_rgba(250,204,21,0.25)]
+                transition-all duration-300
+                hover:-translate-y-0.5
+                hover:bg-yellow-300
+                hover:shadow-[0_12px_25px_rgba(250,204,21,0.35)]
+              "
             >
               Explore Programs
 
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white shadow-sm transition-all duration-300 group-hover:bg-slate-950 group-hover:text-white">
-                <ArrowUpRight
-                  size={12}
-                  className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                />
-              </span>
+              <ArrowUpRight
+                size={13}
+                strokeWidth={2.8}
+                className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              />
             </a>
           </div>
         </motion.div>
 
-        {/* Verification Note */}
+        {/* =====================================================
+            VERIFICATION NOTE
+        ====================================================== */}
 
-        <p className="mx-auto mt-5 max-w-2xl text-center text-[9px] leading-5 tracking-wide text-slate-400">
-          Learner feedback should be published only with permission and
-          replaced with verified learner information before going live.
-        </p>
+        <p className="mx-auto mt-5 max-w-2xl text-center text-[12px] font-[800] leading-6 tracking-wide text-black sm:text-[13px]">
+  Learner feedback should be published only with permission and
+  replaced with verified learner information before going live.
+</p>
       </div>
     </section>
   );

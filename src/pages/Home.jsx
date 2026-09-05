@@ -27,15 +27,18 @@ export default function Home() {
       
       <main>
         <Hero />
-         <TopCompanies />
-        <Programs />
+         <TopCompanies />       
          <About />
+          <LearningExperience />
+         <Programs />
         <WhoIsZenvixFor />
-        <LearningExperience />
-        <CareerSupport />
         <HowItWorks />
-        <JobPlacement />
-        <CareerDomains />
+         <JobPlacement />
+          <CareerDomains />
+        <CareerSupport />
+       
+       
+       
         <WhyZenvix />
         <SuccessStories />
         <Feedback />

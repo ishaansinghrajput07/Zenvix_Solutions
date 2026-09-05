@@ -15,8 +15,6 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-import { createEnrollment } from "../services/enrollmentService";
-
 // =====================================================
 // GET LOGGED-IN USER
 // =====================================================
@@ -34,6 +32,26 @@ function getStoredUser() {
 }
 
 // =====================================================
+// GET STORED ENROLLMENTS
+// =====================================================
+
+function getStoredEnrollments() {
+  try {
+    const raw = localStorage.getItem("zenvix_enrollments");
+
+    if (!raw) {
+      return [];
+    }
+
+    const parsed = JSON.parse(raw);
+
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+// =====================================================
 // COMPONENT
 // =====================================================
 
@@ -41,9 +59,9 @@ export default function Enrollment() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // Course ID coming from URL
+  // Course / Program ID from URL
   // Example:
-  // /enrollment?courseId=123456
+  // /enrollment?courseId=software-engineering
   const courseId = searchParams.get("courseId");
 
   const currentUser = useMemo(() => getStoredUser(), []);
@@ -124,10 +142,22 @@ export default function Enrollment() {
 
     if (!formData.email.trim()) {
       newErrors.email = "Email is required.";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailRegex.test(formData.email.trim())) {
+        newErrors.email = "Please enter a valid email address.";
+      }
     }
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required.";
+    } else {
+      const phoneRegex = /^[0-9+\-\s()]{8,18}$/;
+
+      if (!phoneRegex.test(formData.phone.trim())) {
+        newErrors.phone = "Please enter a valid phone number.";
+      }
     }
 
     if (!formData.education) {
@@ -135,14 +165,15 @@ export default function Enrollment() {
     }
 
     if (!formData.careerGoal.trim()) {
-      newErrors.careerGoal =
-        "Please tell us your career goal.";
+      newErrors.careerGoal = "Please tell us your career goal.";
     }
 
     if (!courseId) {
       setSubmitError(
-        "No course was selected. Please go back and select a program."
+        "No program was selected. Please go back and select a program."
       );
+
+      setErrors(newErrors);
 
       return false;
     }
@@ -153,7 +184,7 @@ export default function Enrollment() {
   };
 
   // =====================================================
-  // SUBMIT ENROLLMENT
+  // SUBMIT ENROLLMENT - LOCAL STORAGE ONLY
   // =====================================================
 
   const handleSubmit = async (event) => {
@@ -170,112 +201,120 @@ export default function Enrollment() {
       setIsSubmitting(true);
 
       // =================================================
-      // BACKEND PAYLOAD
-      // =================================================
-      //
-      // Backend currently accepts:
-      //
-      // courseId
-      // education
-      // experience
-      // message
-      // phone
-      //
-      // student name/email are taken from req.user
+      // CREATE LOCAL ENROLLMENT
       // =================================================
 
-      const payload = {
-        courseId,
+      const enrollment = {
+        id: `ZEN-${Date.now()}`,
+
+        firstName: formData.firstName.trim(),
+
+        lastName: formData.lastName.trim(),
+
+        name: `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim(),
+
+        email: formData.email.trim(),
+
+        phone: formData.phone.trim(),
 
         education: formData.education,
 
         experience: formData.experience,
 
-        phone: formData.phone.trim(),
+        careerGoal: formData.careerGoal.trim(),
 
         message: formData.message.trim(),
+
+        courseId,
+
+        programId: courseId,
+
+        submittedAt: new Date().toISOString(),
+
+        status: "New",
+
+        source: "Program Enrollment Form",
       };
 
-      console.log("Submitting enrollment:", payload);
-
       // =================================================
-      // REAL BACKEND API
-      // POST /api/enrollments
+      // GET EXISTING ENROLLMENTS
       // =================================================
 
-      const response = await createEnrollment(payload);
+      const existingEnrollments = getStoredEnrollments();
 
-      console.log("Enrollment API Response:", response);
+      // =================================================
+      // CHECK DUPLICATE ENROLLMENT
+      // =================================================
 
-      if (!response?.success) {
-        throw new Error(
-          response?.message ||
-            "Unable to submit enrollment request."
+      const alreadyEnrolled = existingEnrollments.some(
+        (item) =>
+          item.email?.toLowerCase() ===
+            enrollment.email.toLowerCase() &&
+          String(item.courseId) === String(courseId)
+      );
+
+      if (alreadyEnrolled) {
+        setSubmitError(
+          "You have already submitted an enrollment request for this program."
         );
+
+        return;
       }
+
+      // =================================================
+      // SAVE TO LOCAL STORAGE
+      // =================================================
+
+      const updatedEnrollments = [
+        ...existingEnrollments,
+        enrollment,
+      ];
+
+      localStorage.setItem(
+        "zenvix_enrollments",
+        JSON.stringify(updatedEnrollments)
+      );
+
+      // =================================================
+      // ALSO SAVE CURRENT ENROLLMENT
+      // =================================================
+
+      localStorage.setItem(
+        "zenvix_last_enrollment",
+        JSON.stringify(enrollment)
+      );
+
+      console.log(
+        "Enrollment saved locally:",
+        enrollment
+      );
 
       // =================================================
       // SUCCESS
       // =================================================
 
       setSubmitSuccess(
-        response.message ||
-          "Enrollment request submitted successfully."
+        "Enrollment request submitted successfully."
       );
 
-      // Give user a moment to see success message
+      // =================================================
+      // REDIRECT
+      // =================================================
+
       setTimeout(() => {
         navigate("/dashboard", {
           replace: true,
         });
       }, 900);
     } catch (error) {
-      console.error("Enrollment submission error:", error);
+      console.error(
+        "Local enrollment submission error:",
+        error
+      );
 
-      // Axios backend response
-      const backendMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Unable to submit enrollment request.";
-
-      // =================================================
-      // SPECIAL BACKEND ERRORS
-      // =================================================
-
-      if (
-        error?.response?.data?.code ===
-        "ENROLLMENT_PENDING"
-      ) {
-        setSubmitError(
-          "Your enrollment request for this course is already pending."
-        );
-
-        return;
-      }
-
-      if (
-        error?.response?.data?.code ===
-        "ALREADY_ENROLLED"
-      ) {
-        setSubmitError(
-          "You already have access to this course."
-        );
-
-        return;
-      }
-
-      if (
-        error?.response?.data?.code ===
-        "ACCESS_REVOKED"
-      ) {
-        setSubmitError(
-          "Course access is currently unavailable. Please contact support."
-        );
-
-        return;
-      }
-
-      setSubmitError(backendMessage);
+      setSubmitError(
+        "Unable to save your enrollment. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -420,13 +459,11 @@ export default function Enrollment() {
 
                 <p className="mt-2 font-body text-[12px] leading-relaxed text-slate-500">
                   Your information will be securely
-                  submitted to the Zenvix enrollment team.
+                  saved on this device.
                 </p>
               </div>
 
-              {/* =================================================
-                  BACKEND ERROR
-              ================================================== */}
+              {/* ERROR */}
 
               {submitError && (
                 <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
@@ -436,9 +473,7 @@ export default function Enrollment() {
                 </div>
               )}
 
-              {/* =================================================
-                  BACKEND SUCCESS
-              ================================================== */}
+              {/* SUCCESS */}
 
               {submitSuccess && (
                 <div className="mb-6 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
@@ -819,7 +854,7 @@ export default function Enrollment() {
                           className="animate-spin"
                         />
 
-                        Submitting...
+                        Saving...
                       </>
                     ) : (
                       <>
@@ -871,8 +906,8 @@ export default function Enrollment() {
                 </h3>
 
                 <p className="mt-3 font-body text-[11.5px] leading-relaxed text-white/55">
-                  Your enrollment request will be linked
-                  to the program you selected.
+                  Your enrollment request will be saved
+                  locally with the program you selected.
                 </p>
 
                 {courseId && (
@@ -910,7 +945,7 @@ export default function Enrollment() {
                 <div className="mt-6 space-y-5">
                   {[
                     "Submit your enrollment information.",
-                    "Our team reviews your request.",
+                    "Your enrollment is saved locally.",
                     "Your student dashboard will be updated.",
                     "Continue your learning journey.",
                   ].map((item, index) => (
@@ -941,12 +976,12 @@ export default function Enrollment() {
 
                   <div>
                     <p className="font-body text-[12px] font-semibold text-emerald-800">
-                      Secure enrollment
+                      Saved securely
                     </p>
 
                     <p className="mt-1 font-body text-[10.5px] leading-relaxed text-emerald-700/70">
-                      Your information is associated with
-                      your authenticated Zenvix account.
+                      Your enrollment information is stored
+                      locally on this device.
                     </p>
                   </div>
                 </div>

@@ -1,105 +1,34 @@
-
-import { motion } from 'framer-motion'
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   Mail,
   Sparkles,
-} from 'lucide-react'
+} from "lucide-react";
 
 export default function FinalCTA() {
   return (
-    <section
-      id="contact"
-      className="
-        relative
-        overflow-hidden
-        border-t
-        border-slate-200
-        bg-slate-50
-        py-14
-        sm:py-16
-        lg:py-18
-      "
-    >
-      {/* =====================================================
-          SOFT BACKGROUND GLOW
-      ====================================================== */}
+<section
+  id="contact"
+  className="
+    relative mb-[40px]
+    mx-[20px] sm:mx-[30px] lg:mx-[40px]
+    overflow-hidden
+    rounded-[2rem]
+    border border-slate-200
+    bg-[#EEF3FA]
+    py-[30px] pb-[60px]
+    shadow-[0_10px_35px_rgba(15,23,42,0.05)]
+  "
+>
+      <div className="relative w-full px-[30px] sm:px-[30px] lg:px-[30px]">
+        {/* =====================================================
+            CONTENT
+        ====================================================== */}
 
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 overflow-hidden"
-      >
-        <motion.div
-          animate={{
-            x: [0, 30, 0],
-            y: [0, -15, 0],
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="
-            absolute
-            -left-32
-            -top-40
-            h-[420px]
-            w-[420px]
-            rounded-full
-            bg-cyan-400/[0.08]
-            blur-3xl
-          "
-        />
-
-        <motion.div
-          animate={{
-            x: [0, -25, 0],
-            y: [0, 20, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="
-            absolute
-            -bottom-44
-            -right-32
-            h-[440px]
-            w-[440px]
-            rounded-full
-            bg-violet-400/[0.07]
-            blur-3xl
-          "
-        />
-
-        {/* subtle grid */}
-
-        <div
-          className="
-            absolute
-            inset-0
-            opacity-[0.35]
-          "
-          style={{
-            backgroundImage:
-              'linear-gradient(to right, rgba(15,23,42,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(15,23,42,0.035) 1px, transparent 1px)',
-            backgroundSize: '64px 64px',
-            maskImage:
-              'radial-gradient(ellipse 70% 100% at 50% 50%, black, transparent 85%)',
-          }}
-        />
-      </div>
-
-      {/* =====================================================
-          CONTENT
-      ====================================================== */}
-
-      <div className="shell relative">
         <motion.div
           initial={{
             opacity: 0,
-            y: 15,
+            y: 20,
           }}
           whileInView={{
             opacity: 1,
@@ -111,47 +40,37 @@ export default function FinalCTA() {
           }}
           transition={{
             duration: 0.6,
-            ease: 'easeOut',
+            ease: "easeOut",
           }}
           className="
-            flex
-            flex-col
-            gap-7
-            rounded-3xl
-            border
-            border-slate-200/80
-            bg-white/80
-            px-6
-            py-7
-            shadow-[0_20px_60px_rgba(15,23,42,0.06)]
-            backdrop-blur-xl
+            mt-[20px]
+            flex flex-col gap-7
+            rounded-[1.35rem]
+            border border-slate-200
+            bg-white
+            px-5 py-6
+            shadow-[0_12px_35px_rgba(15,23,42,0.05)]
+            sm:px-6
             lg:flex-row
             lg:items-center
             lg:justify-between
-            lg:px-8
+            lg:px-7
             lg:py-7
           "
         >
-
           {/* =================================================
               LEFT — LOGO + TEXT
           ================================================== */}
 
           <div className="flex min-w-0 items-center gap-5">
-
             {/* Logo */}
 
             <div
               className="
-                flex
-                h-14
-                w-14
-                shrink-0
-                items-center
-                justify-center
+                flex h-14 w-14 shrink-0
+                items-center justify-center
                 rounded-2xl
-                border
-                border-slate-200
+                border border-slate-200
                 bg-white
                 shadow-sm
               "
@@ -159,46 +78,33 @@ export default function FinalCTA() {
               <img
                 src="/images/zenvix-logo.png"
                 alt="Zenvix Solutions"
-                className="
-                  max-h-9
-                  max-w-10
-                  object-contain
-                "
+                className="max-h-9 max-w-10 object-contain"
               />
             </div>
 
             {/* Text */}
 
             <div className="min-w-0">
-
-              <div className="mb-1.5 flex items-center gap-2">
+              <div className="mb-2 flex items-center gap-2">
                 <Sparkles
                   size={14}
-                  className="text-cyan-500"
+                  className="text-teal-600"
+                  strokeWidth={2.5}
                 />
 
-                <span
-                  className="
-                    font-mono
-                    text-[9px]
-                    font-semibold
-                    uppercase
-                    tracking-[0.18em]
-                    text-cyan-600
-                  "
-                >
-                  Start your journey
-                </span>
+                <p className="text-[14px] font-[900] uppercase tracking-[0.18em] text-teal-700">
+                  Start Your Journey
+                </p>
               </div>
 
               <h2
                 className="
-                  text-[22px]
-                  font-semibold
-                  leading-tight
-                  tracking-[-0.03em]
-                  text-slate-900
-                  sm:text-[25px]
+                  text-[28px]
+                  font-[900]
+                  leading-[1.1]
+                  tracking-[-0.025em]
+                  text-slate-950
+                  sm:text-[32px]
                 "
               >
                 Ready to build what comes next?
@@ -206,18 +112,18 @@ export default function FinalCTA() {
 
               <p
                 className="
-                  mt-1.5
-                  max-w-xl
+                  mt-3
+                  max-w-2xl
                   text-[13px]
-                  leading-5
+                  font-semibold
+                  leading-6
                   text-slate-500
                   sm:text-[14px]
                 "
               >
-                Learn practical skills, build real projects,
-                and move confidently toward your career goals.
+                Learn practical skills, build real projects, and move
+                confidently toward your career goals.
               </p>
-
             </div>
           </div>
 
@@ -227,44 +133,38 @@ export default function FinalCTA() {
 
           <div
             className="
-              flex
-              shrink-0
-              flex-col
-              gap-2.5
+              flex shrink-0
+              flex-col gap-2.5
               sm:flex-row
               lg:justify-end
             "
           >
-
             {/* Explore Programs */}
 
             <a
               href="#programs"
               className="
-                group
-                inline-flex
-                items-center
-                justify-center
-                gap-2
-                whitespace-nowrap
-                rounded-full
-                bg-slate-900
-                px-5
-                py-3
+                group inline-flex items-center justify-center
+                gap-2.5 whitespace-nowrap
+                rounded-xl
+                bg-yellow-400
+                px-5 py-3
                 text-[12px]
-                font-semibold
-                text-white
-                shadow-[0_8px_24px_rgba(15,23,42,0.14)]
-                transition-all
-                duration-300
+                font-[900]
+                text-black
+                shadow-[0_8px_20px_rgba(250,204,21,0.25)]
+                transition-all duration-300
                 hover:-translate-y-0.5
-                hover:bg-slate-800
+                hover:bg-yellow-300
+                hover:shadow-[0_12px_25px_rgba(250,204,21,0.35)]
+                active:translate-y-0
               "
             >
               Explore Programs
 
               <ArrowRight
-                size={14}
+                size={15}
+                strokeWidth={2.8}
                 className="
                   transition-transform
                   duration-300
@@ -278,36 +178,25 @@ export default function FinalCTA() {
             <a
               href="/contact"
               className="
-                group
-                inline-flex
-                items-center
-                justify-center
-                gap-2
-                whitespace-nowrap
-                rounded-full
-                border
-                border-cyan-200
-                bg-cyan-50
-                px-5
-                py-3
+                group inline-flex items-center justify-center
+                gap-2.5 whitespace-nowrap
+                rounded-xl
+                border border-slate-200
+                bg-white
+                px-5 py-3
                 text-[12px]
-                font-semibold
-                text-cyan-700
-                transition-all
-                duration-300
+                font-[900]
+                text-slate-950
+                transition-all duration-300
                 hover:-translate-y-0.5
-                hover:border-cyan-300
-                hover:bg-cyan-100
+                hover:border-slate-300
+                hover:bg-slate-50
               "
             >
               <Mail
-                size={14}
-                className="
-                  text-cyan-600
-                  transition-transform
-                  duration-300
-                  group-hover:scale-110
-                "
+                size={15}
+                className="text-teal-700 transition-transform duration-300 group-hover:scale-110"
+                strokeWidth={2.5}
               />
 
               Contact Us
@@ -318,31 +207,27 @@ export default function FinalCTA() {
             <a
               href="/contact"
               className="
-                group
-                inline-flex
-                items-center
-                justify-center
-                gap-2
-                whitespace-nowrap
-                rounded-full
-                bg-gradient-to-r
-                from-violet-600
-                to-indigo-600
-                px-5
-                py-3
+                group inline-flex items-center justify-center
+                gap-2.5 whitespace-nowrap
+                rounded-xl
+                border border-slate-950
+                bg-slate-950
+                px-5 py-3
                 text-[12px]
-                font-semibold
+                font-[900]
                 text-white
-                shadow-[0_8px_25px_rgba(99,102,241,0.18)]
-                transition-all
-                duration-300
+                shadow-[0_8px_20px_rgba(15,23,42,0.12)]
+                transition-all duration-300
                 hover:-translate-y-0.5
+                hover:bg-slate-800
+                hover:shadow-[0_12px_28px_rgba(15,23,42,0.16)]
               "
             >
               Start Your Journey
 
               <ArrowRight
-                size={14}
+                size={15}
+                strokeWidth={2.8}
                 className="
                   transition-transform
                   duration-300
@@ -350,11 +235,46 @@ export default function FinalCTA() {
                 "
               />
             </a>
-
           </div>
+        </motion.div>
+
+        {/* =====================================================
+            BOTTOM MESSAGE
+        ====================================================== */}
+
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 10,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          viewport={{
+            once: true,
+          }}
+          transition={{
+            duration: 0.5,
+            delay: 0.15,
+          }}
+          className="mx-auto mt-6 flex items-center justify-center gap-2 text-center"
+        >
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-yellow-50">
+            <Sparkles
+              className="h-3.5 w-3.5 text-yellow-500"
+              strokeWidth={2.5}
+            />
+          </div>
+
+          <p className="text-[12px] font-semibold leading-6 text-slate-500">
+            Your next opportunity starts with one step.
+            <span className="ml-1 font-[900] text-slate-950">
+              Start today.
+            </span>
+          </p>
         </motion.div>
       </div>
     </section>
-  )
+  );
 }
-

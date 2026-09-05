@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+
 import { AnimatePresence, motion } from "framer-motion";
-import axios from "axios";
+
 import {
   ArrowUpRight,
   CheckCircle2,
@@ -32,18 +33,78 @@ const INITIAL_FORM = {
 const POPUP_DELAY = 45 * 1000;
 
 // =====================================================
-// API BASE URL
+// LOCAL STORAGE
 // =====================================================
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const CONTACT_STORAGE_KEY = "zenvixContactLeads";
+
+// =====================================================
+// CREATE UNIQUE LEAD ID
+// =====================================================
+
+const createLeadId = () => {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
+    return crypto.randomUUID();
+  }
+
+  return `lead_${Date.now()}_${Math.random()
+    .toString(36)
+    .slice(2, 8)}`;
+};
+
+// =====================================================
+// READ LEADS FROM LOCAL STORAGE
+// =====================================================
+
+const getStoredLeads = () => {
+  try {
+    const raw = localStorage.getItem(CONTACT_STORAGE_KEY);
+
+    if (!raw) {
+      return [];
+    }
+
+    const parsed = JSON.parse(raw);
+
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.error("Contact leads localStorage read error:", error);
+    return [];
+  }
+};
+
+// =====================================================
+// SAVE LEADS TO LOCAL STORAGE
+// =====================================================
+
+const saveLeads = (leads) => {
+  try {
+    localStorage.setItem(
+      CONTACT_STORAGE_KEY,
+      JSON.stringify(leads)
+    );
+
+    return true;
+  } catch (error) {
+    console.error("Contact leads localStorage save error:", error);
+    return false;
+  }
+};
 
 export default function ContactPopup() {
   const [isOpen, setIsOpen] = useState(false);
+
   const [form, setForm] = useState(INITIAL_FORM);
+
   const [errors, setErrors] = useState({});
+
   const [submitted, setSubmitted] = useState(false);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [submitError, setSubmitError] = useState("");
 
   // =====================================================
@@ -89,6 +150,7 @@ export default function ContactPopup() {
 
     return () => {
       document.body.style.overflow = previousOverflow;
+
       window.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen]);
@@ -133,40 +195,53 @@ export default function ContactPopup() {
   const validateForm = () => {
     const newErrors = {};
 
+    // NAME
     if (!form.name.trim()) {
       newErrors.name = "Please enter your name.";
     } else if (form.name.trim().length < 2) {
       newErrors.name = "Name must be at least 2 characters.";
     }
 
+    // EMAIL
     if (!form.email.trim()) {
       newErrors.email = "Please enter your email.";
     } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+        form.email.trim()
+      )
     ) {
       newErrors.email = "Please enter a valid email.";
     }
 
+    // PHONE
     if (!form.phone.trim()) {
       newErrors.phone = "Please enter your phone number.";
     } else if (
-      !/^[0-9+\-\s()]{8,20}$/.test(form.phone.trim())
+      !/^[0-9+\-\s()]{8,20}$/.test(
+        form.phone.trim()
+      )
     ) {
       newErrors.phone = "Please enter a valid phone number.";
     }
 
+    // COURSE
     if (!form.interestedCourse.trim()) {
       newErrors.interestedCourse =
         "Please enter the course or program.";
     }
 
+    // SERVICE
     if (!form.service) {
       newErrors.service = "Please select a service.";
     }
 
+    // MESSAGE
     if (!form.message.trim()) {
       newErrors.message =
         "Please tell us a little about your goal.";
+    } else if (form.message.trim().length < 5) {
+      newErrors.message =
+        "Please enter at least 5 characters.";
     }
 
     setErrors(newErrors);
@@ -175,7 +250,7 @@ export default function ContactPopup() {
   };
 
   // =====================================================
-  // SUBMIT LEAD TO BACKEND
+  // SUBMIT LEAD TO LOCAL STORAGE
   // =====================================================
 
   const handleSubmit = async (event) => {
@@ -191,68 +266,99 @@ export default function ContactPopup() {
     setSubmitError("");
 
     try {
-      console.log(
-        "Submitting lead to:",
-        `${API_BASE_URL}/leads`
-      );
+      const now = new Date().toISOString();
 
-      const response = await axios.post(
-        `${API_BASE_URL}/leads`,
-        {
-          name: form.name.trim(),
-          email: form.email.trim().toLowerCase(),
-          phone: form.phone.trim(),
-          interestedCourse: form.interestedCourse.trim(),
-          service: form.service.trim(),
-          message: form.message.trim(),
-          source: "Website Popup",
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-          timeout: 15000,
-        }
-      );
+      // =================================================
+      // CREATE LEAD
+      // =================================================
 
-      console.log("Lead submission response:", response.data);
+      const newLead = {
+        id: createLeadId(),
 
-      if (response.data?.success) {
-        sessionStorage.setItem(
-          "zenvix-contact-submitted",
-          "true"
-        );
+        name: form.name.trim(),
 
-        setSubmitted(true);
-        setErrors({});
-        setSubmitError("");
-      } else {
-        setSubmitError(
-          response.data?.message ||
-            "Unable to submit your enquiry."
+        email: form.email.trim().toLowerCase(),
+
+        phone: form.phone.trim(),
+
+        interestedCourse:
+          form.interestedCourse.trim(),
+
+        service: form.service.trim(),
+
+        message: form.message.trim(),
+
+        source: "Website Popup",
+
+        status: "New",
+
+        createdAt: now,
+
+        updatedAt: now,
+      };
+
+      // =================================================
+      // GET EXISTING LEADS
+      // =================================================
+
+      const existingLeads = getStoredLeads();
+
+      // =================================================
+      // ADD NEW LEAD AT TOP
+      // =================================================
+
+      const updatedLeads = [
+        newLead,
+        ...existingLeads,
+      ];
+
+      // =================================================
+      // SAVE TO LOCAL STORAGE
+      // =================================================
+
+      const saved = saveLeads(updatedLeads);
+
+      if (!saved) {
+        throw new Error(
+          "Unable to save enquiry locally."
         );
       }
+
+      // =================================================
+      // NOTIFY ADMIN LEADS
+      // =================================================
+
+      window.dispatchEvent(
+        new Event("contactLeadAdded")
+      );
+
+      // =================================================
+      // SESSION STATE
+      // =================================================
+
+      sessionStorage.setItem(
+        "zenvix-contact-submitted",
+        "true"
+      );
+
+      // =================================================
+      // SUCCESS STATE
+      // =================================================
+
+      setSubmitted(true);
+
+      setErrors({});
+
+      setSubmitError("");
     } catch (error) {
       console.error(
         "Popup Lead Submission Error:",
         error
       );
 
-      if (error.response) {
-        setSubmitError(
-          error.response.data?.message ||
-            "Server could not process your enquiry."
-        );
-      } else if (error.request) {
-        setSubmitError(
-          "Unable to connect to the server. Please try again."
-        );
-      } else {
-        setSubmitError(
-          "Something went wrong. Please try again."
-        );
-      }
+      setSubmitError(
+        "Something went wrong while saving your enquiry. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -503,7 +609,7 @@ export default function ContactPopup() {
                             type="tel"
                             value={form.phone}
                             onChange={handleChange}
-                            placeholder="+91 00000 00000"
+                            placeholder="+1  000 000 0000"
                             autoComplete="tel"
                             className={inputClass("phone")}
                           />
@@ -610,7 +716,7 @@ export default function ContactPopup() {
                         )}
                       </div>
 
-                      {/* API ERROR */}
+                      {/* LOCAL STORAGE ERROR */}
 
                       {submitError && (
                         <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-[10px] text-red-600">
@@ -626,7 +732,7 @@ export default function ContactPopup() {
                         className="group flex w-full items-center justify-center gap-3 rounded-xl bg-slate-950 px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-slate-800 hover:shadow-[0_12px_30px_rgba(15,23,42,0.15)] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         {isSubmitting
-                          ? "Sending Enquiry..."
+                          ? "Saving Enquiry..."
                           : "Get Career Guidance"}
 
                         {!isSubmitting && (
@@ -638,6 +744,7 @@ export default function ContactPopup() {
 
                       <p className="flex items-center justify-center gap-1.5 text-center text-[9px] leading-4 text-slate-400">
                         <CheckCircle2 className="h-3 w-3 shrink-0 text-emerald-500" />
+
                         Your information is used only to respond
                         to your enquiry.
                       </p>

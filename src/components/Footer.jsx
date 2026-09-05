@@ -252,7 +252,7 @@ export default function Footer() {
 
         <div className="flex flex-col gap-5 border-t border-slate-200/80 py-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-[11px] font-[800] leading-5 text-slate-600">
-            © 2026 PimsInfotech. All rights reserved. Designed & developed by
+            © 2026 Zenvix Solution. All rights reserved. Designed & developed by
             PimsInfotech Pvt Ltd.
           </p>
 

@@ -545,9 +545,12 @@ export default function Contact() {
                         Email
                       </p>
 
-                      <p className="mt-0.5 text-xs text-slate-300">
-                        hello@zenvix.com
-                      </p>
+                      <a
+                        href="mailto:support@zenvixsolution.com"
+                        className="mt-0.5 block text-xs text-slate-300 hover:text-white"
+                      >
+                        support@zenvixsolution.com
+                      </a>
                     </div>
                   </div>
 
@@ -563,9 +566,12 @@ export default function Contact() {
                         Phone
                       </p>
 
-                      <p className="mt-0.5 text-xs text-slate-300">
-                        Contact our team
-                      </p>
+                      <a
+                        href="tel:+13072927889"
+                        className="mt-0.5 block text-xs text-slate-300 hover:text-white"
+                      >
+                        +1 (307) 292-7889
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -706,7 +712,7 @@ export default function Contact() {
                         type="tel"
                         value={form.phone}
                         onChange={handleChange}
-                        placeholder="+91 00000 00000"
+                        placeholder="+1 (307) 292-7889"
                         autoComplete="tel"
                         className={inputClass("phone")}
                       />
@@ -847,7 +853,7 @@ export default function Contact() {
                 </h2>
 
                 <p className="mt-3 max-w-sm text-sm leading-6 text-slate-500">
-                  Thank you for contacting Zenvix Solutions.
+                  Thank you for contacting Zenvix Solution.
                   Our team will review your enquiry and get
                   back to you soon.
                 </p>

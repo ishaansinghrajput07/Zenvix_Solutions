@@ -18,7 +18,7 @@ const blogs = [
       {
         type: "paragraph",
         text:
-          "Technical interviews can feel difficult when preparation is unstructured. The goal is not simply to memorize questions, but to develop the ability to understand problems, explain your thinking, and build solutions confidently.",
+          "Technical interviews can feel difficult when preparation is unstructured. The goal is not simply to memorize questions, but to develop the ability to understand problems, explain your thinking, and build solution confidently.",
       },
       {
         type: "heading",
@@ -249,7 +249,7 @@ const blogs = [
       {
         type: "paragraph",
         text:
-          "Instead of creating projects only to follow tutorials, choose problems that interest you and build solutions around them.",
+          "Instead of creating projects only to follow tutorials, choose problems that interest you and build solution around them.",
       },
     ],
   },

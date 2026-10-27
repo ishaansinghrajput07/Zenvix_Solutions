@@ -326,7 +326,7 @@ export default function ApplyProgramModal({
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
-                            placeholder="+91 XXXXX XXXXX"
+                            placeholder="+1 (307) 292-7889"
                             required
                             className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-[13px] text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-electric-400 focus:ring-4 focus:ring-electric-500/10"
                           />

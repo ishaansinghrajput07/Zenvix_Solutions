@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import {
   ArrowRight,
+  BadgeCheck,
   PlayCircle,
   Globe2,
   Layers,
@@ -29,6 +30,13 @@ const trustIndicators = [
     iconColor: "text-emerald-400",
     iconBg: "bg-emerald-400/15",
     iconBorder: "border-emerald-300/30",
+  },
+  {
+    icon: BadgeCheck,
+    label: "E-Verified",
+    iconColor: "text-sky-400",
+    iconBg: "bg-sky-400/15",
+    iconBorder: "border-sky-300/30",
   },
 ];
 

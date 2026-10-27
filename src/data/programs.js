@@ -10,7 +10,7 @@ export const programs = [
     shortName: "Full Stack Engineering",
     category: "Technology & IT",
     accent: "electric",
-    duration: "24 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Beginner to Advanced",
     mode: "Online",
     description:
@@ -58,7 +58,7 @@ export const programs = [
     shortName: "Frontend Development",
     category: "Technology & IT",
     accent: "sky",
-    duration: "16 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Beginner to Intermediate",
     mode: "Online",
     description:
@@ -104,7 +104,7 @@ export const programs = [
     shortName: "Backend Development",
     category: "Technology & IT",
     accent: "cyan",
-    duration: "18 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -150,7 +150,7 @@ export const programs = [
     shortName: "React Development",
     category: "Technology & IT",
     accent: "sky",
-    duration: "14 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -196,7 +196,7 @@ export const programs = [
     shortName: "Node.js Development",
     category: "Technology & IT",
     accent: "emerald",
-    duration: "14 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -242,7 +242,7 @@ export const programs = [
     shortName: "Python Development",
     category: "Technology & IT",
     accent: "amber",
-    duration: "18 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Beginner to Intermediate",
     mode: "Online",
     description:
@@ -288,7 +288,7 @@ export const programs = [
     shortName: "Java Development",
     category: "Technology & IT",
     accent: "orange",
-    duration: "20 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Beginner to Advanced",
     mode: "Online",
     description:
@@ -380,7 +380,7 @@ export const programs = [
     shortName: "Data Science",
     category: "Data & Analytics",
     accent: "violet",
-    duration: "24 Weeks",
+    duration: "6 to 7 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -426,7 +426,7 @@ export const programs = [
     shortName: "Business Analytics",
     category: "Business & Operations",
     accent: "emerald",
-    duration: "14 Weeks",
+    duration: "5 to 6 Weeks",
     level: "Beginner to Intermediate",
     mode: "Online",
     description:
@@ -471,7 +471,7 @@ export const programs = [
     shortName: "AI & Machine Learning",
     category: "AI & Emerging Technology",
     accent: "violet",
-    duration: "24 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -517,7 +517,7 @@ export const programs = [
     shortName: "Generative AI",
     category: "AI & Emerging Technology",
     accent: "pink",
-    duration: "16 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -563,7 +563,7 @@ export const programs = [
     shortName: "AI Automation",
     category: "AI & Emerging Technology",
     accent: "pink",
-    duration: "10 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Beginner to Intermediate",
     mode: "Online",
     description:
@@ -608,7 +608,7 @@ export const programs = [
     shortName: "Cybersecurity",
     category: "Cybersecurity",
     accent: "indigo",
-    duration: "20 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Beginner to Intermediate",
     mode: "Online",
     description:
@@ -654,7 +654,7 @@ export const programs = [
     shortName: "Cloud Computing",
     category: "Cloud & Infrastructure",
     accent: "sky",
-    duration: "18 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -700,7 +700,7 @@ export const programs = [
     shortName: "AWS Engineering",
     category: "Cloud & Infrastructure",
     accent: "orange",
-    duration: "18 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -793,7 +793,7 @@ export const programs = [
     shortName: "DevOps Engineering",
     category: "Cloud & Infrastructure",
     accent: "emerald",
-    duration: "20 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -839,7 +839,7 @@ export const programs = [
     shortName: "UI/UX Design",
     category: "Design & Creative",
     accent: "pink",
-    duration: "14 Weeks",
+    duration: "8 to 9 Weeks",
     level: "Beginner to Intermediate",
     mode: "Online",
     description:
@@ -884,7 +884,7 @@ export const programs = [
     shortName: "Product Design",
     category: "Design & Creative",
     accent: "violet",
-    duration: "16 Weeks",
+    duration: "6 to 7 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -929,7 +929,7 @@ export const programs = [
     shortName: "Digital Marketing",
     category: "Marketing",
     accent: "orange",
-    duration: "12 Weeks",
+    duration: "6 to 7 Weeks",
     level: "Beginner to Intermediate",
     mode: "Online",
     description:
@@ -974,7 +974,7 @@ export const programs = [
     shortName: "SEO & Content",
     category: "Marketing",
     accent: "emerald",
-    duration: "10 Weeks",
+    duration: "6 to 7 Weeks",
     level: "Beginner",
     mode: "Online",
     description:
@@ -1019,7 +1019,7 @@ export const programs = [
     shortName: "Product Management",
     category: "Business & Operations",
     accent: "violet",
-    duration: "14 Weeks",
+    duration: "6 to 7 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -1064,11 +1064,11 @@ export const programs = [
     shortName: "Business Intelligence",
     category: "Data & Analytics",
     accent: "indigo",
-    duration: "16 Weeks",
+    duration: "5 to 6 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
-      "Build dashboards and reporting solutions that help organizations make data-driven decisions.",
+      "Build dashboards and reporting solution that help organizations make data-driven decisions.",
     overview:
       "Learn BI workflows including SQL, data modeling, dashboards and business reporting.",
     skills: [
@@ -1109,7 +1109,7 @@ export const programs = [
     shortName: "SQL & Databases",
     category: "Data & Technology",
     accent: "cyan",
-    duration: "12 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Beginner to Intermediate",
     mode: "Online",
     description:
@@ -1200,7 +1200,7 @@ export const programs = [
     shortName: "IT Support",
     category: "IT & Infrastructure",
     accent: "slate",
-    duration: "12 Weeks",
+    duration: "5 to 6 Weeks",
     level: "Beginner",
     mode: "Online",
     description:
@@ -1246,7 +1246,7 @@ export const programs = [
     shortName: "QA Testing",
     category: "Technology & IT",
     accent: "amber",
-    duration: "14 Weeks",
+    duration: "6 to 7 Weeks",
     level: "Beginner to Intermediate",
     mode: "Online",
     description:
@@ -1292,7 +1292,7 @@ export const programs = [
     shortName: "Automation Testing",
     category: "Technology & IT",
     accent: "emerald",
-    duration: "18 Weeks",
+    duration: "6 to 7 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -1338,7 +1338,7 @@ export const programs = [
     shortName: "FinTech",
     category: "Finance & Technology",
     accent: "emerald",
-    duration: "16 Weeks",
+    duration: "5 to 6 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -1384,7 +1384,7 @@ export const programs = [
     shortName: "Healthcare Technology",
     category: "Healthcare Technology",
     accent: "pink",
-    duration: "14 Weeks",
+    duration: "6 to 7 Weeks",
     level: "Beginner to Intermediate",
     mode: "Online",
     description:
@@ -1429,7 +1429,7 @@ export const programs = [
     shortName: "Project Management",
     category: "Business & Operations",
     accent: "violet",
-    duration: "12 Weeks",
+    duration: "6 to 7 Weeks",
     level: "Beginner to Intermediate",
     mode: "Online",
     description:
@@ -1474,7 +1474,7 @@ export const programs = [
     shortName: "Supply Chain Analytics",
     category: "Business & Operations",
     accent: "orange",
-    duration: "14 Weeks",
+    duration: "5 to 6 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -1519,7 +1519,7 @@ export const programs = [
     shortName: "HR Analytics",
     category: "Business & Analytics",
     accent: "pink",
-    duration: "12 Weeks",
+    duration: "4 to 5 Weeks",
     level: "Beginner to Intermediate",
     mode: "Online",
     description:
@@ -1564,7 +1564,7 @@ export const programs = [
     shortName: "Cloud Security",
     category: "Cybersecurity",
     accent: "indigo",
-    duration: "18 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -1609,7 +1609,7 @@ export const programs = [
     shortName: "Technical PM",
     category: "Technology & Business",
     accent: "violet",
-    duration: "16 Weeks",
+    duration: "6 to 7 Weeks",
     level: "Intermediate",
     mode: "Online",
     description:
@@ -1655,7 +1655,7 @@ export const programs = [
     shortName: "Networking",
     category: "IT & Infrastructure",
     accent: "sky",
-    duration: "16 Weeks",
+    duration: "7 to 8 Weeks",
     level: "Beginner to Intermediate",
     mode: "Online",
     description:

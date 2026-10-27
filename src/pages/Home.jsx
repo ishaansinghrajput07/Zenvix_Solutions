@@ -21,7 +21,7 @@ export default function Home() {
 
     <SEO
   title="Learn. Build. Get Hired."
-  description="Build practical skills through career-focused programs, real-world projects, interview preparation, job preparation and career support with Zenvix Solutions."
+  description="Build practical skills through career-focused programs, real-world projects, interview preparation, job preparation and career support with Zenvix Solution."
   path="/"
 />
       

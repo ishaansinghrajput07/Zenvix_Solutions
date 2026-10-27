@@ -1,4 +1,4 @@
-# Zenvix Solutions — Frontend
+# Zenvix Solution — Frontend
 
 Premium international EdTech + Career platform. Frontend only (React + Vite + Tailwind + Framer Motion).
 

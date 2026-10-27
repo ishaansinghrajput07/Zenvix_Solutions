@@ -584,7 +584,7 @@ export default function CareerSupport() {
                             type="tel"
                             value={form.phone}
                             onChange={handleChange}
-                            placeholder="+91 00000 00000"
+                            placeholder="+1 (307) 292-7889"
                             autoComplete="tel"
                             className={inputClass("phone")}
                           />
@@ -736,7 +736,7 @@ export default function CareerSupport() {
                     </h3>
 
                     <p className="!mt-3 max-w-sm text-[13px] font-medium leading-6 !text-slate-500">
-                      Thank you for contacting Zenvix Solutions. Your enquiry
+                      Thank you for contacting Zenvix Solution. Your enquiry
                       has been saved successfully. Our team will review it and
                       get back to you soon.
                     </p>

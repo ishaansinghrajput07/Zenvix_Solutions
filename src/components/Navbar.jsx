@@ -283,7 +283,7 @@ export default function Navbar() {
       {/* =====================================================
           NAVBAR
           SAME 30px LEFT / RIGHT SPACING
-          AS BATTERY SOLUTIONS
+          AS BATTERY SOLUTION
       ===================================================== */}
 
       <nav
@@ -305,7 +305,7 @@ export default function Navbar() {
         <Link
           to="/"
           className="shrink-0"
-          aria-label="Zenvix Solutions — Home"
+          aria-label="Zenvix Solution — Home"
         >
           <Logo />
         </Link>

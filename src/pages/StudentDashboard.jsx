@@ -679,7 +679,7 @@ export default function StudentDashboard() {
           <footer className="mt-12 border-t border-slate-200 py-7">
             <div className="flex flex-col justify-between gap-3 text-[10px] text-slate-400 sm:flex-row sm:items-center">
               <p>
-                © {new Date().getFullYear()} Zenvix Solutions. All rights
+                © {new Date().getFullYear()} Zenvix Solution. All rights
                 reserved.
               </p>
 

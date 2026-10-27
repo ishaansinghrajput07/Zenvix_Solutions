@@ -157,8 +157,10 @@ export default function Footer() {
 
             <div className="mt-6 flex items-center gap-2">
               <a
-                href="#"
+                href="https://www.linkedin.com/company/zenvix-solution-llc/"
                 aria-label="LinkedIn"
+                target="_blank"
+                rel="noreferrer"
                 className="
                   flex h-9 w-9 items-center justify-center
                   rounded-xl border border-slate-200
@@ -208,7 +210,7 @@ export default function Footer() {
               </a>
 
               <a
-                href="#"
+                href="mailto:support@zenvixsolution.com"
                 aria-label="Email"
                 className="
                   flex h-9 w-9 items-center justify-center
@@ -252,8 +254,7 @@ export default function Footer() {
 
         <div className="flex flex-col gap-5 border-t border-slate-200/80 py-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-[11px] font-[800] leading-5 text-slate-600">
-            © 2026 Zenvix Solution. All rights reserved. Designed & developed by
-            PimsInfotech Pvt Ltd.
+            © 2021 Zenvix Solution. All rights reserved.
           </p>
 
           <div className="flex items-center gap-4">

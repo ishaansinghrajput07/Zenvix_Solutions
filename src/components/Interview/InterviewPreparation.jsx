@@ -79,7 +79,7 @@ const preparationAreas = [
     id: "communication",
     title: "Communication Skills",
     description:
-      "Improve the way you explain technical concepts, projects, solutions, and professional experiences.",
+      "Improve the way you explain technical concepts, projects, solution, and professional experiences.",
     icon: MessageCircle,
     accent: "orange",
     tags: ["Speaking", "Clarity", "Confidence"],

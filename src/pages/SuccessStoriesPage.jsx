@@ -22,12 +22,12 @@ import { Link } from "react-router-dom";
 const stories = [
   {
     id: 1,
-    name: "Rahul Sharma",
+    name: "James Smith",
     role: "Frontend Developer",
     previous: "Student",
     current: "Frontend Developer",
     company: "Technology Company",
-    location: "Bengaluru, India",
+    location: "Austin, Texas",
     program: "Web Development",
     result: "Job Ready",
     quote:
@@ -37,12 +37,12 @@ const stories = [
   },
   {
     id: 2,
-    name: "Priya Verma",
+    name: "Emily Johnson",
     role: "Data Analyst",
     previous: "Fresher",
     current: "Data Analyst",
     company: "Analytics Company",
-    location: "Pune, India",
+    location: "Seattle, Washington",
     program: "Data & Analytics",
     result: "Career Started",
     quote:
@@ -52,12 +52,12 @@ const stories = [
   },
   {
     id: 3,
-    name: "Arjun Kumar",
+    name: "Michael Brown",
     role: "Full Stack Developer",
     previous: "Career Changer",
     current: "MERN Stack Developer",
     company: "Software Company",
-    location: "Noida, India",
+    location: "Denver, Colorado",
     program: "Full Stack Development",
     result: "Career Transition",
     quote:
@@ -67,12 +67,12 @@ const stories = [
   },
   {
     id: 4,
-    name: "Sneha Singh",
+    name: "Olivia Davis",
     role: "Software Engineer",
     previous: "Graduate",
     current: "Software Engineer",
     company: "IT Services",
-    location: "Hyderabad, India",
+    location: "Chicago, Illinois",
     program: "Software Development",
     result: "Interview Ready",
     quote:
@@ -82,12 +82,12 @@ const stories = [
   },
   {
     id: 5,
-    name: "Aman Gupta",
+    name: "Daniel Wilson",
     role: "Cloud Engineer",
     previous: "IT Professional",
     current: "Cloud Engineer",
     company: "Technology Company",
-    location: "Gurugram, India",
+    location: "Phoenix, Arizona",
     program: "Cloud & DevOps",
     result: "Upskilled",
     quote:
@@ -97,12 +97,12 @@ const stories = [
   },
   {
     id: 6,
-    name: "Neha Kumari",
+    name: "Sophia Miller",
     role: "UI Developer",
     previous: "Beginner",
     current: "UI Developer",
     company: "Digital Company",
-    location: "Delhi, India",
+    location: "Boston, Massachusetts",
     program: "Frontend Development",
     result: "Career Started",
     quote:

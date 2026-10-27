@@ -77,7 +77,7 @@ export default function FinalCTA() {
             >
               <img
                 src="/images/zenvix-logo.png"
-                alt="Zenvix Solutions"
+                alt="Zenvix Solution"
                 className="max-h-9 max-w-10 object-contain"
               />
             </div>

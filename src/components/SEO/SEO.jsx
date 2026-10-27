@@ -1,12 +1,12 @@
 import { Helmet } from "react-helmet-async";
 
-const SITE_NAME = "Zenvix Solutions";
+const SITE_NAME = "Zenvix Solution";
 
 const DEFAULT_TITLE =
-  "Zenvix Solutions — Learn. Build. Get Hired.";
+  "Zenvix Solution — Learn. Build. Get Hired.";
 
 const DEFAULT_DESCRIPTION =
-  "Zenvix Solutions helps learners build practical skills through career-focused programs, real-world projects, interview preparation, job preparation and career support.";
+  "Zenvix Solution helps learners build practical skills through career-focused programs, real-world projects, interview preparation, job preparation and career support.";
 
 const SITE_URL = "https://YOUR-DOMAIN.com";
 

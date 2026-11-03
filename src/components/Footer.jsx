@@ -147,10 +147,14 @@ export default function Footer() {
 
             {/* Location */}
 
-            <div className="mt-5 flex items-center gap-2 text-[11px] font-semibold text-slate-500">
-              <MapPin className="h-3.5 w-3.5 text-teal-700" />
+            <div className="mt-5 flex items-start gap-2 text-[11px] font-semibold text-slate-500">
+              <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal-700" />
 
-              <span>United States</span>
+              <div className="flex flex-col leading-5">
+                <span>237 N Main St Ste 300,</span>
+                <span>Sheridan, WY 82801,</span>
+                <span>United States</span>
+              </div>
             </div>
 
             {/* Socials */}

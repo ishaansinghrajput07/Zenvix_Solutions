@@ -5,6 +5,8 @@ import {
   Linkedin,
   Mail,
   MapPin,
+  MessageCircle,
+  Phone,
   Twitter,
 } from "lucide-react";
 
@@ -157,6 +159,34 @@ export default function Footer() {
               </div>
             </div>
 
+            <div className="mt-4 flex flex-col items-start gap-2 text-[11px] font-semibold text-slate-500">
+              <a
+                href="tel:+13072927889"
+                className="inline-flex items-center gap-2 transition-colors hover:text-teal-700"
+              >
+                <Phone className="h-3.5 w-3.5 shrink-0 text-teal-700" />
+                <span>+1 (307) 292-7889</span>
+              </a>
+
+              <a
+                href="https://wa.me/13072927889"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 transition-colors hover:text-teal-700"
+              >
+                <MessageCircle className="h-3.5 w-3.5 shrink-0 text-teal-700" />
+                <span>Chat with us on WhatsApp</span>
+              </a>
+
+              <a
+                href="mailto:Support@zanvixsolution.com"
+                className="inline-flex items-center gap-2 transition-colors hover:text-teal-700"
+              >
+                <Mail className="h-3.5 w-3.5 shrink-0 text-teal-700" />
+                <span className="break-all">Support@zanvixsolution.com</span>
+              </a>
+            </div>
+
             {/* Socials */}
 
             <div className="mt-6 flex items-center gap-2">
@@ -214,7 +244,7 @@ export default function Footer() {
               </a>
 
               <a
-                href="mailto:support@zenvixsolution.com"
+                href="mailto:Support@zanvixsolution.com"
                 aria-label="Email"
                 className="
                   flex h-9 w-9 items-center justify-center

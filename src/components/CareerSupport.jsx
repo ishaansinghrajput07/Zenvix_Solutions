@@ -584,7 +584,7 @@ export default function CareerSupport() {
                             type="tel"
                             value={form.phone}
                             onChange={handleChange}
-                            placeholder="+1 (307) 292-7889"
+                            placeholder="Your number, including country code"
                             autoComplete="tel"
                             className={inputClass("phone")}
                           />

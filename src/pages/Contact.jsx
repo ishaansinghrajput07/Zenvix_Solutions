@@ -546,10 +546,10 @@ export default function Contact() {
                       </p>
 
                       <a
-                        href="mailto:support@zenvixsolution.com"
+                        href="mailto:Support@zanvixsolution.com"
                         className="mt-0.5 block text-xs text-slate-300 hover:text-white"
                       >
-                        support@zenvixsolution.com
+                        Support@zanvixsolution.com
                       </a>
                     </div>
                   </div>
@@ -712,7 +712,7 @@ export default function Contact() {
                         type="tel"
                         value={form.phone}
                         onChange={handleChange}
-                        placeholder="+1 (307) 292-7889"
+                        placeholder="Your number, including country code"
                         autoComplete="tel"
                         className={inputClass("phone")}
                       />

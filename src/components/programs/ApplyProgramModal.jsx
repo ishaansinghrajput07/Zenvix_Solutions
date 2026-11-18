@@ -9,16 +9,18 @@ import {
   User,
   X,
   MessageSquareText,
+  MessageCircle,
   BriefcaseBusiness,
 } from 'lucide-react'
+
+const WHATSAPP_NUMBER = '13072927889'
 
 export default function ApplyProgramModal({
   isOpen,
   onClose,
   program,
 }) {
-  const [submitted, setSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [whatsappUrl, setWhatsappUrl] = useState('')
 
   const [formData, setFormData] = useState({
     name: '',
@@ -42,8 +44,7 @@ export default function ApplyProgramModal({
 
   useEffect(() => {
     if (!isOpen) {
-      setSubmitted(false)
-      setLoading(false)
+      setWhatsappUrl('')
       setFormData({
         name: '',
         email: '',
@@ -65,41 +66,30 @@ export default function ApplyProgramModal({
     }))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
 
     if (!formData.consent) {
       return
     }
 
-    setLoading(true)
+    const message = [
+      'Hello Zenvix, I would like to apply for a program.',
+      '',
+      `Program: ${program?.name}`,
+      `Name: ${formData.name}`,
+      `WhatsApp Number: ${formData.phone}`,
+      `Email: ${formData.email}`,
+      `Education: ${formData.education}`,
+      `Experience: ${formData.experience}`,
+      formData.message ? `Message: ${formData.message}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n')
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
 
-    /*
-      Backend / Email / WhatsApp integration will be connected here.
-
-      Example future payload:
-
-      {
-        program: program?.name,
-        ...formData
-      }
-    */
-
-    try {
-      // Temporary submission simulation
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      console.log('Program Application:', {
-        program: program?.name,
-        ...formData,
-      })
-
-      setSubmitted(true)
-    } catch (error) {
-      console.error('Application submission failed:', error)
-    } finally {
-      setLoading(false)
-    }
+    setWhatsappUrl(url)
+    window.open(url, '_blank', 'noopener,noreferrer')
   }
 
   if (!program) return null
@@ -162,12 +152,12 @@ export default function ApplyProgramModal({
                   </p>
 
                   <h2 className="mt-1 text-[19px] font-semibold tracking-tight text-slate-950">
-                    {submitted
-                      ? 'Application received'
+                    {whatsappUrl
+                      ? 'WhatsApp message ready'
                       : 'Start your career journey'}
                   </h2>
 
-                  {!submitted && (
+                  {!whatsappUrl && (
                     <p className="mt-1 text-[12px] text-slate-500">
                       Apply for{' '}
                       <span className="font-semibold text-slate-700">
@@ -191,7 +181,7 @@ export default function ApplyProgramModal({
             {/* CONTENT */}
 
             <div className="relative overflow-y-auto px-6 py-6 sm:px-7">
-              {submitted ? (
+              {whatsappUrl ? (
                 /* SUCCESS */
 
                 <motion.div
@@ -204,7 +194,7 @@ export default function ApplyProgramModal({
                   </div>
 
                   <h3 className="mt-5 text-2xl font-semibold tracking-tight text-slate-950">
-                    Thank you, {formData.name.split(' ')[0]}.
+                    WhatsApp message ready
                   </h3>
 
                   <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-slate-500">
@@ -212,7 +202,8 @@ export default function ApplyProgramModal({
                     <span className="font-semibold text-slate-700">
                       {program.name}
                     </span>{' '}
-                    has been received successfully.
+                    is ready in WhatsApp. Review the details and tap Send to
+                    share it with our admissions team.
                   </p>
 
                   <div className="mx-auto mt-6 max-w-md rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4 text-left">
@@ -224,24 +215,27 @@ export default function ApplyProgramModal({
 
                       <div>
                         <p className="text-[13px] font-semibold text-slate-800">
-                          What happens next?
+                          WhatsApp didn't open?
                         </p>
 
                         <p className="mt-1 text-[12px] leading-5 text-slate-500">
-                          Our admissions team will review your details and
-                          contact you regarding the next steps.
+                          Use the button below to open your prefilled message.
+                          Your application is sent only after you tap Send in
+                          WhatsApp.
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="btn-primary mt-7"
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary mt-7 inline-flex items-center gap-2"
                   >
-                    Done
-                  </button>
+                    Open WhatsApp
+                    <MessageCircle size={16} />
+                  </a>
                 </motion.div>
               ) : (
                 <form onSubmit={handleSubmit}>
@@ -326,7 +320,7 @@ export default function ApplyProgramModal({
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
-                            placeholder="+1 (307) 292-7889"
+                            placeholder="Your number, including country code"
                             required
                             className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-[13px] text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-electric-400 focus:ring-4 focus:ring-electric-500/10"
                           />
@@ -459,25 +453,15 @@ export default function ApplyProgramModal({
 
                   <button
                     type="submit"
-                    disabled={loading}
                     className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-slate-950 text-[13px] font-semibold text-white shadow-[0_10px_30px_rgba(15,23,42,0.15)] transition-all hover:-translate-y-0.5 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {loading ? (
-                      <>
-                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                        Sending Application...
-                      </>
-                    ) : (
-                      <>
-                        Submit Application
-                        <ArrowRight size={16} />
-                      </>
-                    )}
+                    Continue with WhatsApp
+                    <ArrowRight size={16} />
                   </button>
 
                   <p className="mt-3 text-center text-[9.5px] text-slate-400">
-                    Our admissions team will contact you after reviewing your
-                    application.
+                    WhatsApp will open with your application details. Tap Send
+                    there to submit.
                   </p>
                 </form>
               )}
